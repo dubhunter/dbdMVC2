@@ -1,0 +1,10 @@
+##
+# .htaccess :: DBD MVC Bootstrap Hook
+#
+# @package dbdMVC
+# @version 1.1
+# @author Don't Blink Design <info@dontblinkdesign.com>
+# @copyright Copyright (c) 2006-2007 by Don't Blink Design
+##
+RewriteEngine on
+RewriteRule !\.(js|ico|gif|jpg|png|css|txt|zip|tar|gz)$ index.php

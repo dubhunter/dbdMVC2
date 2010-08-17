@@ -1,0 +1,45 @@
+#!/bin/bash
+
+if [ ${#} -lt 1 ]
+then
+    echo "USAGE: ${0} doc_root"
+    exit 1
+fi
+
+#strip the trailing slash
+f=${1%\/}
+f="`readlink -f ${f}`/"
+fUp="`readlink -f ${f}../`/"
+
+#check for dir existance and writability
+if [[ ! -d ${f} || ! -w ${f} || ! -d ${fUp} || ! -w ${fUp} ]]
+then
+    echo "ERROR: dir (${f} or ${fUp}) is not not writeable!"
+    exit 2
+fi
+
+helpDir="./help/"
+
+echo -e "\n*** Making dbdMVC App...\n"
+
+#create dbdApp dir
+echo "Creating 'dbdApp' skeleton dir in ${fUp}"
+rsync -av --ignore-existing --exclude=".svn" ${helpDir}dbdApp ${fUp}
+#chown -R --reference=${f} ${fUp}dbdApp
+
+#writing cli
+echo -e "#!/usr/bin/php -q\n<?php\nrequire_once(\"${f}index.php\");\n?>" > ${fUp}dbdApp/dbdcli
+
+#copy htdocs dir
+echo "Updating '${f}' dir with skeleton files"
+rsync -av --ignore-existing --exclude=".svn" --include="*" --include=".htaccess" ${helpDir}htdocs/ ${f}
+#chown -R --reference=${f} ${f}
+
+#make sure permissions are good
+chmod 777 ${fUp}dbdApp/cache
+chmod 777 ${fUp}dbdApp/views/.cache
+chmod 777 ${fUp}dbdApp/views/.templates_c
+
+echo -e "\n\n*** Finished making dbdMVC App!\n"
+
+exit 0
