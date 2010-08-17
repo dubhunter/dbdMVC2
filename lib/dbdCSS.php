@@ -369,8 +369,17 @@ class dbdCSS extends dbdController
 			$cache_time = filectime($path);
 			foreach ($files as $f)
 			{
-				if (filectime(DBD_STYLE_DIR.$f) > $cache_time)
-					return false;
+				switch (true)
+				{
+					case file_exists(DBD_STYLE_DIR.$f):
+						if (filectime(DBD_STYLE_DIR.$f) > $cache_time)
+							return false;
+						break;
+					case file_exists(DBD_ASSET_DIR.$f):
+						if (filectime(DBD_ASSET_DIR.$f) > $cache_time)
+							return false;
+						break;
+				}
 			}
 			$this->dumpFile($file);
 			return true;
