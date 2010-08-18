@@ -27,18 +27,23 @@ echo "Creating 'dbdApp' skeleton dir in ${fUp}"
 rsync -av --ignore-existing --exclude=".svn" ${helpDir}dbdApp ${fUp}
 #chown -R --reference=${f} ${fUp}dbdApp
 
+echo "Creating helper scripts in ${fUp}"
+rsync -av --ignore-existing --exclude=".svn" ${helpDir}clearCaches ${fUp}
+rsync -av --ignore-existing --exclude=".svn" ${helpDir}fixPerms ${fUp}
+
 #writing cli
 echo -e "#!/usr/bin/php -q\n<?php\nrequire_once(\"${f}index.php\");\n?>" > ${fUp}dbdApp/dbdcli
 
 #copy htdocs dir
 echo "Updating '${f}' dir with skeleton files"
-rsync -av --ignore-existing --exclude=".svn" --include="*" --include=".htaccess" ${helpDir}htdocs/ ${f}
+rsync -av --ignore-existing --exclude=".svn" --include="*" --include=".htaccess" ${helpDir}httpdocs/ ${f}
 #chown -R --reference=${f} ${f}
 
 #make sure permissions are good
-chmod 777 ${fUp}dbdApp/cache
-chmod 777 ${fUp}dbdApp/views/.cache
-chmod 777 ${fUp}dbdApp/views/.templates_c
+chmod 775 ${fUp}dbdApp/cache
+chmod 775 ${fUp}dbdApp/assets/images/cache
+chmod 775 ${fUp}dbdApp/views/.cache
+chmod 775 ${fUp}dbdApp/views/.templates_c
 
 echo -e "\n\n*** Finished making dbdMVC App!\n"
 

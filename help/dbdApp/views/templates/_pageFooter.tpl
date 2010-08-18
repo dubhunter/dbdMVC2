@@ -1,3 +1,0 @@
-{* dbdMVC Smarty *}
-</body>
-</html>
