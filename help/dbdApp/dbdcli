@@ -1,0 +1,4 @@
+#!/usr/bin/php -q
+<?php
+require_once("/var/www/html/index.php");
+?>

@@ -130,8 +130,8 @@ abstract class dbdController
 		}
 		catch (PDOException $e)
 		{
-			dbdLog(dbdDB::getInstance()->errorCode());
-			dbdLog($e);
+			dbdLog(__CLASS__.": Cannot start Session (".dbdDB::getInstance()->errorCode().")");
+//			dbdLog($e);
 		}
 
 		if (DBD_MVC_CLI) $this->noRender();
