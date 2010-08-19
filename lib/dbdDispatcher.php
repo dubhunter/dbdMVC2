@@ -3,7 +3,7 @@
  * dbdDispatcher.php :: dbdDispatcher Class File
  *
  * @package dbdMVC
- * @version 1.9
+ * @version 1.10
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2009 by Don't Blink Design
  */
@@ -153,16 +153,18 @@ class dbdDispatcher
 			$this->router->setAction(self::DEFAULT_ACTION);
 			$action = $this->router->getAction();
 		}
-		$action = self::ACTION_PREFIX.ucfirst($action);
-		if (!method_exists($controller, $action))
+		$method = self::ACTION_PREFIX.ucfirst($action);
+		if (!method_exists($controller, $method))
 		{
-			$action = "__".self::ACTION_PREFIX.ucfirst(self::MAGIC_ACTION);
-			if (!method_exists($controller, $action))
+			$magic = "__".self::ACTION_PREFIX.ucfirst(self::MAGIC_ACTION);
+			if (!method_exists($controller, $magic))
 			{
 				$controller->noRender();
 				throw new dbdException("Action (".$action.") could not be executed!");
 			}
+			$action = $magic;
 		}
+		$action = $method;
 		return $action;
 	}
 	/**#@-*/

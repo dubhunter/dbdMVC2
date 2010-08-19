@@ -3,7 +3,7 @@
  * dbdController.php :: dbdController Class File
  *
  * @package dbdMVC
- * @version 1.9
+ * @version 1.10
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2009 by Don't Blink Design
  */
@@ -166,7 +166,7 @@ abstract class dbdController
 			if (!$this->template)
 				$this->template = preg_replace("/^([A-Z]{1})(.*)$/e", "strtolower('$1').$2", $this->getController()).".tpl";
 			if (!$this->view->template_exists($this->template))
-				throw new dbdException("View (".$this->template.") could not be found!", 404);
+				throw new dbdException("Page (".$this->getController().") could not be found!", 404);
 			$this->view->display($this->template);
 		}
 	}

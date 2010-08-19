@@ -1,5 +1,4 @@
 {* dbdSmarty *}
-		</div>
 	</div>
 	<div id="pageFoot">
 		<p class="legal">&copy; {$smarty.now|date:'Y'} Don't Blink Design, Inc. All Rights Reserved</p>

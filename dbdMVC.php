@@ -371,7 +371,7 @@ class dbdMVC
 	 */
 	public static function e(Exception $e)
 	{
-		dbdLog($e->__toString());
+		dbdLog($e->getMessage());
 		try
 		{
 			if (($c = self::getErrorController()) === null)
