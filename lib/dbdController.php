@@ -164,9 +164,13 @@ abstract class dbdController
 		if (!$this->view->wasRendered() && $this->default_render)
 		{
 			if (!$this->template)
+			{
 				$this->template = preg_replace("/^([A-Z]{1})(.*)$/e", "strtolower('$1').$2", $this->getController()).".tpl";
+				if (!$this->view->template_exists($this->template))
+					throw new dbdException("Page (".$this->getController().") could not be found!", 404);
+			}
 			if (!$this->view->template_exists($this->template))
-				throw new dbdException("Page (".$this->getController().") could not be found!", 404);
+				throw new dbdException("View (".$this->template.") could not be found!", 404);
 			$this->view->display($this->template);
 		}
 	}
