@@ -3,7 +3,7 @@
  * dbdModel.php :: dbdModel Class File
  *
  * @package dbdMVC
- * @version 1.11
+ * @version 1.12
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2009 by Don't Blink Design
  */
@@ -292,7 +292,9 @@ abstract class dbdModel
 		$table .= "s";
 		if (self::$db->tableExists($table) && ($key = self::$db->primaryKey($table)))
 		{
-			eval("class ".$class." extends ".__CLASS__."{const ".self::CONST_TABLE_NAME." = '".$table."';const ".self::CONST_TABLE_KEY." = '".$key."';}");
+			$model = "class ".$class." extends ".__CLASS__."\n{\n\tconst ".self::CONST_TABLE_NAME." = '".$table."';\n\tconst ".self::CONST_TABLE_KEY." = '".$key."';\n}";
+			eval($model);
+			file_put_contents(DBD_APP_DIR.dbdLoader::getModelDir().DBD_DS.$class.".php", "<?php\n".$model."\n?>");
 		}
 		else
 		{
