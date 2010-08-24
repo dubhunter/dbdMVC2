@@ -5,8 +5,12 @@
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<meta name="author" content="Don't Blink Design, Inc." />
-	<meta name="keywords" content="dbdMVC, model-view-controller" />
-	<meta name="description" content="{$title}" />
+{if $page_keys}
+	<meta name="keywords" content="{$page_keys}" />
+{/if}
+{if $page_desc}
+	<meta name="description" content="{$page_desc}" />
+{/if}
 	<link rel="icon" href="/favicon.ico" type="image/x-icon" />
 	<title>{$app_name} - {$page_title|default:'Home'}</title>
 </head>

@@ -1,6 +1,7 @@
 {* dbdSmarty *}
+{assign var="page_title" value=""}
+{assign var="page_desc" value=""}
+{assign var="page_keys" value=""}
 {include file="global/_pageHeader.tpl"}
-<a href="{dbduri c='dbdAdmin'}" title="Admin">Admin</a>
-<pre>{$count}
-{$data|escape:'html'}</pre>
+{include file="com/home/_welcome.tpl"}
 {include file="global/_pageFooter.tpl"}
