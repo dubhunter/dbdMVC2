@@ -13,7 +13,7 @@
  * @package dbdMVC
  * @uses dbdController
  */
-class Index extends dbdController
+class Index extends XYZController
 {
 	/**
 	 * Set a welcome message for the view

@@ -1,8 +1,8 @@
 #!/bin/bash
 
-if [ ${#} -lt 1 ]
+if [ ${#} -lt 2 ]
 then
-    echo "USAGE: ${0} doc_root"
+    echo "USAGE: ${0} doc_root initials"
     exit 1
 fi
 

@@ -39,7 +39,8 @@ dbdMVC::exposePHPInfo();
  */
 //dbdMVC::setDebugMode(DBD_DEBUG_HTML);
 
-//dbdMVC::setFallbackController("Index");
+dbdMVC::setErrorController("XYZError");
+dbdMVC::setFallbackController("XYZController");
 
 /**
  * Run dbdMVC application.
