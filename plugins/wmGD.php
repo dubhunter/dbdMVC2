@@ -106,9 +106,9 @@ function colorizeImage(&$im, GDColor $color)
 		{
 			$old = imagecolorsforindex($im, $i);
 			$new = array(
-				min(($old['red'] / 255.0 + 1) * $color->getRed(), 255),
-				min(($old['green'] / 255.0 + 1) * $color->getGreen(), 255),
-				min(($old['blue'] / 255.0 + 1) * $color->getBlue(), 255)
+				min($old[0] + $color->getRed(), 255),
+				min($old[1] + $color->getGreen(), 255),
+				min($old[2] + $color->getBlue(), 255)
 			);
 			imagecolorset($im, $i, $new[0], $new[1], $new[2]);
 		}
@@ -126,9 +126,9 @@ function colorizeImage(&$im, GDColor $color)
 			{
 				$old = GDColor::int2arr(imagecolorat($im, $x, $y));
 				$new = array(
-					round(min(($old[0] / 255.0 + 1) * $color->getRed(), 255)),
-					round(min(($old[1] / 255.0 + 1) * $color->getGreen(), 255)),
-					round(min(($old[2] / 255.0 + 1) * $color->getBlue(), 255)),
+					min($old[0] + $color->getRed(), 255),
+					min($old[1] + $color->getGreen(), 255),
+					min($old[2] + $color->getBlue(), 255),
 					$old[3]
 				);
 				imagesetpixel($im2, $x, $y, imagecolorallocatealpha($im2, $new[0], $new[1], $new[2], $new[3]));

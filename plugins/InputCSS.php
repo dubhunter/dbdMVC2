@@ -3,7 +3,7 @@
  * InputCSS.php :: The Fancy XHTML/CSS Form Input Class
  *
  * @package dbdCommon
- * @version 1.4
+ * @version 1.5
  * @author Will Mason <will@dontblinkdesign.com>
  * @copyright Copyright (c) 2009 by Don't Blink Design
  */
@@ -88,6 +88,8 @@ class InputCSS
 			{
 				$html .= " onmouseover=\"$('#".$div_id."').removeClass().addClass('".$id."On');\"";
 				$html .= " onmouseout=\"$('#".$div_id."').removeClass().addClass('".$id."Off');\"";
+				$html .= " onmousedown=\"$('#".$div_id."').addClass('".$id."Dn');\"";
+				$html .= " onmouseup=\"$('#".$div_id."').removeClass('".$id."Dn');\"";
 			}
 		}
 		else
@@ -111,6 +113,8 @@ class InputCSS
 			$html .= "} return false;\"";
 			$html .= " onmouseover=\"if (!$('#".$input_id."').attr('checked'))$('#".$div_id."').removeClass().addClass('".$id."On');\"";
 			$html .= " onmouseout=\"if (!$('#".$input_id."').attr('checked'))$('#".$div_id."').removeClass().addClass('".$id."Off');\"";
+			$html .= " onmousedown=\"if (!$('#".$input_id."').attr('checked'))$('#".$div_id."').addClass('".$id."Dn');\"";
+			$html .= " onmouseup=\"if (!$('#".$input_id."').attr('checked'))$('#".$div_id."').removeClass('".$id."Dn');\"";
 			$html .= ">".$value."</a>";
 		}
 		elseif (in_array($type, array("submit", "reset")))
@@ -118,7 +122,9 @@ class InputCSS
 			$html .= "<a href=\"#\" ".($disabled ? "class=\"disabled\"" : "")."onclick=\"$('#".$input_id."').click(); return false;\"";
 			$html .= " onmouseover=\"if (!$('#".$input_id."').attr('disabled'))$('#".$div_id."').removeClass().addClass('".$id."On');\"";
 			$html .= " onmouseout=\"if (!$('#".$input_id."').attr('disabled'))$('#".$div_id."').removeClass().addClass('".$id."Off');\"";
-			$html .= ">".$value."</a>";
+			$html .= " onmousedown=\"if (!$('#".$input_id."').attr('disabled'))$('#".$div_id."').addClass('".$id."Dn');\"";
+			$html .= " onmouseup=\"if (!$('#".$input_id."').attr('disabled'))$('#".$div_id."').removeClass('".$id."Dn');\"";
+			$html .= " title=\"".$value."\">".$value."</a>";
 		}
 		$html .= "<div id=\"".$div_id."\" class=\"".$id.($disabled ? "Na" : ($checked ? "On" : "Off"))."\"><span></span></div>";
 		$html .= "</div>\n";

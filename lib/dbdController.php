@@ -404,7 +404,7 @@ abstract class dbdController
 	protected function sendEmail($from_name, $from_address, $to_address, $subject, $tpl, $cc_address = false, $hdrs = array())
 	{
 		$this->view->assign("tpl", $tpl);
-		$hdrs['From'] = "\"".$from_name."\"<".$from_address.">";
+		$hdrs['From'] = "\"".$from_name."\" <".$from_address.">";
 		$hdrs['To'] = $to_address;
 		if ($cc_address)
 			$hdrs['Cc'] = $cc_address;
