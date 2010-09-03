@@ -266,11 +266,9 @@ abstract class dbdController
 		{
 			case ($this->router->getParam("HTTP_X_REQUESTED_BY") == "jqueryAjax"):
 				$this->win_type = self::WIN_TYPE_JQUERY;
-				self::$tabindex += 1000;
 				break;
 			case $this->getParam("iframe"):
 				$this->win_type = self::WIN_TYPE_IFRAME;
-				self::$tabindex += 2000;
 				break;
 			default:
 				$this->win_type = self::WIN_TYPE_NORMAL;
