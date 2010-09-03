@@ -197,9 +197,9 @@ class dbdSmarty extends Smarty
 	public function fetch($resource_name, $cache_id = null, $compile_id = null, $display = false, $no_includes = false, $no_minify = false)
 	{
 		if ($no_includes)
-			$this->unregister_outputfilter("dbdIncludeFiles");
+			$this->unregister_outputfilter(array($this, "dbdIncludeFiles"));
 		if ($no_minify)
-			$this->unregister_outputfilter("dbdMinify");
+			$this->unregister_outputfilter(array($this, "dbdMinify"));
 		$html = parent::fetch($resource_name, $cache_id, $compile_id, $display);
 		if ($no_includes)
 			$this->register_outputfilter(array($this, "dbdIncludeFiles"));

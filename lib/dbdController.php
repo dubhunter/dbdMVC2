@@ -116,23 +116,23 @@ abstract class dbdController
 //		$this->view->config_load("errorMsgs.conf");
 //		dbdException::setMsgArray($this->view->get_config_vars());
 //		$this->view->clear_config();
-
-		try
-		{
-			$this->session = new dbdSession(dbdMVC::getRequest()->getQuery("PHPSESSID", null));
-			$session = $this->session->getParams();
-			if ($this->session->isLoggedIn())
-			{
-				$this->user = $this->session->getUser();
-				$session['access'] = $this->user->getAccess();
-			}
-			$this->view->assign("session", $session);
-		}
-		catch (PDOException $e)
-		{
-			dbdLog(__CLASS__.": Cannot start Session (".dbdDB::getInstance()->errorCode().")");
-//			dbdLog($e);
-		}
+//
+//		try
+//		{
+//			$this->session = new dbdSession(dbdMVC::getRequest()->getQuery("PHPSESSID", null));
+//			$session = $this->session->getParams();
+//			if ($this->session->isLoggedIn())
+//			{
+//				$this->user = $this->session->getUser();
+//				$session['access'] = $this->user->getAccess();
+//			}
+//			$this->view->assign("session", $session);
+//		}
+//		catch (PDOException $e)
+//		{
+//			dbdLog(__CLASS__.": Cannot start Session (".dbdDB::getInstance()->errorCode().")");
+////			dbdLog($e);
+//		}
 
 		if (DBD_MVC_CLI) $this->noRender();
 		$this->init();

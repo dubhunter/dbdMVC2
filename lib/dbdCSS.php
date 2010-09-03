@@ -209,6 +209,7 @@ class dbdCSS extends dbdController
 			'background-color' => '#7fffffff',
 			'foreground-color' => null,
 			'font-color' => null,
+			'font-size' => null,
 			'src-body' => null,
 			'src-shade' => null,
 			'src-high' => null
