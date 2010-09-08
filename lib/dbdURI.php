@@ -3,7 +3,7 @@
  * dbdURI.php :: dbdURI Class File
  *
  * @package dbdMVC
- * @version 1.10
+ * @version 1.11
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2009 by Don't Blink Design
  */
@@ -228,7 +228,7 @@ class dbdURI
 					$v = array($v);
 				}
 				foreach ($v as $k2 => $v2)
-					$uri .= $k.($braces ? "[".(is_string($k2) ? $k2 : "")."]" : "")."/".preg_replace("/\//", "%5C/", $v2)."/";
+					$uri .= $k.($braces ? "%5B".(is_string($k2) ? $k2 : "")."%5D" : "")."/".preg_replace("/\//", "%5C/", $v2)."/";
 			}
 		}
 		return $uri;

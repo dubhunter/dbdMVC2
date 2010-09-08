@@ -3,7 +3,7 @@
  * dbdCSS.php :: dbdCSS Class File
  *
  * @package dbdMVC
- * @version 1.19
+ * @version 1.20
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2009 by Don't Blink Design
  */
@@ -1362,23 +1362,6 @@ class dbdCSS extends dbdController
 		$this->debug = dbdMVC::debugMode(DBD_DEBUG_CSS);
 		$this->vars = $this->getParams();
 	}
-//	/**
-//	 * Alias of doGet()
-//	 */
-//	public function doDefault()
-//	{
-//		$this->doGet();
-//	}
-//	/**
-//	 * Serve css files...
-//	 */
-//	public function doGet()
-//	{
-//		$file = $this->getParam("file");
-//		$dir = $this->getParam("dir");
-//		$this->parseImports($file, $dir);
-//		$this->output();
-//	}
 	/**
 	 * Serve multiple css files as one
 	 */
@@ -1416,6 +1399,8 @@ class dbdCSS extends dbdController
 	 */
 	public static function genURL($files = array(), $vars = array())
 	{
+		if (count($files) == 1 && count($vars) == 0)
+			return DBD_DS.$files[0];
 		for ($i = 0; $i < count($files); $i++)
 			$files[$i] = str_replace(DBD_DS, ",", $files[$i]);
 		$vars['files'] = $files;

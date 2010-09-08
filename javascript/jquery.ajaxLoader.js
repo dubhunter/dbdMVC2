@@ -71,7 +71,7 @@
 					display: 'none',
 					minHeight: this.opts.imageH,
 					padding: '3px',
-					paddingLeft: this.opts.imageW + 2,
+					paddingLeft: this.opts.imageW + 5,
 					zIndex: (this.opts.zIndex + 1)
 				})
 				.appendTo(this.overlay);
@@ -82,7 +82,7 @@
 				.addClass(this.opts.imageClass)
 				.css({
 					position: 'absolute',
-					left: 0,
+					left: '3px',
 					top: '50%',
 					marginTop: '-' + (this.opts.imageH / 2) + 'px'
 				})

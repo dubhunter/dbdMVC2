@@ -11,6 +11,7 @@
 	<meta name="description" content="{$page_desc}" />
 {/if}
 	<link rel="icon" href="/favicon.ico" type="image/x-icon" />
+	<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 	<title>{$app_name} - {$page_title|default:'Home'}</title>
 </head>
 <body id="www-dbdmvc-com">
