@@ -3,7 +3,7 @@
  * dbdCSS.php :: dbdCSS Class File
  *
  * @package dbdMVC
- * @version 1.20
+ * @version 1.21
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2009 by Don't Blink Design
  */
@@ -1108,13 +1108,13 @@ class dbdCSS extends dbdController
 			if (isset($srcs['shade']))
 			{
 			    $btn_shadow = imageCreateFrom($srcs['shade']);
-				stretchCopyButton($btn_out, $btn_shadow, $btn_wd, $start_wd, $btn_ht, $off_y);
+				stretchCopyButton($btn_out, $btn_shadow, $btn_wd, $start_wd, $btn_ht, $off_y, $p['cap-width']);
 			}
-			stretchCopyButton($btn_out, $btn_body, $btn_wd, $start_wd, $btn_ht, $off_y);
+			stretchCopyButton($btn_out, $btn_body, $btn_wd, $start_wd, $btn_ht, $off_y, $p['cap-width']);
 			if (isset($srcs['high']))
 			{
 				$btn_highlight = imageCreateFrom($srcs['high']);
-				stretchCopyButton($btn_out, $btn_highlight, $btn_wd, $start_wd, $btn_ht, $off_y);
+				stretchCopyButton($btn_out, $btn_highlight, $btn_wd, $start_wd, $btn_ht, $off_y, $p['cap-width']);
 			}
 			$tbb = imageFTText($btn_out, $p['font-size'], 0, $x, $y + $off_y, $fontColor->getColor(), $p['font'], $value);
 			switch ($p['text-decoration'])

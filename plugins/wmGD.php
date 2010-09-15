@@ -245,15 +245,26 @@ function cropImageReal(&$src, $x, $y, $w, $h)
 	return $out;
 }
 
-function stretchCopyButton($dst_im, $src_im, $dst_wd, $src_wd, $src_ht, $y = 0)
+function stretchCopyButton($dst_im, $src_im, $dst_wd, $src_wd, $src_ht, $y = 0, $cap_wd = null)
 {
-	$half_wd = $src_wd / 2;
-	$diff_wd = $dst_wd - $src_wd;
-	//stretch center pixel
-	imageCopyResampled($dst_im, $src_im, $half_wd, $y, $half_wd, 0, $diff_wd, $src_ht, 1, $src_ht);
-	//caps
-	imageCopy($dst_im, $src_im, 0, $y, 0, 0, $half_wd, $src_ht);
-	imageCopy($dst_im, $src_im, $half_wd + $diff_wd, $y, $half_wd, 0, $half_wd, $src_ht);
+	if ($cap_wd > 0)
+	{
+		//stretch center pixels
+		imagecopyresampled($dst_im, $src_im, $cap_wd, $y, $cap_wd, 0, $dst_wd - ($cap_wd * 2), $src_ht, $src_wd - ($cap_wd * 2), $src_ht);
+		//caps
+		imagecopy($dst_im, $src_im, 0, $y, 0, 0, $cap_wd, $src_ht);
+		imagecopy($dst_im, $src_im, $dst_wd - $cap_wd, $y, $src_wd - $cap_wd, 0, $cap_wd, $src_ht);
+	}
+	else
+	{
+		$diff_wd = $dst_wd - $src_wd;
+		$half_wd = $src_wd / 2;
+		//stretch center pixel
+		imageCopyResampled($dst_im, $src_im, $half_wd, $y, $half_wd, 0, $diff_wd, $src_ht, 1, $src_ht);
+		//caps
+		imageCopy($dst_im, $src_im, 0, $y, 0, 0, $half_wd, $src_ht);
+		imageCopy($dst_im, $src_im, $half_wd + $diff_wd, $y, $half_wd, 0, $half_wd, $src_ht);
+	}
 	imageDestroy($src_im);
 }
 
