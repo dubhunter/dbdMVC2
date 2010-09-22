@@ -3,7 +3,7 @@
  * dbdSmarty.php :: dbdSmarty Class File
  *
  * @package dbdMVC
- * @version 1.17
+ * @version 1.18
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2009 by Don't Blink Design
  */
@@ -402,7 +402,7 @@ class dbdSmarty extends Smarty
 			if (preg_match("/<script[^>]+>/", $tpl) && strpos($tpl, "<script") < strpos($tpl, "</head>"))
 				$tpl = preg_replace("/(<script[^>]+>)/", $tag."\n\\1", $tpl, 1);
 			else
-				$tpl = preg_replace("/(<\/head>)/", $tag."\n\\1", $tpl, 1);
+				$tpl = preg_replace("/(<\/body>)/", $tag."\n\\1", $tpl, 1);
 		}
 		if ($this->flash_loader && $this->flash_loader->hasMovies())
 		{
