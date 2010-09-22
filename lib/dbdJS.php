@@ -94,6 +94,7 @@ class dbdJS extends dbdController
 		{
 			$file = DBD_CACHE_DIR.$this->cache_file;
 			@file_put_contents($file, $this->buffer);
+			$this->cache_mtime = filemtime($file);
 		}
 	}
 	/**
@@ -144,9 +145,9 @@ class dbdJS extends dbdController
 	/**
 	 * Set js headers
 	 */
-	private function setHeaders($cache = false)
+	private function setHeaders()
 	{
-		if ($cache)
+		if ($this->cache_mtime != null)
 		{
 			$etag = md5(serialize($this->vars));
 			if (strtotime(dbdRequest::getHeader("if-modified-since")) >= $this->cache_mtime && dbdRequest::getHeader("if-none-match") == $etag)
@@ -191,7 +192,7 @@ class dbdJS extends dbdController
 			$this->createCache();
 		}
 		$this->addVars();
-		if ($this->setHeaders($cache))
+		if ($this->setHeaders())
 			echo $this->buffer;
 	}
 	/**

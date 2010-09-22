@@ -404,6 +404,7 @@ class dbdCSS extends dbdController
 			$info .= " */\n";
 			$this->buffer = $info.$this->buffer;
 			@file_put_contents($file, $this->buffer);
+			$this->cache_mtime = filemtime($file);
 		}
 	}
 	/**
@@ -1322,7 +1323,7 @@ class dbdCSS extends dbdController
 			$this->minify();
 			$this->createCache();
 		}
-		if ($this->setHeaders($cache));
+		if ($this->setHeaders());
 			echo $this->buffer;
 	}
 	/**
@@ -1349,11 +1350,11 @@ class dbdCSS extends dbdController
 	/**
 	 * Set css headers
 	 */
-	private function setHeaders($cache = false)
+	private function setHeaders()
 	{
-		if ($cache)
+		if ($this->cache_mtime != null)
 		{
-			$etag = md5(serialize($this->vars));
+			$etag = md5(serialize($this->getParams()));
 			if (strtotime(dbdRequest::getHeader("if-modified-since")) >= $this->cache_mtime && dbdRequest::getHeader("if-none-match") == $etag)
 			{
 				header("HTTP/1.1 304 Not Modified");
