@@ -59,7 +59,7 @@ define("DBD_FIREPHP_DIR", DBD_MVC_DIR."FirePHPCore-0.3.1".DBD_DS."lib".DBD_DS);
  */
 define("DBD_PLUG_DIR", DBD_MVC_DIR."plugins".DBD_DS);
 /**
- * dbdMVC javascript plug-in directory
+ * dbdMVC built in template directory
  */
 define("DBD_TPL_DIR", DBD_MVC_DIR."templates".DBD_DS);
 /**

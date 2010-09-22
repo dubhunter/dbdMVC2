@@ -30,11 +30,6 @@ function outputAndDestroy(&$im, $type = "png", $cache_file = null, $no_output = 
 				header("Content-type: image/jpeg");
 				ob_start();
 				imagejpeg($im);
-				$len = ob_get_length();
-				$img = ob_get_contents();
-				ob_end_clean();
-//				header("Content-length: ".$len);
-				echo $img;
 			}
 			break;
 		case 'gif':
@@ -45,11 +40,6 @@ function outputAndDestroy(&$im, $type = "png", $cache_file = null, $no_output = 
 				header("Content-type: image/gif");
 				ob_start();
 				imagegif($im);
-				$len = ob_get_length();
-				$img = ob_get_contents();
-				ob_end_clean();
-//				header("Content-length: ".$len);
-				echo $img;
 			}
 			break;
 		case 'png':
@@ -60,15 +50,20 @@ function outputAndDestroy(&$im, $type = "png", $cache_file = null, $no_output = 
 				header("Content-type: image/png");
 				ob_start();
 				imagepng($im);
-				$len = ob_get_length();
-				$img = ob_get_contents();
-				ob_end_clean();
-//				header("Content-length: ".$len);
-				echo $img;
 			}
 			break;
 		default:
 			throw new Exception("Invalid extension!");
+	}
+	if (!$no_output)
+	{
+		if ($cache_file)
+			header("Last-Modified: ".gmdate("D, d M Y H:i:s", filemtime($cache_file))." GMT");
+//		$len = ob_get_length();
+		$img = ob_get_contents();
+		ob_end_clean();
+//		header("Content-length: ".$len);
+		echo $img;
 	}
 	imagedestroy($im);
 }

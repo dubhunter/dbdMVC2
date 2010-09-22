@@ -104,8 +104,8 @@ abstract class dbdController
 			"action" => $this->getAction()
 		));
 
-		$this->view->addJSVar("controller", $this->getController());
-		$this->view->addJSVar("action", $this->getAction() ? $this->getAction() : "");
+//		$this->view->addJSVar("controller", $this->getController());
+//		$this->view->addJSVar("action", $this->getAction() ? $this->getAction() : "");
 //		$this->view->addJSVar("params", $this->getParams());
 
 		$this->view->assign_by_ref("page_title", self::$title);

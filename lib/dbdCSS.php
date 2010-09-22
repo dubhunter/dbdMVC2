@@ -3,7 +3,7 @@
  * dbdCSS.php :: dbdCSS Class File
  *
  * @package dbdMVC
- * @version 1.21
+ * @version 1.22
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2009 by Don't Blink Design
  */
@@ -290,6 +290,11 @@ class dbdCSS extends dbdController
 	 */
 	private $cache_file = null;
 	/**
+	 * Cache file last modified date
+	 * @var string
+	 */
+	private $cache_mtime = null;
+	/**
 	 * List of files for proccessing
 	 * @var array string
 	 */
@@ -323,19 +328,17 @@ class dbdCSS extends dbdController
 	 * Generate a cache file name based on the list of proccess files.
 	 * @return string
 	 */
-	private function genCacheName($files)
+	private function genCacheName()
 	{
-		sort($files);
-		$str = get_class().".".md5(strtolower(implode(",", $files)));
-		return $str.".css";
+		return __CLASS__.".".md5(serialize($this->vars)).".css";
 	}
 	/**
 	 * Check for a cache file and make sure its not outdated.
 	 * @return boolean
 	 */
-	private function checkCache($files)
+	private function checkCache()
 	{
-		$this->cache_file = $this->genCacheName($files);
+		$this->cache_file = $this->genCacheName();
 		if (($path = dbdLoader::search($this->cache_file, DBD_CACHE_DIR)) && !$this->debug)
 		{
 			$file = $path;
@@ -367,17 +370,17 @@ class dbdCSS extends dbdController
 					break;
 				}
 			}
-			$cache_time = filectime($path);
+			$this->cache_mtime = filemtime($path);
 			foreach ($files as $f)
 			{
 				switch (true)
 				{
 					case file_exists(DBD_STYLE_DIR.$f):
-						if (filectime(DBD_STYLE_DIR.$f) > $cache_time)
+						if (filemtime(DBD_STYLE_DIR.$f) > $this->cache_mtime)
 							return false;
 						break;
 					case file_exists(DBD_ASSET_DIR.$f):
-						if (filectime(DBD_ASSET_DIR.$f) > $cache_time)
+						if (filemtime(DBD_ASSET_DIR.$f) > $this->cache_mtime)
 							return false;
 						break;
 				}
@@ -1148,7 +1151,7 @@ class dbdCSS extends dbdController
 	private function genButtonCacheFile($type, $params)
 	{
 		ksort($params);
-		$str = get_class();
+		$str = __CLASS__;
 		if (key_exists('hover', $params))
 			unset($params['hover']);
 		if (key_exists('active', $params))
@@ -1319,8 +1322,8 @@ class dbdCSS extends dbdController
 			$this->minify();
 			$this->createCache();
 		}
-		$this->setHeaders();
-		echo $this->buffer;
+		if ($this->setHeaders($cache));
+			echo $this->buffer;
 	}
 	/**
 	 * Minify buffer.
@@ -1346,11 +1349,23 @@ class dbdCSS extends dbdController
 	/**
 	 * Set css headers
 	 */
-	private function setHeaders()
+	private function setHeaders($cache = false)
 	{
+		if ($cache)
+		{
+			$etag = md5(serialize($this->vars));
+			if (strtotime(dbdRequest::getHeader("if-modified-since")) >= $this->cache_mtime && dbdRequest::getHeader("if-none-match") == $etag)
+			{
+				header("HTTP/1.1 304 Not Modified");
+				return false;
+			}
+			header("Last-Modified: ".gmdate("D, d M Y H:i:s", $this->cache_mtime)." GMT");
+			header("ETag: ".$etag);
+		}
 		header("Content-Type: text/css");
 		if (function_exists("mb_strlen"))
 			header("Content-Length: ".mb_strlen($this->buffer));
+		return true;
 	}
 	/**#@-*/
 	/**
@@ -1372,7 +1387,7 @@ class dbdCSS extends dbdController
 			$files = array($files);
 		try
 		{
-			if (!($cache = $this->checkCache($files)))
+			if (!($cache = $this->checkCache()))
 			{
 				foreach ($files as $f)
 				{
