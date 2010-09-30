@@ -3,7 +3,7 @@
  * dbdCSS.php :: dbdCSS Class File
  *
  * @package dbdMVC
- * @version 1.22
+ * @version 1.23
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2009 by Don't Blink Design
  */
@@ -198,6 +198,9 @@ class dbdCSS extends dbdController
 			'text-decoration' => 'none',
 			'text-horizontal-offset' => 0,
 			'text-vertical-offset' => 0,
+			'text-shadow' => null,
+			'text-shadow-horizontal-offset' => 0,
+			'text-shadow-vertical-offset' => 0,
 			'cap-width' => null,
 			'src-body' => null,
 			'src-shade' => null,
@@ -210,6 +213,7 @@ class dbdCSS extends dbdController
 			'foreground-color' => null,
 			'font-color' => null,
 			'font-size' => null,
+			'text-shadow' => null,
 			'src-body' => null,
 			'src-shade' => null,
 			'src-high' => null
@@ -917,31 +921,31 @@ class dbdCSS extends dbdController
 			if (count($b['hover']['props']))
 			{
 				$imgs[$s.":hover"] = array(
-					'src' => key_exists('background-image', $b['hover']['props']) ? $b['hover']['props']['background-image'] : $b['props']['background-image']
+					'src' => isset($b['hover']['props']['background-image']) ? $b['hover']['props']['background-image'] : $b['props']['background-image']
 				);
 			}
 			if (count($b['hover']['props']))
 			{
 				$imgs[$s.":hover"] = array(
-					'src' => key_exists('background-image', $b['hover']['props']) ? $b['hover']['props']['background-image'] : $b['props']['background-image']
+					'src' => isset($b['hover']['props']['background-image']) ? $b['hover']['props']['background-image'] : $b['props']['background-image']
 				);
 			}
 			if (count($b['active']['props']))
 			{
 				$imgs[$s.":active"] = array(
-					'src' => key_exists('background-image', $b['active']['props']) ? $b['active']['props']['background-image'] : $b['props']['background-image']
+					'src' => isset($b['active']['props']['background-image']) ? $b['active']['props']['background-image'] : $b['props']['background-image']
 				);
 			}
 			if (count($b['current']['props']))
 			{
 				$imgs[$s.":current"] = array(
-					'src' => key_exists('background-image', $b['current']['props']) ? $b['current']['props']['background-image'] : $b['props']['background-image']
+					'src' => isset($b['current']['props']['background-image']) ? $b['current']['props']['background-image'] : $b['props']['background-image']
 				);
 			}
 			if (count($b['disabled']['props']))
 			{
 				$imgs[$s.":disabled"] = array(
-					'src' => key_exists('background-image', $b['disabled']['props']) ? $b['disabled']['props']['background-image'] : $b['props']['background-image']
+					'src' => isset($b['disabled']['props']['background-image']) ? $b['disabled']['props']['background-image'] : $b['props']['background-image']
 				);
 			}
 		}
@@ -1062,35 +1066,40 @@ class dbdCSS extends dbdController
 		$x = floor(($btn_wd - $text_wd) / 2) - 1 + $p['text-horizontal-offset'];
 		$y =  $p['font-size'] + ceil(($btn_ht - $p['font-size']) / 2) - 1 + $p['text-vertical-offset'];
 		$butts = array(array(
-			"fg" => key_exists('foreground-color', $p) ? $p['foreground-color'] : null,
-			"fc" => $p['font-color']
+			"fg" => isset($p['foreground-color']) ? $p['foreground-color'] : null,
+			"fc" => $p['font-color'],
+			"ts" => isset($p['text-shadow']) ? $p['text-shadow'] : null
 		));
-		if (key_exists('foreground-color-hover', $p) || key_exists('font-color-hover', $p))
+		if (isset($p['foreground-color-hover']) || isset($p['font-color-hover']) || isset($p['text-shadow-hover']))
 		{
 			$butts[] = array(
-				"fg" => $p['foreground-color-hover'] ? $p['foreground-color-hover'] : key_exists('foreground-color', $p) ? $p['foreground-color'] : null,
-				"fc" => $p['font-color-hover'] ? $p['font-color-hover'] : $p['font-color']
+				"fg" => isset($p['foreground-color-hover']) ? $p['foreground-color-hover'] : isset($p['foreground-color']) ? $p['foreground-color'] : null,
+				"fc" => isset($p['font-color-hover']) ? $p['font-color-hover'] : $p['font-color'],
+				"ts" => isset($p['text-shadow-hover']) ? $p['text-shadow-hover'] : isset($p['text-shadow']) ? $p['text-shadow'] : null
 			);
 		}
-		if (key_exists('foreground-color-active', $p) || key_exists('font-color-active', $p))
+		if (isset($p['foreground-color-active']) || isset($p['font-color-active']) || isset($p['text-shadow-active']))
 		{
 			$butts[] = array(
-				"fg" => $p['foreground-color-active'] ? $p['foreground-color-active'] : key_exists('foreground-color', $p) ? $p['foreground-color'] : null,
-				"fc" => $p['font-color-active'] ? $p['font-color-active'] : $p['font-color']
+				"fg" => isset($p['foreground-color-active']) ? $p['foreground-color-active'] : isset($p['foreground-color']) ? $p['foreground-color'] : null,
+				"fc" => isset($p['font-color-active']) ? $p['font-color-active'] : $p['font-color'],
+				"ts" => isset($p['text-shadow-active']) ? $p['text-shadow-active'] : isset($p['text-shadow']) ? $p['text-shadow'] : null
 			);
 		}
-		if (key_exists('foreground-color-current', $p) || key_exists('font-color-current', $p))
+		if (isset($p['foreground-color-current']) || isset($p['font-color-current']) || isset($p['text-shadow-current']))
 		{
 			$butts[] = array(
-				"fg" => $p['foreground-color-current'] ? $p['foreground-color-current'] : key_exists('foreground-color', $p) ? $p['foreground-color'] : null,
-				"fc" => $p['font-color-current'] ? $p['font-color-current'] : $p['font-color']
+				"fg" => isset($p['foreground-color-current']) ? $p['foreground-color-current'] : isset($p['foreground-color']) ? $p['foreground-color'] : null,
+				"fc" => isset($p['font-color-current']) ? $p['font-color-current'] : $p['font-color'],
+				"ts" => isset($p['text-shadow-current']) ? $p['text-shadow-current'] : isset($p['text-shadow']) ? $p['text-shadow'] : null
 			);
 		}
-		if (key_exists('foreground-color-disabled', $p) || key_exists('font-color-disabled', $p))
+		if (isset($p['foreground-color-disabled']) || isset($p['font-color-disabled']) || isset($p['text-shadow-disabled']))
 		{
 			$butts[] = array(
-				"fg" => $p['foreground-color-disabled'] ? $p['foreground-color-disabled'] : key_exists('foreground-color', $p) ? $p['foreground-color'] : null,
-				"fc" => $p['font-color-disabled'] ? $p['font-color-disabled'] : $p['font-color']
+				"fg" => isset($p['foreground-color-disabled']) ? $p['foreground-color-disabled'] : isset($p['foreground-color']) ? $p['foreground-color'] : null,
+				"fc" => isset($p['font-color-disabled']) ? $p['font-color-disabled'] : $p['font-color'],
+				"ts" => isset($p['text-shadow-disabled']) ? $p['text-shadow-disabled'] : isset($p['text-shadow']) ? $p['text-shadow'] : null
 			);
 		}
 		$out_ht = ($btn_ht + $p['offset']) * count($butts) - $p['offset'];
@@ -1120,20 +1129,31 @@ class dbdCSS extends dbdController
 				$btn_highlight = imageCreateFrom($srcs['high']);
 				stretchCopyButton($btn_out, $btn_highlight, $btn_wd, $start_wd, $btn_ht, $off_y, $p['cap-width']);
 			}
-			$tbb = imageFTText($btn_out, $p['font-size'], 0, $x, $y + $off_y, $fontColor->getColor(), $p['font'], $value);
+			if (isset($b['ts']))
+			{
+				$tsColor = new GDColor($btn_out, $b['ts']);
+				$tbb = imageFTText($btn_out, $p['font-size'], 0, $x + $p['text-shadow-horizontal-offset'], $y + $off_y + $p['text-shadow-vertical-offset'], $tsColor->getColor(), $p['font'], $value);
+			}
+			imageFTText($btn_out, $p['font-size'], 0, $x, $y + $off_y, $fontColor->getColor(), $p['font'], $value);
 			switch ($p['text-decoration'])
 			{
 				case 'overline':
 					$pad = round($p['font-size'] * 0.15);
 					imageLineThick($btn_out, $x, $y + $off_y - ($pad * 2) - $p['font-size'], $x + $text_wd, $y + $off_y - ($pad * 2) - $p['font-size'], $fontColor->getColor(), $pad);
+					if ($tsColor)
+						imageLineThick($btn_out, $x + $p['text-shadow-horizontal-offset'], $y + $off_y - ($pad * 2) - $p['font-size'] + $p['text-shadow-vertical-offset'], $x + $text_wd + $p['text-shadow-horizontal-offset'], $y + $off_y - ($pad * 2) - $p['font-size'] + $p['text-shadow-vertical-offset'], $fontColor->getColor(), $pad);
 					break;
 				case 'underline':
 					$pad = round($p['font-size'] * 0.15);
 					imageLineThick($btn_out, $x, $y + $off_y + $pad, $x + $text_wd, $y + $off_y + $pad, $fontColor->getColor(), $pad);
+					if ($tsColor)
+						imageLineThick($btn_out, $x + $p['text-shadow-horizontal-offset'], $y + $off_y + $pad + $p['text-shadow-vertical-offset'], $x + $text_wd + $p['text-shadow-horizontal-offset'], $y + $off_y + $pad + $p['text-shadow-vertical-offset'], $fontColor->getColor(), $pad);
 					break;
 				case 'line-through':
 					$pad = round($p['font-size'] * 0.15);
 					imageLineThick($btn_out, $x, $y + $off_y - (($pad + $p['font-size']) / 2), $x + $text_wd, $y + $off_y - (($pad + $p['font-size']) / 2), $fontColor->getColor(), $pad);
+					if ($tsColor)
+						imageLineThick($btn_out, $x + $p['text-shadow-horizontal-offset'], $y + $off_y - (($pad + $p['font-size']) / 2) + $p['text-shadow-vertical-offset'], $x + $text_wd + $p['text-shadow-horizontal-offset'], $y + $off_y - (($pad + $p['font-size']) / 2) + $p['text-shadow-vertical-offset'], $fontColor->getColor(), $pad);
 					break;
 			}
 		}
