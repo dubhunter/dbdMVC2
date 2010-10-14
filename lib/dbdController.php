@@ -3,7 +3,7 @@
  * dbdController.php :: dbdController Class File
  *
  * @package dbdMVC
- * @version 1.10
+ * @version 1.11
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2009 by Don't Blink Design
  */
@@ -399,10 +399,11 @@ abstract class dbdController
 		readfile($path);
 	}
 
-	protected function sendEmail($from_name, $from_address, $to_address, $subject, $tpl, $cc_address = false, $hdrs = array())
+	protected function sendEmail($from_name, $from_address, $to_address, $subject, $tpl, $attachments = array(), $cc_address = false, $hdrs = array())
 	{
 		$this->view->assign("tpl", $tpl);
 		$hdrs['From'] = "\"".$from_name."\" <".$from_address.">";
+		$to_address = preg_replace("/[;, ]+/", ", ", $to_address);
 		$hdrs['To'] = $to_address;
 		if ($cc_address)
 			$hdrs['Cc'] = $cc_address;
@@ -413,6 +414,11 @@ abstract class dbdController
 		$this->view->assign("tpl", $tpl);
 		$mime->setHTMLBody($this->view->fetch(self::TPL_EMAIL_HTML, null, null, false, true));
 		$mime->setTXTBody($this->view->fetch(self::TPL_EMAIL_TEXT, null, null, false, true, true));
+		if (is_array($attachments))
+		{
+			foreach($attachments as $attachment)
+				$mime->addAttachment($attachment, wmFileSystem::mimeType($attachment), basename($attachment));
+		}
 		$body = $mime->get();
 		$hdrs = $mime->headers($hdrs);
 		$mail =& Mail::factory("sendmail");

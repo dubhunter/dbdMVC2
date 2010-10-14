@@ -62,7 +62,7 @@ function outputAndDestroy(&$im, $type = "png", $cache_file = null, $no_output = 
 //		$len = ob_get_length();
 		$img = ob_get_contents();
 		ob_end_clean();
-//		header("Content-length: ".$len);
+//		header("Content-length: ".strlen($img));
 		echo $img;
 	}
 	imagedestroy($im);
@@ -92,6 +92,29 @@ function imageTypesArray()
     return $a;
 }
 
+function imageAlphaChange(&$im, $opacity)
+{
+	if ($opacity < 0)
+		$opacity = 0;
+	if ($opacity > 100)
+		$opacity = 100;
+	$opacity = 100 - $opacity;
+	$opacity /= 100.0;
+	$w = imagesx($im);
+	$h = imagesy($im);
+	imagealphablending($im, false);
+	imagesavealpha($im, true);
+	for ($x = 0; $x < $w; $x++)
+	{
+		for ($y = 0; $y < $h; $y++)
+		{
+			$old = GDColor::int2arr(imagecolorat($im, $x, $y));
+			$alpha = $old[3] + ((127 - $old[3]) * $opacity);
+			imagesetpixel($im, $x, $y, imagecolorallocatealpha($im, $old[0], $old[1], $old[2], $old[3] + ((127 - $old[3]) * $opacity)));
+		}
+	}
+}
+
 function colorizeImage(&$im, GDColor $color)
 {
 	$n = imageColorsTotal($im);
@@ -112,9 +135,8 @@ function colorizeImage(&$im, GDColor $color)
 	{
 		$w = imagesx($im);
 		$h = imagesy($im);
-		$im2 = imagecreatetruecolor($w, $h);
-		imagealphablending($im2, false);
-		imagesavealpha($im2, true);
+		imagealphablending($im, false);
+		imagesavealpha($im, true);
 		for ($x = 0; $x < $w; $x++)
 		{
 			for ($y = 0; $y < $h; $y++)
@@ -126,11 +148,9 @@ function colorizeImage(&$im, GDColor $color)
 					min($old[2] + $color->getBlue(), 255),
 					$old[3]
 				);
-				imagesetpixel($im2, $x, $y, imagecolorallocatealpha($im2, $new[0], $new[1], $new[2], $new[3]));
+				imagesetpixel($im, $x, $y, imagecolorallocatealpha($im, $new[0], $new[1], $new[2], $new[3]));
 			}
 		}
-		imagedestroy($im);
-		$im = $im2;
 	}
 }
 

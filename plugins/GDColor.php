@@ -2,7 +2,7 @@
 /**
  * GDColor.php :: The GD Color Class
  *
- * GDColor version 1.1
+ * GDColor version 1.2
  * Copyright (c) 2006-2007 by Don't Blink Design
  * http://www.dontblinkdesign.com
  *
@@ -24,7 +24,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @package dbdCommon
- * @version 1.1
+ * @version 1.2
  * @author Will Mason <will@dontblinkdesign.com>
  * @copyright Copyright (c) 2007 by Don't Blink Design
  * @license http://www.gnu.org/copyleft/lesser.html
@@ -66,9 +66,9 @@ class GDColor
 		$this->im = $i;
 		$this->rgba = self::hex2arr($hex);
 		if ($this->rgba[3] > 0)
-			$this->color = imagecolorexactalpha($this->im, $this->rgba[0], $this->rgba[1], $this->rgba[2], $this->rgba[3]);
+			$this->color = imagecolorallocatealpha($this->im, $this->rgba[0], $this->rgba[1], $this->rgba[2], $this->rgba[3]);
 		else
-			$this->color = imagecolorexact($this->im, $this->rgba[0], $this->rgba[1], $this->rgba[2]);
+			$this->color = imagecolorallocate($this->im, $this->rgba[0], $this->rgba[1], $this->rgba[2]);
 	}
 
 	/**
@@ -161,6 +161,29 @@ class GDColor
 	public static function hex2arr($hex)
 	{
 		return self::int2arr(hexdec($hex));
+	}
+
+	/**
+	 * Static function for combining an rgba
+	 * color into a HEX color.
+	 * @param int $r
+	 * @param int $g
+	 * @param int $b
+	 * @return string
+	 */
+	public static function arr2hex($r, $g, $b, $a = null)
+	{
+		$r = dechex($r < 0 ? 0 : ($r > 255 ? 255 : $r));
+		$g = dechex($g < 0 ? 0 : ($g > 255 ? 255 : $g));
+		$b = dechex($b < 0 ? 0 : ($b > 255 ? 255 : $b));
+		if ($a !== null)
+			$a = dechex($a < 0 ? 0 : ($a > 127 ? 127 : $a));
+		$color = (strlen($r) < 2 ? '0' : '').$r;
+		$color .= (strlen($g) < 2 ? '0' : '').$g;
+		$color .= (strlen($b) < 2 ? '0' : '').$b;
+		if ($a !== null)
+			$color .= (strlen($a) < 2 ? '0' : '').$a;
+		return '#'.$color;
 	}
 }
 ?>

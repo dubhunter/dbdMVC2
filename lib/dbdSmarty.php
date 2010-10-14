@@ -399,9 +399,9 @@ class dbdSmarty extends Smarty
 			$tag = "";
 			foreach (array_merge(array($src), $ext) as $s)
 				$tag .= '<script type="text/javascript" src="'.$s.'"></script>';
-			if (preg_match("/<script[^>]+>/", $tpl) && strpos($tpl, "<script") < strpos($tpl, "</head>"))
-				$tpl = preg_replace("/(<script[^>]+>)/", $tag."\n\\1", $tpl, 1);
-			else
+//			if (preg_match("/<script[^>]+>/", $tpl) && strpos($tpl, "<script") < strpos($tpl, "</body>"))
+//				$tpl = preg_replace("/(<script[^>]+>)/", $tag."\n\\1", $tpl, 1);
+//			else
 				$tpl = preg_replace("/(<\/body>)/", $tag."\n\\1", $tpl, 1);
 		}
 		if ($this->flash_loader && $this->flash_loader->hasMovies())

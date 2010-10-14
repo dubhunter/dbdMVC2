@@ -116,7 +116,7 @@ class wmFileSystem
 	 */
 	public static function mimeType($file)
 	{
-        $finfo = finfo_open(FILEINFO_MIME, "/usr/share/misc/magic");
+        $finfo = finfo_open(FILEINFO_MIME);
         $mimetype = finfo_file($finfo, $file);
         finfo_close($finfo);
         return $mimetype;
