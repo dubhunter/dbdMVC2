@@ -3,7 +3,7 @@
  * dbdCSS.php :: dbdCSS Class File
  *
  * @package dbdMVC
- * @version 1.23
+ * @version 1.24
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2009 by Don't Blink Design
  */
@@ -820,7 +820,8 @@ class dbdCSS extends dbdController
 		$this->buffer .= ".hiddenButtonDiv{overflow: hidden; position: relative;}";
 		$this->buffer .= ".hiddenButtonDisabled,.hiddenButton,.hiddenButtonDiv a{display: inline; font-size: 100px; height: 100%; opacity: 0; filter: alpha(opacity=0); position: absolute; right: 0; top: 0; z-index: 2;}";
 		$this->buffer .= ".hiddenButtonDiv a.disabled{cursor: default;}";
-		$this->buffer .= ".hiddenButtonDiv a{z-index: 3; width: 100%;}";
+		$this->buffer .= ".hiddenButtonDiv div{z-index: 3; position: absolute; top: 0; left: 0;}";
+		$this->buffer .= ".hiddenButtonDiv a{z-index: 4; width: 100%;}";
 		$tmp = "";
 		$hide = "";
 		$i = 0;
@@ -982,29 +983,21 @@ class dbdCSS extends dbdController
 			if (strpos($i, ':hover'))
 			{
 				$j = str_replace(':hover', '', $i);
-				$this->buttons[$j]['hover']['css']['width'] = $imgs[$i]['width']."px";
-				$this->buttons[$j]['hover']['css']['height'] = $imgs[$i]['height']."px";
 				$this->buttons[$j]['hover']['css']['background-position'] = $x."px -".$y."px";
 			}
 			elseif (strpos($i, ':active'))
 			{
 				$j = str_replace(':active', '', $i);
-				$this->buttons[$j]['active']['css']['width'] = $imgs[$i]['width']."px";
-				$this->buttons[$j]['active']['css']['height'] = $imgs[$i]['height']."px";
 				$this->buttons[$j]['active']['css']['background-position'] = $x."px -".$y."px";
 			}
 			elseif (strpos($i, ':current'))
 			{
 				$j = str_replace(':current', '', $i);
-				$this->buttons[$j]['current']['css']['width'] = $imgs[$i]['width']."px";
-				$this->buttons[$j]['current']['css']['height'] = $imgs[$i]['height']."px";
 				$this->buttons[$j]['current']['css']['background-position'] = $x."px -".$y."px";
 			}
 			elseif (strpos($i, ':disabled'))
 			{
 				$j = str_replace(':disabled', '', $i);
-				$this->buttons[$j]['disabled']['css']['width'] = $imgs[$i]['width']."px";
-				$this->buttons[$j]['disabled']['css']['height'] = $imgs[$i]['height']."px";
 				$this->buttons[$j]['disabled']['css']['background-position'] = $x."px -".$y."px";
 			}
 			else
