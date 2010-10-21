@@ -67,8 +67,8 @@ class InputCSS
 	{
 		$div_id = self::getDivID();
 		$input_id = self::getInputID($id);
-		$html = "<div class=\"hiddenButtonDiv ".$id."Div\">";
-		$html .= "<input type=\"".$type."\" id=\"".$input_id."\" name=\"".$name."\" value=\"".$value."\" class=\"hiddenButton".($disabled ? "Disabled" : "")."\"";
+		$html = "<div class=\"hiddenButtonDiv ".$id."Div".($disabled ? " disabled" : "")."\">";
+		$html .= "<input type=\"".$type."\" id=\"".$input_id."\" name=\"".$name."\" value=\"".$value."\" class=\"hiddenButton\"";
 		if (!$disabled)
 		{
 			if (!in_array($type, array("checkbox", "radio", "submit", "reset")))
@@ -106,14 +106,14 @@ class InputCSS
 		}
 		elseif (in_array($type, array("submit", "reset")))
 		{
-			$html .= "<a href=\"#\" ".($disabled ? "class=\"disabled\"" : "")."onclick=\"$('#".$input_id."').click(); return false;\"";
+			$html .= "<a href=\"#\" onclick=\"$('#".$input_id."').click(); return false;\"";
 			$html .= " onmouseover=\"if (!$('#".$input_id."').attr('disabled'))$('#".$div_id."').removeClass().addClass('".$id."On');\"";
 			$html .= " onmouseout=\"if (!$('#".$input_id."').attr('disabled'))$('#".$div_id."').removeClass().addClass('".$id."Off');\"";
 			$html .= " onmousedown=\"if (!$('#".$input_id."').attr('disabled'))$('#".$div_id."').addClass('".$id."Dn');\"";
 			$html .= " onmouseup=\"if (!$('#".$input_id."').attr('disabled'))$('#".$div_id."').removeClass('".$id."Dn');\"";
 			$html .= " title=\"".$value."\">".$value."</a>";
 		}
-		$html .= "<div id=\"".$div_id."\" class=\"".$id.($disabled ? "Na" : ($checked ? "On" : "Off"))."\"></div>";
+		$html .= "<div id=\"".$div_id."\" class=\"".$id.($checked ? "On" : "Off")."\"></div>";
 		$html .= "</div>\n";
 		return $html;
 	}

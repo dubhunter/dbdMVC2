@@ -819,8 +819,8 @@ class dbdCSS extends dbdController
 		$this->genButtons();
 		$this->sprite = $this->genButtonSprite();
 		$this->buffer .= ".hiddenButtonDiv{overflow: hidden; position: relative;}";
-		$this->buffer .= ".hiddenButtonDisabled,.hiddenButton,.hiddenButtonDiv a{display: inline; font-size: 100px; height: 100%; opacity: 0; filter: alpha(opacity=0); position: absolute; right: 0; top: 0; z-index: 3;}";
-		$this->buffer .= ".hiddenButtonDiv a.disabled{cursor: default;}";
+		$this->buffer .= ".hiddenButton,.hiddenButtonDiv a{display: inline; font-size: 100px; height: 100%; opacity: 0; filter: alpha(opacity=0); position: absolute; right: 0; top: 0; z-index: 3;}";
+		$this->buffer .= ".hiddenButtonDiv.disabled a{cursor: default;}";
 		$this->buffer .= ".hiddenButtonDiv div{z-index: 2; position: absolute; top: 0; left: 0;}";
 		$this->buffer .= ".hiddenButtonDiv a{z-index: 4; width: 100%;}";
 		$tmp = "";
@@ -833,7 +833,8 @@ class dbdCSS extends dbdController
 			if ($b['tag'] == 'input')
 			{
 				$s = $b['parent'].$b['type'].$b['name'];
-				$l = $s."Off,".$s."On,".$s."Dn,".$s."Na";
+				$l = $s."Off,".$s."On,".$s."Dn";
+				$d = $s."Div.disabled ".$b['type'].$b['name']."Off,".s."Div.disabled ".$b['type'].$b['name']."On,".$s."Div.disabled ".$b['type'].$b['name']."Dn";
 				$this->buffer .= $l;
 				$tmp .= $l.",".$s."Div{display: block; width: ".$b['css']['width']."; height: ".$b['css']['height'].";}";
 				$tmp .= $l."{";
@@ -856,7 +857,7 @@ class dbdCSS extends dbdController
 				}
 				if (count($b['disabled']['css']))
 				{
-					$tmp .= $s."Na{";
+					$tmp .= $d."{";
 					foreach ($b['disabled']['css'] as $k => $v)
 						$tmp .= $k.": ".$v.";";
 					$tmp .= "}";
