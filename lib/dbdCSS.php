@@ -834,7 +834,7 @@ class dbdCSS extends dbdController
 			{
 				$s = $b['parent'].$b['type'].$b['name'];
 				$l = $s."Off,".$s."On,".$s."Dn";
-				$d = $s."Div.disabled ".$b['type'].$b['name']."Off,".s."Div.disabled ".$b['type'].$b['name']."On,".$s."Div.disabled ".$b['type'].$b['name']."Dn";
+				$d = $s."Div.disabled ".$b['type'].$b['name']."Off,".$s."Div.disabled ".$b['type'].$b['name']."On,".$s."Div.disabled ".$b['type'].$b['name']."Dn";
 				$this->buffer .= $l;
 				$tmp .= $l.",".$s."Div{display: block; width: ".$b['css']['width']."; height: ".$b['css']['height'].";}";
 				$tmp .= $l."{";
