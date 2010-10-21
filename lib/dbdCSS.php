@@ -3,7 +3,7 @@
  * dbdCSS.php :: dbdCSS Class File
  *
  * @package dbdMVC
- * @version 1.24
+ * @version 1.25
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2009 by Don't Blink Design
  */
@@ -815,12 +815,13 @@ class dbdCSS extends dbdController
 	 */
 	private function genButtonCSS()
 	{
+		if (count($this->buttons) == 0) return;
 		$this->genButtons();
 		$this->sprite = $this->genButtonSprite();
 		$this->buffer .= ".hiddenButtonDiv{overflow: hidden; position: relative;}";
-		$this->buffer .= ".hiddenButtonDisabled,.hiddenButton,.hiddenButtonDiv a{display: inline; font-size: 100px; height: 100%; opacity: 0; filter: alpha(opacity=0); position: absolute; right: 0; top: 0; z-index: 2;}";
+		$this->buffer .= ".hiddenButtonDisabled,.hiddenButton,.hiddenButtonDiv a{display: inline; font-size: 100px; height: 100%; opacity: 0; filter: alpha(opacity=0); position: absolute; right: 0; top: 0; z-index: 3;}";
 		$this->buffer .= ".hiddenButtonDiv a.disabled{cursor: default;}";
-		$this->buffer .= ".hiddenButtonDiv div{z-index: 3; position: absolute; top: 0; left: 0;}";
+		$this->buffer .= ".hiddenButtonDiv div{z-index: 2; position: absolute; top: 0; left: 0;}";
 		$this->buffer .= ".hiddenButtonDiv a{z-index: 4; width: 100%;}";
 		$tmp = "";
 		$hide = "";

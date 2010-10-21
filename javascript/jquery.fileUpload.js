@@ -27,7 +27,7 @@
 		showCancel: true,
 		interval: 600,
 		progressUrl: '/index/uploadProgress/',
-		idUploadKey: 'UPLOAD_IDENTIFIER',
+		idUploadKey: 'APC_UPLOAD_PROGRESS',
 		idLoader: 'ajaxLoader',
 		idProgressDiv: 'FUuploadProgress',
 		idPercentBar: 'FUpercentBar',
@@ -76,6 +76,7 @@
 		avgSpeed: null,
 		timeLeft: null,
 		cancelBtn: null,
+		count: 0,
 		init: function (options){
 			var f = this;
 			if (!f.div){
@@ -97,6 +98,7 @@
 					});
 				}
 			}
+			$('#' + f.opts.idUploadKey).val($('#' + f.opts.idUploadKey).val() + '-' + f.count);
 			f.bind();
 		},
 		change: function (file){
@@ -114,8 +116,8 @@
 			if ($.isFunction(this.opts.onStart)){
 				this.opts.onStart.apply(this, [form]);
 			}
-			this.show();
 			this.resetProgress();
+			this.show();
 			this.checkProgress();
 			this.iFrame = $('#' + form.target);
 		},
@@ -165,6 +167,8 @@
 				timeLeft: 'Calculating...',
 				avgSpeed: ''
 			});
+			var id = $('#' + this.opts.idUploadKey).val();
+			$('#' + this.opts.idUploadKey).val(id.substring(0, id.length - 1) + (this.count++));
 		},
 		show: function (){
 			$.ajaxLoader.unBind();

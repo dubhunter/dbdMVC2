@@ -101,7 +101,7 @@ abstract class dbdController
 		$this->view->assign("page_url_params", dbdURI::replace($this->getURL(true), null, null, array("_" => null)));
 		$this->view->assign("this", array(
 			"controller" => $this->getController(),
-			"action" => $this->getAction()
+			"action" => $this->getAction() ? $this->getAction() : dbdDispatcher::DEFAULT_ACTION
 		));
 
 //		$this->view->addJSVar("controller", $this->getController());

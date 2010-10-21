@@ -3,7 +3,7 @@
  * InputCSS.php :: The Fancy XHTML/CSS Form Input Class
  *
  * @package dbdCommon
- * @version 1.5
+ * @version 1.6
  * @author Will Mason <will@dontblinkdesign.com>
  * @copyright Copyright (c) 2009 by Don't Blink Design
  */
@@ -29,19 +29,6 @@ class InputCSS
 	 */
 	private static $input_ids = array();
 	/**
-	 * Get the file name of the calling file.
-	 * @static
-	 * @access private
-	 * @return string
-	 */
-	private static function getCallingFile()
-	{
-		$info = pathinfo($_SERVER['PHP_SELF']);
-		if (!isset($info['filename']))
-			$info['filename'] = substr($info['basename'], 0, -1 * (strlen($info['extension']) + 1));
-		return str_replace(".", "_", $info['filename']);
-	}
-	/**
 	 * Generate id for input tag.
 	 * @static
 	 * @access private
@@ -52,7 +39,7 @@ class InputCSS
 	{
 		if (!isset(self::$input_ids[$id]))
 			self::$input_ids[$id] = 0;
-		return $id."-".self::getCallingFile()."-".self::$input_ids[$id]++;
+		return $id."-".self::$input_ids[$id]++;
 	}
 	/**
 	 * Generate id for div tag.
@@ -62,7 +49,7 @@ class InputCSS
 	 */
 	private static function getDivID()
 	{
-		return "InputCSS-".self::getCallingFile()."-".md5(microtime(true))."-".self::$div_id++;
+		return "InputCSS-".md5(microtime(true))."-".self::$div_id++;
 	}
 	/**
 	 * Generate all markup required for final output.
@@ -126,7 +113,7 @@ class InputCSS
 			$html .= " onmouseup=\"if (!$('#".$input_id."').attr('disabled'))$('#".$div_id."').removeClass('".$id."Dn');\"";
 			$html .= " title=\"".$value."\">".$value."</a>";
 		}
-		$html .= "<div id=\"".$div_id."\" class=\"".$id.($disabled ? "Na" : ($checked ? "On" : "Off"))."\"><span></span></div>";
+		$html .= "<div id=\"".$div_id."\" class=\"".$id.($disabled ? "Na" : ($checked ? "On" : "Off"))."\"></div>";
 		$html .= "</div>\n";
 		return $html;
 	}
