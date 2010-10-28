@@ -3,7 +3,7 @@
  * dbdCSS.php :: dbdCSS Class File
  *
  * @package dbdMVC
- * @version 1.25
+ * @version 1.26
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2009 by Don't Blink Design
  */
@@ -985,21 +985,29 @@ class dbdCSS extends dbdController
 			if (strpos($i, ':hover'))
 			{
 				$j = str_replace(':hover', '', $i);
+				$this->buttons[$j]['hover']['css']['width'] = $imgs[$i]['width']."px";
+				$this->buttons[$j]['hover']['css']['height'] = $imgs[$i]['height']."px";
 				$this->buttons[$j]['hover']['css']['background-position'] = $x."px -".$y."px";
 			}
 			elseif (strpos($i, ':active'))
 			{
 				$j = str_replace(':active', '', $i);
+				$this->buttons[$j]['active']['css']['width'] = $imgs[$i]['width']."px";
+				$this->buttons[$j]['active']['css']['height'] = $imgs[$i]['height']."px";
 				$this->buttons[$j]['active']['css']['background-position'] = $x."px -".$y."px";
 			}
 			elseif (strpos($i, ':current'))
 			{
 				$j = str_replace(':current', '', $i);
+				$this->buttons[$j]['current']['css']['width'] = $imgs[$i]['width']."px";
+				$this->buttons[$j]['current']['css']['height'] = $imgs[$i]['height']."px";
 				$this->buttons[$j]['current']['css']['background-position'] = $x."px -".$y."px";
 			}
 			elseif (strpos($i, ':disabled'))
 			{
 				$j = str_replace(':disabled', '', $i);
+				$this->buttons[$j]['disabled']['css']['width'] = $imgs[$i]['width']."px";
+				$this->buttons[$j]['disabled']['css']['height'] = $imgs[$i]['height']."px";
 				$this->buttons[$j]['disabled']['css']['background-position'] = $x."px -".$y."px";
 			}
 			else
