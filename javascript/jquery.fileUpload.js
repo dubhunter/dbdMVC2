@@ -38,6 +38,7 @@
 		autoUpload: true,
 		classBound: 'FUbound',
 		classNoAuto: 'FUnoAutoUpload',
+		textCancel: 'Cancel',
 		onChange: null,
 		onStart: function (){
 			$('.errorMsgs').remove();
@@ -79,25 +80,7 @@
 		count: 0,
 		init: function (options){
 			var f = this;
-			if (!f.div){
-				f.opts = $.extend({}, $.fileUpload.defaults, options);
-				f.div = $('<div></div>').attr('id', f.opts.idProgressDiv).css('display', 'none').appendTo($('#' + f.opts.idLoader));
-				if (f.opts.showPercentBar)
-					f.percentBar = $('<div></div>').attr('id', f.opts.idPercentBar).appendTo(f.div);
-				if (f.opts.showPercent)
-					f.percent = $('<span></span>').attr('id', f.opts.idPercent).appendTo(f.div);
-				if (f.opts.showAvgSpeed)
-					f.avgSpeed = $('<span></span>').attr('id', f.opts.idAvgSpee).appendTo(f.div);
-				if (f.opts.showTimeLeft)
-					f.timeLeft = $('<span></span>').attr('id', f.opts.idTimeLeft).appendTo(f.div);
-				if (f.opts.showCancel){
-					f.cancelBtn = $('<a></a>').attr('id', f.opts.idCancel).attr('href', '#').html('<span>Cancel</span>').appendTo(f.div);
-					f.cancelBtn.click(function(e){
-						e.preventDefault();
-						f.cancel();
-					});
-				}
-			}
+			f.opts = $.extend({}, $.fileUpload.defaults, options);
 			$('#' + f.opts.idUploadKey).val($('#' + f.opts.idUploadKey).val() + '-' + f.count);
 			f.bind();
 		},
@@ -171,9 +154,28 @@
 			$('#' + this.opts.idUploadKey).val(id.substring(0, id.length - 1) + (this.count++));
 		},
 		show: function (){
+			var f = this;
 			$.ajaxLoader.unBind();
 			$.ajaxLoader.show();
-			this.div.show();
+			if (!f.div){
+				f.div = $('<div></div>').attr('id', f.opts.idProgressDiv).css('display', 'none').appendTo($('#' + f.opts.idLoader));
+				if (f.opts.showPercentBar)
+					f.percentBar = $('<div></div>').attr('id', f.opts.idPercentBar).appendTo(f.div);
+				if (f.opts.showPercent)
+					f.percent = $('<span></span>').attr('id', f.opts.idPercent).appendTo(f.div);
+				if (f.opts.showAvgSpeed)
+					f.avgSpeed = $('<span></span>').attr('id', f.opts.idAvgSpee).appendTo(f.div);
+				if (f.opts.showTimeLeft)
+					f.timeLeft = $('<span></span>').attr('id', f.opts.idTimeLeft).appendTo(f.div);
+				if (f.opts.showCancel){
+					f.cancelBtn = $('<a></a>').attr('id', f.opts.idCancel).attr('href', '#').html('<span>' + f.opts.textCancel + '</span>').appendTo(f.div);
+					f.cancelBtn.click(function(e){
+						e.preventDefault();
+						f.cancel();
+					});
+				}
+			}
+			f.div.show();
 		},
 		hide: function (){
 			this.div.hide();

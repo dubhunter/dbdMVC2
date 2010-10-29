@@ -17,6 +17,7 @@
 	$.photoCrop.defaults = {
 		containerClass: 'photoCropCon',
 		containerColor: '#000000',
+		containerWrap: false,
 		imageClass: 'photoCropImage',
 		imageOpacity: 0.4,
 		windowClass: 'photoCropWindow',
@@ -56,6 +57,7 @@
 			p.crop.con = $('.' + p.opts.containerClass)
 				.css({
 					position: 'relative',
+					overflow: 'hidden',
 					backgroundColor: p.opts.containerColor
 				});
 			p.crop.win = $('<div>')
@@ -125,12 +127,17 @@
 					backgroundColor: p.opts.resizeColor,
 					cursor: p.opts.resizeSECursor
 				});
+			if (p.opts.containerWrap){
+				p.crop.con.css({
+					width: p.crop.img.width() + 'px',
+					height: p.crop.img.height() + 'px'
+				});
+			}
 			p.opts.resizeOffset = p.opts.resizeSize / 2;
-
 			p.opts.startRatio = p.opts.startWidth / p.opts.startHeight;
 			p.crop.winPos = p.crop.win.position();
 			p.crop.winDim = {width: p.crop.win.width(), height: p.crop.win.height()};
-			p.setDims(p.opts.startWidth, p.opts.startHeight, 0 , 0);
+			p.setDims(p.opts.startWidth, p.opts.startHeight, 0, 0);
 			p.bind();
 		},
 		bind: function (){

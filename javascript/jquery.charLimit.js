@@ -8,7 +8,6 @@
 				jQuery(counter).text(limit - that.value.length);
 		};
 		this.keydown(function (e){
-			$.log(e.which);
 			if(e.which == 17 || e.which == 224) isCtrl = true;
 			var ctrl_a = (e.which == 65 && isCtrl == true) ? true : false; // detect and allow CTRL + A selects all.
 			var ctrl_v = (e.which == 86 && isCtrl == true) ? true : false; // detect and allow CTRL + V paste.
