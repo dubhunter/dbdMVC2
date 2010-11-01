@@ -3,7 +3,7 @@
  * InputCSS.php :: The Fancy XHTML/CSS Form Input Class
  *
  * @package dbdCommon
- * @version 1.6
+ * @version 1.7
  * @author Will Mason <will@dontblinkdesign.com>
  * @copyright Copyright (c) 2009 by Don't Blink Design
  */
@@ -68,7 +68,9 @@ class InputCSS
 		$div_id = self::getDivID();
 		$input_id = self::getInputID($id);
 		$html = "<div class=\"hiddenButtonDiv ".$id."Div".($disabled ? " disabled" : "")."\">";
-		$html .= "<input type=\"".$type."\" id=\"".$input_id."\" name=\"".$name."\" value=\"".$value."\" class=\"hiddenButton\"";
+		$html .= "<input type=\"".$type."\" id=\"".$input_id."\" name=\"".$name."\" class=\"hiddenButton\"";
+		if ($type != "file")
+			$html .= " value=\"".$value."\"";
 		if (!$disabled)
 		{
 			if (!in_array($type, array("checkbox", "radio", "submit", "reset")))

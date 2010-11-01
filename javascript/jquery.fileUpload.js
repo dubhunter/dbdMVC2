@@ -38,6 +38,7 @@
 		autoUpload: true,
 		classBound: 'FUbound',
 		classNoAuto: 'FUnoAutoUpload',
+		classIframe: 'hiddenIframe',
 		textCancel: 'Cancel',
 		onChange: null,
 		onStart: function (){
@@ -185,12 +186,23 @@
 		bind: function (){
 			var f = this;
 			var $file = $(':file');
-			$file.parents('form').not('.' + f.opts.classBound).submit(function (e){
+			var $form = $file.parents('form');
+			$form.not('.' + f.opts.classBound).submit(function (e){
 				f.start(this);
 			}).addClass(f.opts.classBound);
 			$file.not('.' + f.opts.classBound).change(function (e){
 				f.change(this);
 			}).addClass(f.opts.classBound);
+			$form.each(function (){
+				if ($('#' + this.target).size() == 0){
+					$('<iframe/>')
+						.attr('id', this.target)
+						.attr('name', this.target)
+						.attr('src', 'about:blank')
+						.addClass(f.opts.classIframe)
+						.appendTo(this);
+				}
+			});
 		}
 	};
 })(jQuery);
