@@ -2,7 +2,7 @@
 /**
  * dbdMVC.php :: dbdMVC Include File & Front Controller Class
  *
- * dbdMVC version 2.0.2
+ * dbdMVC version 2.0.3
  * Copyright (c) 2006-2009 by Don't Blink Design
  * http://dbdmvc.com
  *
@@ -26,7 +26,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @package dbdMVC
- * @version 2.0.2
+ * @version 2.0.3
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2009 by Don't Blink Design
  * @license http://www.gnu.org/copyleft/lesser.html
@@ -53,7 +53,7 @@ define("DBD_SMARTY_PLUG_DIR", DBD_SMARTY_DIR.DBD_DS."plugins_dbd".DBD_DS);
 /**
  * FirePHP core directory
  */
-define("DBD_FIREPHP_DIR", DBD_MVC_DIR."FirePHPCore-0.3.1".DBD_DS."lib".DBD_DS);
+define("DBD_FIREPHP_DIR", DBD_MVC_DIR."FirePHPCore-0.3.2".DBD_DS."lib".DBD_DS);
 /**
  * dbdMVC plug-in directory
  */
@@ -159,7 +159,7 @@ class dbdMVC
 	 * Current version number
 	 * <b>Note:</b> May not match file @version number
 	 */
-	const VERSION = "2.0.2";
+	const VERSION = "2.0.3";
 	/**
 	 * #@+
 	 * @access private
