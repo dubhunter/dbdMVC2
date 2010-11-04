@@ -819,10 +819,10 @@ class dbdCSS extends dbdController
 		$this->genButtons();
 		$this->sprite = $this->genButtonSprite();
 		$this->buffer .= ".hiddenButtonDiv{overflow: hidden; position: relative;}";
-		$this->buffer .= ".hiddenButton,.hiddenButtonDiv a{display: inline; font-size: 100px; height: 100%; opacity: 0; filter: alpha(opacity=0); position: absolute; right: 0; top: 0; z-index: 3;}";
+		$this->buffer .= ".hiddenButton,.hiddenButtonDiv a{display: inline; font-size: 100px; height: 100%; opacity: 0; filter: alpha(opacity=0); position: absolute; right: 0; top: 0;}";
 		$this->buffer .= ".hiddenButtonDiv.disabled a{cursor: default;}";
-		$this->buffer .= ".hiddenButtonDiv div{z-index: 2; position: absolute; top: 0; left: 0;}";
-		$this->buffer .= ".hiddenButtonDiv a{z-index: 4; width: 100%;}";
+		$this->buffer .= ".hiddenButtonDiv div{position: absolute; top: 0; left: 0;}";
+		$this->buffer .= ".hiddenButtonDiv a{width: 100%;}";
 		$tmp = "";
 		$hide = "";
 		$i = 0;

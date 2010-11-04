@@ -68,6 +68,7 @@ class InputCSS
 		$div_id = self::getDivID();
 		$input_id = self::getInputID($id);
 		$html = "<div class=\"hiddenButtonDiv ".$id."Div".($disabled ? " disabled" : "")."\">";
+		$html .= "<div id=\"".$div_id."\" class=\"".$id.($checked ? "On" : "Off")."\"></div>";
 		$html .= "<input type=\"".$type."\" id=\"".$input_id."\" name=\"".$name."\" class=\"hiddenButton\"";
 		if ($type != "file")
 			$html .= " value=\"".$value."\"";
@@ -115,7 +116,6 @@ class InputCSS
 			$html .= " onmouseup=\"if (!$('#".$input_id."').attr('disabled'))$('#".$div_id."').removeClass('".$id."Dn');\"";
 			$html .= " title=\"".$value."\">".$value."</a>";
 		}
-		$html .= "<div id=\"".$div_id."\" class=\"".$id.($checked ? "On" : "Off")."\"></div>";
 		$html .= "</div>\n";
 		return $html;
 	}
