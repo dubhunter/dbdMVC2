@@ -3,7 +3,7 @@
  * dbdCSS.php :: dbdCSS Class File
  *
  * @package dbdMVC
- * @version 1.26
+ * @version 1.27
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2009 by Don't Blink Design
  */
@@ -875,7 +875,7 @@ class dbdCSS extends dbdController
 				$tmp .= "}";
 				if (count($b['hover']['css']))
 				{
-					$tmp .= $s.":hover{";
+					$tmp .= $s.":hover,".$s.":focus{";
 					foreach ($b['hover']['css'] as $k => $v)
 						$tmp .= $k.": ".$v.";";
 					$tmp .= "}";

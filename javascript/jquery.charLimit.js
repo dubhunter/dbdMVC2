@@ -1,11 +1,11 @@
 (function(jQuery) {
-	$.fn.charLimit = function(counter, limit) {
+	$.fn.charLimit = function(limit, counter) {
 		$.each(this, function (){
 			var that = this;
 			var isCtrl = false;
 			updateCounter();
 			function updateCounter(){
-				if(typeof that == "object")
+				if (counter && typeof that == "object")
 					$(that).parent().find(counter).text(limit - that.value.length);
 			};
 			$(this).keydown(function (e){

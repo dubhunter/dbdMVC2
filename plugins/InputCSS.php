@@ -111,7 +111,9 @@ class InputCSS
 		{
 			$html .= "<a href=\"#\" onclick=\"$('#".$input_id."').click(); return false;\"";
 			$html .= " onmouseover=\"if (!$('#".$input_id."').attr('disabled'))$('#".$div_id."').removeClass().addClass('".$id."On');\"";
+			$html .= " onfocus=\"if (!$('#".$input_id."').attr('disabled'))$('#".$div_id."').removeClass().addClass('".$id."On');\"";
 			$html .= " onmouseout=\"if (!$('#".$input_id."').attr('disabled'))$('#".$div_id."').removeClass().addClass('".$id."Off');\"";
+			$html .= " onblur=\"if (!$('#".$input_id."').attr('disabled'))$('#".$div_id."').removeClass().addClass('".$id."Off');\"";
 			$html .= " onmousedown=\"if (!$('#".$input_id."').attr('disabled'))$('#".$div_id."').addClass('".$id."Dn');\"";
 			$html .= " onmouseup=\"if (!$('#".$input_id."').attr('disabled'))$('#".$div_id."').removeClass('".$id."Dn');\"";
 			$html .= " title=\"".$value."\">".$value."</a>";
