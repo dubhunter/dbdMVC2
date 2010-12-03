@@ -3,7 +3,7 @@
  * dbdModel.php :: dbdModel Class File
  *
  * @package dbdMVC
- * @version 1.12
+ * @version 1.13
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2009 by Don't Blink Design
  */
@@ -205,6 +205,7 @@ abstract class dbdModel
 	{
 		$sql = "";
 		$i = 0;
+		$table_keys2 = array();
 		foreach ($table_keys as $k => $v)
 		{
 			$sql .= " ".($i++ > 0 ? "and" : "where")." ";
@@ -220,61 +221,76 @@ abstract class dbdModel
 			{
 				case dbdDB::COMP_LIKE:
 					$sql .= "`".$k."` like :".$k;
-					$table_keys[$k] = $v[0];
+					$table_keys2[$k] = $v[0];
 					break;
 				case dbdDB::COMP_NLIKE:
 					$sql .= "`".$k."` not like :".$k;
-					$table_keys[$k] = $v[0];
+					$table_keys2[$k] = $v[0];
 					break;
-//				case dbdDB::COMP_IN:
-//					$sql .= "`".$k."` in(:".$k.")";
-//					break;
-//				case dbdDB::COMP_NIN:
-//					$sql .= "`".$k."` not in(:".$k.")";
-//					break;
+				case dbdDB::COMP_IN:
+					$sql .= "`".$k."` in(";
+					foreach ($v[0] as $j => $a)
+					{
+						if ($j > 0)
+							$sql .= ",";
+						$sql .= ":".$k."__".$j;
+						$table_keys2[$k."__".$j] = $a;
+					}
+					$sql .= ")";
+					break;
+				case dbdDB::COMP_NIN:
+					$sql .= "`".$k."` not in(";
+					foreach ($v[0] as $j => $a)
+					{
+						if ($j > 0)
+							$sql .= ",";
+						$sql .= ":".$k."__".$j;
+						$table_keys2[$k."__".$j] = $a;
+					}
+					$sql .= ")";
+					break;
 				case dbdDB::COMP_BETWEEN:
 					$sql .= "`".$k."` between :".$k."__0 and :".$k."__1";
-					unset($table_keys[$k]);
-					$table_keys[$k.'__0'] = $v[0];
-					$table_keys[$k.'__1'] = $v[1];
+					$table_keys2[$k.'__0'] = $v[0];
+					$table_keys2[$k.'__1'] = $v[1];
 					break;
 				case dbdDB::COMP_NBETWEEN:
 					$sql .= "`".$k."` not between :".$k."__0 and :".$k."__1";
-					unset($table_keys[$k]);
-					$table_keys[$k.'__0'] = $v[0];
-					$table_keys[$k.'__1'] = $v[1];
+					$table_keys2[$k.'__0'] = $v[0];
+					$table_keys2[$k.'__1'] = $v[1];
 					break;
 				case dbdDB::COMP_GTEQ:
 					$sql .= "`".$k."` >= :".$k;
-					$table_keys[$k] = $v[0];
+					$table_keys2[$k] = $v[0];
 					break;
 				case dbdDB::COMP_GT:
 					$sql .= "`".$k."` > :".$k;
-					$table_keys[$k] = $v[0];
+					$table_keys2[$k] = $v[0];
 					break;
 				case dbdDB::COMP_LTEQ:
 					$sql .= "`".$k."` <= :".$k;
-					$table_keys[$k] = $v[0];
+					$table_keys2[$k] = $v[0];
 					break;
 				case dbdDB::COMP_LT:
 					$sql .= "`".$k."` < :".$k;
-					$table_keys[$k] = $v[0];
+					$table_keys2[$k] = $v[0];
 					break;
 				case dbdDB::COMP_NEQ:
 					$sql .= "`".$k."` != :".$k;
-					$table_keys[$k] = $v[0];
+					$table_keys2[$k] = $v[0];
 					break;
 				case dbdDB::COMP_NULLEQ:
 					$sql .= "`".$k."` <=> :".$k;
-					$table_keys[$k] = $v[0];
+					$table_keys2[$k] = $v[0];
 					break;
 				case dbdDB::COMP_EQ:
 				default:
 					$sql .= "`".$k."` = :".$k;
-					$table_keys[$k] = $v[0];
+					$table_keys2[$k] = $v[0];
 					break;
 			}
 		}
+		$table_keys = $table_keys2;
 		return $sql;
 	}
 	/**

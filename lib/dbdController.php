@@ -3,7 +3,7 @@
  * dbdController.php :: dbdController Class File
  *
  * @package dbdMVC
- * @version 1.11
+ * @version 1.12
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2009 by Don't Blink Design
  */
@@ -403,7 +403,7 @@ abstract class dbdController
 	{
 		$this->view->assign("tpl", $tpl);
 		$hdrs['From'] = "\"".$from_name."\" <".$from_address.">";
-		$to_address = preg_replace("/[;, ]+/", ", ", $to_address);
+		$to_address = preg_replace("/[;, \n]+/", ", ", $to_address);
 		$hdrs['To'] = $to_address;
 		if ($cc_address)
 			$hdrs['Cc'] = $cc_address;

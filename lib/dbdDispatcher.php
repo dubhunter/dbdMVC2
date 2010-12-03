@@ -3,7 +3,7 @@
  * dbdDispatcher.php :: dbdDispatcher Class File
  *
  * @package dbdMVC
- * @version 1.10
+ * @version 1.11
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2009 by Don't Blink Design
  */
@@ -162,7 +162,7 @@ class dbdDispatcher
 				$controller->noRender();
 				throw new dbdException("Action (".$action.") could not be executed!");
 			}
-			$action = $magic;
+			$method = $magic;
 		}
 		$action = $method;
 		return $action;

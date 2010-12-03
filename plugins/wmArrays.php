@@ -3,7 +3,7 @@
  * wmArrays.php :: Will Mason's array processing class
  *
  * @package dbdCommon
- * @version 1.0
+ * @version 1.1
  * @author Will Mason <will@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2007 by Don't Blink Design
  */
@@ -112,13 +112,8 @@
 		{
 			if (!is_array($arr))
 				return array();
-			$arr2 = array();
-			foreach ($arr as $a)
-			{
-				if ($a != $value)
-					$arr2[] = $a;
-			}
-			return $arr2;
+			unset($arr[array_search($value, $arr)]);
+			return $arr;
 		}
 
 		public static function pregExplode($pattern, $string, $limit = -1)
