@@ -246,7 +246,10 @@ abstract class dbdController
 	{
 		$this->view->assign($this->getParams());
 	}
-
+	/**
+	 * Assign exception messages to the template.
+	 * @param dbdException $e
+	 */
 	protected function e(dbdException $e)
 	{
 		$errors = array();
@@ -259,7 +262,9 @@ abstract class dbdController
 			$errors[] = $e->getMessage();
 		$this->view->assign("errors", $errors);
 	}
-
+	/**
+	 * Determine the window type for the request.
+	 */
 	protected function determineWinType()
 	{
 		switch (true)
@@ -275,7 +280,12 @@ abstract class dbdController
 		}
 		$this->view->assign("win_type", $this->win_type);
 	}
-
+	/**
+	 * Ensure the current window type matches the passed value.
+	 * Forwards to / if not.
+	 * @param integer $type
+	 * @return boolean
+	 */
 	protected function ensureWinType($type = self::WIN_TYPE_NORMAL)
 	{
 		if (!is_array($type))
@@ -284,7 +294,10 @@ abstract class dbdController
 			$this->forward();
 		return true;
 	}
-
+	/**
+	 * Execute JavaScript
+	 * @param string $script
+	 */
 	protected function script($script)
 	{
 		echo "<script type=\"text/javascript\">".$script."</script>";
@@ -384,7 +397,12 @@ abstract class dbdController
 	{
 		return ($host ? "http://".$this->router->getParam("HTTP_HOST") : "").$this->router->getURL($get_params);
 	}
-
+	/**
+	 * Call to set the required headers and send a file for download.
+	 * @param string $file
+	 * @param string $name
+	 * @param string $type
+	 */
 	protected function downloadFile($file, $name = null, $type = null)
 	{
 		$this->noRender();
@@ -398,7 +416,17 @@ abstract class dbdController
 		header("Content-Disposition: attatchment; filename=".($name ? $name : $file));
 		readfile($path);
 	}
-
+	/**
+	 * Send an email using PEAR::Mail.
+	 * @param string $from_name
+	 * @param string $from_address
+	 * @param string $to_address
+	 * @param string $subject
+	 * @param string $tpl
+	 * @param array $attachments
+	 * @param string $cc_address
+	 * @param array $hdrs
+	 */
 	protected function sendEmail($from_name, $from_address, $to_address, $subject, $tpl, $attachments = array(), $cc_address = false, $hdrs = array())
 	{
 		$this->view->assign("tpl", $tpl);

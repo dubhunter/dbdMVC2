@@ -29,12 +29,19 @@ class wmString
 	const TIME_LEN_TIME_MON = 2592000;
 	const TIME_LEN_TIME_YEAR = 31536000;
 	const TIME_LEN_LABEL_SEC = "Second";
+	const TIME_LEN_LABEL_SEC_SHORT = "Sec";
 	const TIME_LEN_LABEL_MIN = "Minute";
+	const TIME_LEN_LABEL_MIN_SHORT = "Min";
 	const TIME_LEN_LABEL_HRS = "Hour";
+	const TIME_LEN_LABEL_HRS_SHORT = "Hr";
 	const TIME_LEN_LABEL_DAY = "Day";
+	const TIME_LEN_LABEL_DAY_SHORT = "Day";
 	const TIME_LEN_LABEL_WEEK = "Week";
+	const TIME_LEN_LABEL_WEEK_SHORT = "Wk";
 	const TIME_LEN_LABEL_MON = "Month";
+	const TIME_LEN_LABEL_MON_SHORT = "Mon";
 	const TIME_LEN_LABEL_YEAR = "Year";
+	const TIME_LEN_LABEL_YEAR_SHORT = "Yr";
 	const TIME_LEN_LABEL_LAST = "Last";
 	const TIME_LEN_LABEL_AGO = "Ago";
 	const TIME_LEN_LABEL_YESTERDAY = "Yesterday";
@@ -208,7 +215,7 @@ class wmString
 	 * @param mixed $date
 	 * @return string
 	 */
-	public static function timePastFormat($date, $use_today = false)
+	public static function timePastFormat($date, $short_names = false, $use_today = false)
 	{
 		$time = strtotime($date);
 		$diff = time() - $time;
@@ -220,21 +227,21 @@ class wmString
 		switch (true)
 		{
 			case (($n = floor($diff / self::TIME_LEN_TIME_YEAR)) > 0):
-				return $n > 1 ? $n." ".self::TIME_LEN_LABEL_YEAR."s ".self::TIME_LEN_LABEL_AGO : self::TIME_LEN_LABEL_LAST." ".self::TIME_LEN_LABEL_YEAR;
+				return $n > 1 ? $n." ".($short_names ? self::TIME_LEN_LABEL_YEAR_SHORT : self::TIME_LEN_LABEL_YEAR)."s ".self::TIME_LEN_LABEL_AGO : self::TIME_LEN_LABEL_LAST." ".self::TIME_LEN_LABEL_YEAR;
 			case (($n = floor($diff / self::TIME_LEN_TIME_MON)) > 0):
-				return $n > 1 ? $n." ".self::TIME_LEN_LABEL_MON."s ".self::TIME_LEN_LABEL_AGO : self::TIME_LEN_LABEL_LAST." ".self::TIME_LEN_LABEL_MON;
+				return $n > 1 ? $n." ".($short_names ? self::TIME_LEN_LABEL_MON_SHORT : self::TIME_LEN_LABEL_MON)."s ".self::TIME_LEN_LABEL_AGO : self::TIME_LEN_LABEL_LAST." ".self::TIME_LEN_LABEL_MON;
 			case (($n = floor($diff / self::TIME_LEN_TIME_WEEK)) > 0):
-				return $n > 1 ? $n." ".self::TIME_LEN_LABEL_WEEK."s ".self::TIME_LEN_LABEL_AGO : self::TIME_LEN_LABEL_LAST." ".self::TIME_LEN_LABEL_WEEK;
+				return $n > 1 ? $n." ".($short_names ? self::TIME_LEN_LABEL_WEEK_SHORT : self::TIME_LEN_LABEL_WEEK)."s ".self::TIME_LEN_LABEL_AGO : self::TIME_LEN_LABEL_LAST." ".self::TIME_LEN_LABEL_WEEK;
 			case (($n = floor($diff / self::TIME_LEN_TIME_DAY)) > 0):
-				return $n > 1 ? $n." ".self::TIME_LEN_LABEL_DAY."s ".self::TIME_LEN_LABEL_AGO : self::TIME_LEN_LABEL_YESTERDAY;
+				return $n > 1 ? $n." ".($short_names ? self::TIME_LEN_LABEL_DAY_SHORT : self::TIME_LEN_LABEL_DAY)."s ".self::TIME_LEN_LABEL_AGO : self::TIME_LEN_LABEL_YESTERDAY;
 			case $use_today:
 				return self::TIME_LEN_LABEL_TODAY;
 			case (($n = floor($diff / self::TIME_LEN_TIME_HRS)) > 0):
-				return $n." ".self::TIME_LEN_LABEL_HRS.($n > 1 ? "s" : "")." ".self::TIME_LEN_LABEL_AGO;
+				return $n." ".($short_names ? self::TIME_LEN_LABEL_HRS_SHORT : self::TIME_LEN_LABEL_HRS).($n > 1 ? "s" : "")." ".self::TIME_LEN_LABEL_AGO;
 			case (($n = floor($diff / self::TIME_LEN_TIME_MIN)) > 0):
-				return $n." ".self::TIME_LEN_LABEL_MIN.($n > 1 ? "s" : "")." ".self::TIME_LEN_LABEL_AGO;
+				return $n." ".($short_names ? self::TIME_LEN_LABEL_MIN_SHORT : self::TIME_LEN_LABEL_MIN).($n > 1 ? "s" : "")." ".self::TIME_LEN_LABEL_AGO;
 			default:
-				return floor($diff / self::TIME_LEN_TIME_SEC)." ".self::TIME_LEN_LABEL_SEC.($n > 1 ? "s" : "")." ".self::TIME_LEN_LABEL_AGO;
+				return floor($diff / self::TIME_LEN_TIME_SEC)." ".($short_names ? self::TIME_LEN_LABEL_SEC_SHORT : self::TIME_LEN_LABEL_SEC).($n > 1 ? "s" : "")." ".self::TIME_LEN_LABEL_AGO;
 		}
 	}
 

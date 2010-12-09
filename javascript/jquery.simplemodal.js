@@ -234,7 +234,7 @@
 				.attr('id', this.opts.windowId)
 				.addClass(this.opts.windowClass)
 				.css($.extend(this.opts.windowCss, {
-					overflow: 'hidden',
+//					overflow: 'hidden',
 					position: 'fixed',
 					zIndex: (zStart + 100)
 				}))
