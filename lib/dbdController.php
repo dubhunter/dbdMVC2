@@ -24,7 +24,6 @@ abstract class dbdController
 	const WIN_TYPE_IFRAME = 2;
 	const JS_PAGE_REFRESH = 'window.location.reload();';
 	const JS_PARENT_PAGE_REFRESH = 'window.parent.location.reload();';
-	const JS_MODAL_REFRESH = '$.ajaxModal.refresh();';
 	const TPL_EMAIL_HTML = "emailHTML.tpl";
 	const TPL_EMAIL_TEXT = "emailTEXT.tpl";
 	/**
