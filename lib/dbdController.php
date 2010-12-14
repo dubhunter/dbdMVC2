@@ -36,6 +36,9 @@ abstract class dbdController
 	 * @var dbdUser
 	 */
 	protected $user = null;
+	/**
+	 * @var integer
+	 */
 	protected $win_type = null;
 	/**
 	 * #@+
