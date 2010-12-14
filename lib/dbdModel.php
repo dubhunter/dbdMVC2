@@ -3,7 +3,7 @@
  * dbdModel.php :: dbdModel Class File
  *
  * @package dbdMVC
- * @version 1.13
+ * @version 1.14
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2009 by Don't Blink Design
  */
@@ -98,6 +98,8 @@ abstract class dbdModel
 	{
 		$sql = "select * from `".$this->table_name."` where `".$this->table_key."` = ?";
 		$this->data = self::$db->prepExec($sql, array($this->id))->fetch(PDO::FETCH_ASSOC);
+		if (!is_array($this->data))
+			$this->initFields();
 	}
 	/**
 	 * Select all the fields names for this table
@@ -109,6 +111,11 @@ abstract class dbdModel
 		{
 			if (!isset($this->data[$f['field']]))
 				$this->data[$f['field']] = null;
+		}
+		if ($this->id > 0)
+		{
+			$this->data[$this->table_key] = $this->id;
+			$this->id = 0;
 		}
 	}
 	/**

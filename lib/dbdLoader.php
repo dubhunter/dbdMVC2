@@ -3,7 +3,7 @@
  * dbdLoader.php :: dbdLoader Class File & __autoload() Function
  *
  * @package dbdMVC
- * @version 1.7
+ * @version 1.8
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2009 by Don't Blink Design
  */
@@ -224,13 +224,21 @@ class dbdLoader
 			}
 			catch (dbdException $e)
 			{
+				$file = str_replace("_", DBD_DS, $class).".php";
 				try
 				{
-					dbdModel::factory($class);
+					self::load($file);
 				}
 				catch (dbdException $e)
 				{
-					throw $e;
+					try
+					{
+						dbdModel::factory($class);
+					}
+					catch (dbdException $e)
+					{
+						throw $e;
+					}
 				}
 			}
 		}

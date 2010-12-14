@@ -3,7 +3,7 @@
  * dbdController.php :: dbdController Class File
  *
  * @package dbdMVC
- * @version 1.12
+ * @version 1.14
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2009 by Don't Blink Design
  */
@@ -165,7 +165,7 @@ abstract class dbdController
 		{
 			if (!$this->template)
 			{
-				$this->template = preg_replace("/^([A-Z]{1})(.*)$/e", "strtolower('$1').$2", $this->getController()).".tpl";
+				$this->template = preg_replace("/^([A-Z]{1})([a-zA-Z0-9]*)$/e", "strtolower('$1').$2", $this->getController()).".tpl";
 				if (!$this->view->template_exists($this->template))
 					throw new dbdException("Page (".$this->getController().") could not be found!", 404);
 			}
@@ -436,8 +436,6 @@ abstract class dbdController
 		if ($cc_address)
 			$hdrs['Cc'] = $cc_address;
 		$hdrs['Subject'] = $subject;
-		dbdLoader::load(PEAR_DIR.DBD_DS."Mail".DBD_DS."mail.php");
-		dbdLoader::load(PEAR_DIR.DBD_DS."Mail".DBD_DS."mime.php");
 		$mime = new Mail_mime("\n");
 		$this->view->assign("tpl", $tpl);
 		$mime->setHTMLBody($this->view->fetch(self::TPL_EMAIL_HTML, null, null, false, true));
