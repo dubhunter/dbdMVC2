@@ -251,6 +251,13 @@ class dbdLoader
  */
 function __autoload($class)
 {
-	dbdLoader::loadClass($class);
+	try
+	{
+		dbdLoader::loadClass($class);
+	}
+	catch (dbdException $e)
+	{
+		dbdLog("Class (".$class.") could not be autoloaded!");
+	}
 }
 ?>
