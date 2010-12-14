@@ -27,6 +27,10 @@ abstract class dbdController
 	const JS_MODAL_REFRESH = '$.ajaxModal.refresh();';
 	const TPL_EMAIL_HTML = "emailHTML.tpl";
 	const TPL_EMAIL_TEXT = "emailTEXT.tpl";
+	/**
+	 * Page title
+	 * @var string
+	 */
 	protected static $title = "";
 	/**
 	 * @var dbdSession
