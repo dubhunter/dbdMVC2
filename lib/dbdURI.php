@@ -3,7 +3,7 @@
  * dbdURI.php :: dbdURI Class File
  *
  * @package dbdMVC
- * @version 1.11
+ * @version 1.13
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2009 by Don't Blink Design
  */
@@ -88,13 +88,13 @@ class dbdURI
 			for ($i = 0; $i < count($that->position_lists[$that->controller][$that->action]); $i++)
 			{
 				if (isset($parts[0]))
-					self::setParam(urldecode($that->position_lists[$that->controller][$that->action][$i]), stripslashes(urldecode(array_shift($parts))));
+					self::setParam(rawurldecode($that->position_lists[$that->controller][$that->action][$i]), rawurldecode(rawurldecode(array_shift($parts))));
 			}
 		}
 		for ($i = 0; $i < count($parts); $i += 2)
 		{
 			if (isset($parts[$i + 1]))
-				self::setParam(urldecode($parts[$i]), stripslashes(urldecode($parts[$i + 1])));
+				self::setParam(rawurldecode($parts[$i]), rawurldecode(rawurldecode($parts[$i + 1])));
 		}
 	}
 	/**
@@ -186,29 +186,7 @@ class dbdURI
 				{
 					if (key_exists($that->position_lists[$controller][$action][$i], $args))
 					{
-						$uri .= preg_replace("/\//", "%5C/", $args[$that->position_lists[$controller][$action][$i]])."/";
-						unset($args[$that->position_lists[$controller][$action][$i]]);
-					}
-				}
-			}
-			if (key_exists($controller, $that->position_lists) && key_exists($action, $that->position_lists[$controller]))
-			{
-				for ($i = 0; $i < count($that->position_lists[$controller][$action]); $i++)
-				{
-					if (key_exists($that->position_lists[$controller][$action][$i], $args))
-					{
-						$uri .= preg_replace("/\//", "%5C/", $args[$that->position_lists[$controller][$action][$i]])."/";
-						unset($args[$that->position_lists[$controller][$action][$i]]);
-					}
-				}
-			}
-			if (key_exists($controller, $that->position_lists) && key_exists($action, $that->position_lists[$controller]))
-			{
-				for ($i = 0; $i < count($that->position_lists[$controller][$action]); $i++)
-				{
-					if (key_exists($that->position_lists[$controller][$action][$i], $args))
-					{
-						$uri .= preg_replace("/\//", "%5C/", $args[$that->position_lists[$controller][$action][$i]])."/";
+						$uri .= preg_replace("/\//", "%5C/", rawurlencode($args[$that->position_lists[$controller][$action][$i]]))."/";
 						unset($args[$that->position_lists[$controller][$action][$i]]);
 					}
 				}
@@ -228,7 +206,7 @@ class dbdURI
 					$v = array($v);
 				}
 				foreach ($v as $k2 => $v2)
-					$uri .= $k.($braces ? "%5B".(is_string($k2) ? $k2 : "")."%5D" : "")."/".preg_replace("/\//", "%5C/", $v2)."/";
+					$uri .= $k.($braces ? "%5B".(is_string($k2) ? $k2 : "")."%5D" : "")."/".rawurlencode(rawurlencode($v2))."/";
 			}
 		}
 		return $uri;
