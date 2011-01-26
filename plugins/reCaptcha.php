@@ -2,9 +2,9 @@
 /**
  * The reCAPTCHA server URL's
  */
-define("RECAPTCHA_API_SERVER", "http://www.google.com/recaptcha/api");
-define("RECAPTCHA_API_SECURE_SERVER", "https://www.google.com/recaptcha/api");
-define("RECAPTCHA_VERIFY_SERVER", "www.google.com");
+define("RECAPTCHA_API_SERVER", "http://api.recaptcha.net");
+define("RECAPTCHA_API_SECURE_SERVER", "https://api-secure.recaptcha.net");
+define("RECAPTCHA_VERIFY_SERVER", "api-verify.recaptcha.net");
 
 class reCaptcha
 {
