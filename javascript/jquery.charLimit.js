@@ -1,12 +1,22 @@
 (function(jQuery) {
-	$.fn.charLimit = function(limit, counter) {
+	$.fn.charLimit = function(limit, counter, limit2, counter2, negativeClass) {
 		$.each(this, function (){
 			var that = this;
 			var isCtrl = false;
 			updateCounter();
 			function updateCounter(){
-				if (counter && typeof that == "object")
+				if (counter && typeof that == "object"){
 					$(that).parent().find(counter).text(limit - that.value.length);
+					if (counter2 && limit2){
+						var c2 = $(that).parent().find(counter2);
+						if (c2.size()){
+							var diff2 = limit2 - that.value.length;
+							c2.text(diff2);
+							if (diff2 < 0 && negativeClass)
+								c2.addClass(negativeClass);
+						}
+					}
+				}
 			};
 			$(this).keydown(function (e){
 				if(e.which == 17 || e.which == 224) isCtrl = true;

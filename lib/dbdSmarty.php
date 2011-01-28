@@ -3,7 +3,7 @@
  * dbdSmarty.php :: dbdSmarty Class File
  *
  * @package dbdMVC
- * @version 1.18
+ * @version 1.19
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2009 by Don't Blink Design
  */
@@ -219,7 +219,7 @@ class dbdSmarty extends Smarty
 	 * Add CSS files to the list
 	 * @param mixed $files
 	 */
-	public function addCSS($files)
+	public function addCss($files)
 	{
 		if (!is_array($files))
 			$files = explode(',', $files);
@@ -230,7 +230,7 @@ class dbdSmarty extends Smarty
 	 * @param string $name
 	 * @param mixed $value
 	 */
-	public function addCSSVar($name, $value)
+	public function addCssVar($name, $value)
 	{
 		$this->css_vars[$name] = $value;
 	}
@@ -239,14 +239,14 @@ class dbdSmarty extends Smarty
 	 * @param string $name
 	 * @return mixed $value
 	 */
-	public function getCSSVar($name)
+	public function getCssVar($name)
 	{
 		return key_exists($name, $this->css_vars) ? $this->css_vars[$name] : null;
 	}
 	/**
 	 * Clear CSS file list
 	 */
-	public function clearCSS()
+	public function clearCss()
 	{
 		$this->css_files = array();
 	}
@@ -254,7 +254,7 @@ class dbdSmarty extends Smarty
 	 * Set JS host for inclusion
 	 * @param string $host
 	 */
-	public function setJSHost($host)
+	public function setJsHost($host)
 	{
 		$this->js_host = $host;
 	}
@@ -262,7 +262,7 @@ class dbdSmarty extends Smarty
 	 * Add JS files to the list
 	 * @param mixed $files
 	 */
-	public function addJS($files)
+	public function addJs($files)
 	{
 		if (!is_array($files))
 			$files = explode(',', $files);
@@ -273,7 +273,7 @@ class dbdSmarty extends Smarty
 	 * @param string $name
 	 * @return mixed $value
 	 */
-	public function getJSVar($name)
+	public function getJsVar($name)
 	{
 		return key_exists($name, $this->js_vars) ? $this->js_vars[$name] : null;
 	}
@@ -282,14 +282,14 @@ class dbdSmarty extends Smarty
 	 * @param string $name
 	 * @param mixed $value
 	 */
-	public function addJSVar($name, $value)
+	public function addJsVar($name, $value)
 	{
 		$this->js_vars[$name] = $value;
 	}
 	/**
 	 * Clear JS file list
 	 */
-	public function clearJS()
+	public function clearJs()
 	{
 		$this->js_files = array();
 	}
@@ -349,7 +349,7 @@ class dbdSmarty extends Smarty
 	 * Add a flash movie to FlashLoader
 	 * @param mixed
 	 */
-	public function addQTMovie()
+	public function addQtMovie()
 	{
 		$this->initQuickTime();
 		$a = func_get_args();

@@ -3,7 +3,7 @@
  * dbdCSS.php :: dbdCSS Class File
  *
  * @package dbdMVC
- * @version 1.27
+ * @version 1.29
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2009 by Don't Blink Design
  */
@@ -820,7 +820,7 @@ class dbdCSS extends dbdController
 		$this->sprite = $this->genButtonSprite();
 		$this->buffer .= ".hiddenButtonDiv{overflow: hidden; position: relative;}";
 		$this->buffer .= ".hiddenButton,.hiddenButtonDiv a{display: inline; font-size: 100px; height: 100%; opacity: 0; filter: alpha(opacity=0); position: absolute; right: 0; top: 0;}";
-		$this->buffer .= ".hiddenButtonDiv.disabled a{cursor: default;}";
+		$this->buffer .= ".hiddenButtonDiv.disabled a,a.ui-state-disabled{cursor: default;}";
 		$this->buffer .= ".hiddenButtonDiv div{position: absolute; top: 0; left: 0;}";
 		$this->buffer .= ".hiddenButtonDiv a{width: 100%;}";
 		$tmp = "";
@@ -896,7 +896,7 @@ class dbdCSS extends dbdController
 				}
 				if (count($b['disabled']['css']))
 				{
-					$tmp .= $s.".disabled{";
+					$tmp .= $s.".disabled,".$s.".ui-state-disabled{";
 					foreach ($b['disabled']['css'] as $k => $v)
 						$tmp .= $k.": ".$v.";";
 					$tmp .= "}";
@@ -1338,7 +1338,7 @@ class dbdCSS extends dbdController
 			$this->minify();
 			$this->createCache();
 		}
-		if ($this->setHeaders());
+		if ($this->setHeaders())
 			echo $this->buffer;
 	}
 	/**
@@ -1378,9 +1378,9 @@ class dbdCSS extends dbdController
 			header("Last-Modified: ".gmdate("D, d M Y H:i:s", $this->cache_mtime)." GMT");
 			header("ETag: ".$etag);
 		}
-		header("Content-Type: text/css");
-		if (function_exists("mb_strlen"))
-			header("Content-Length: ".mb_strlen($this->buffer));
+		header("Content-type: text/css");
+//		if (function_exists("mb_strlen"))
+//		header("Content-Length: ".strlen($this->buffer));
 		return true;
 	}
 	/**#@-*/

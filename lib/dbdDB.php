@@ -3,7 +3,7 @@
  * dbdDB.php :: dbdDB Class File
  *
  * @package dbdMVC
- * @version 1.4
+ * @version 1.6
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2009 by Don't Blink Design
  */
@@ -145,6 +145,8 @@ class dbdDB
 	 */
 	public static function date($timestamp = null)
 	{
+		if ($timestamp !== null && !is_numeric($timestamp))
+			$timestamp = strtotime($timestamp);
 		return $timestamp ? date(self::DATE_FORMAT, $timestamp) : date(self::DATE_FORMAT);
 	}
 	/**
@@ -154,6 +156,8 @@ class dbdDB
 	 */
 	public static function time($timestamp = null)
 	{
+		if ($timestamp !== null && !is_numeric($timestamp))
+			$timestamp = strtotime($timestamp);
 		return $timestamp ? date(self::TIME_FORMAT, $timestamp) : date(self::TIME_FORMAT);
 	}
 	/**
@@ -167,6 +171,7 @@ class dbdDB
 	public function prepExec($statement, $input_parameters = array(), $driver_options = array())
 	{
 		$sth = $this->prepare($statement, $driver_options);
+		if (dbdMVC::debugMode(DBD_DEBUG_DB)) dbdLog($input_parameters);
 		if (!$sth->execute($input_parameters))
 			throw new dbdException("Statement could not be executed!");
 		return $sth;
@@ -199,6 +204,50 @@ class dbdDB
 		$sql = "show index from `".$table."` where key_name = 'primary'";
 		$tmp = $this->query($sql)->fetch(PDO::FETCH_ASSOC);
 		return key_exists('column_name', $tmp) ? $tmp['column_name'] : false;
+	}
+	/**
+	 * Excute a query statement
+	 * @param string $statement
+	 * @return integer
+	 */
+	public function exec($statement)
+	{
+		if (dbdMVC::debugMode(DBD_DEBUG_DB)) dbdLog($statement);
+		return $this->pdo->exec($statement);
+	}
+	/**
+	 * Prepares a statement for execution and returns a statement object
+	 * @param string $statement
+	 * @param array $driver_options
+	 * @return PDOStatement
+	 */
+	public function prepare($statement, $driver_options = array())
+	{
+		if (dbdMVC::debugMode(DBD_DEBUG_DB)) dbdLog($statement);
+		return $this->pdo->prepare($statement, $driver_options);
+	}
+	/**
+	 * Executes an SQL statement, returning a result set as a PDOStatement object
+	 * @param string $statement
+	 * @param integer $PDO
+	 * @param mixed $object
+	 * @param array $ctorargs
+	 * @return PDOStatement
+	 */
+	public function query($statement, $PDO = null, $object = null, $args = null)
+	{
+		if (dbdMVC::debugMode(DBD_DEBUG_DB)) dbdLog($statement);
+		if ($PDO !== null && $object !== null)
+		{
+			if ($args !== null)
+				return $this->pdo->query($statement, $PDO, $object, $args);
+			else
+				return $this->pdo->query($statement, $PDO, $object);
+		}
+		else
+		{
+			return $this->pdo->query($statement);
+		}
 	}
 	/**
 	 * Magic function to call PDO functions and rethrow any

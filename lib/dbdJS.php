@@ -3,7 +3,7 @@
  * dbdJS.php :: dbdJS Class File
  *
  * @package dbdMVC
- * @version 1.8
+ * @version 1.9
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2009 by Don't Blink Design
  */
@@ -158,9 +158,9 @@ class dbdJS extends dbdController
 			header("Last-Modified: ".gmdate("D, d M Y H:i:s", $this->cache_mtime)." GMT");
 			header("ETag: ".$etag);
 		}
-		header("Content-Type: text/js");
-		if (function_exists("mb_strlen"))
-			header("Content-Length: ".mb_strlen($this->buffer));
+		header("Content-type: text/javascript");
+//		if (function_exists("mb_strlen"))
+//		header("Content-Length: ".strlen($this->buffer));
 		return true;
 	}
 	/**#@-*/

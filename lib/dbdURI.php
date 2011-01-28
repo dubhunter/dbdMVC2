@@ -3,7 +3,7 @@
  * dbdURI.php :: dbdURI Class File
  *
  * @package dbdMVC
- * @version 1.13
+ * @version 1.14
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2009 by Don't Blink Design
  */
@@ -87,7 +87,7 @@ class dbdURI
 		{
 			for ($i = 0; $i < count($that->position_lists[$that->controller][$that->action]); $i++)
 			{
-				if (isset($parts[0]))
+				if (isset($parts[0]) && $parts[0] != $that->position_lists[$that->controller][$that->action][$i])
 					self::setParam(rawurldecode($that->position_lists[$that->controller][$that->action][$i]), rawurldecode(rawurldecode(array_shift($parts))));
 			}
 		}
