@@ -3,7 +3,7 @@
  * dbdCSS.php :: dbdCSS Class File
  *
  * @package dbdMVC
- * @version 1.29
+ * @version 1.30
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2009 by Don't Blink Design
  */
@@ -194,7 +194,7 @@ class dbdCSS extends dbdController
 			'font-size' => null,
 			'font-color' => null,
 			'min-text-width' => null,
-//			'text-align' => 'center',
+			'text-align' => 'center',
 			'text-decoration' => 'none',
 			'text-horizontal-offset' => 0,
 			'text-vertical-offset' => 0,
@@ -248,7 +248,7 @@ class dbdCSS extends dbdController
 			'background-color',
 //			'foreground-color',
 			'font-color',
-//			'text-align',
+			'text-align',
 			'text-decoration',
 			'text-horizontal-offset',
 			'text-vertical-offset',
@@ -1058,7 +1058,19 @@ class dbdCSS extends dbdController
 		// use text width to calculate final button width & x,y
 		$btn_wd = max($text_wd, $p['min-text-width']) + ($p['cap-width'] * 2);
 		$btn_wd += $btn_wd % 2;
-		$x = floor(($btn_wd - $text_wd) / 2) - 1 + $p['text-horizontal-offset'];
+		switch ($p['text-align'])
+		{
+			case 'left':
+				$x = $p['cap-width'];
+				break;
+			case 'right':
+				$x = $btn_wd - $text_wd - $p['cap-width'];
+				break;
+			default:
+				$x = floor(($btn_wd - $text_wd) / 2);
+				break;
+		}
+		$x = $x - 1 + $p['text-horizontal-offset'];
 		$y =  $p['font-size'] + ceil(($btn_ht - $p['font-size']) / 2) - 1 + $p['text-vertical-offset'];
 		$butts = array(array(
 			"fg" => isset($p['foreground-color']) ? $p['foreground-color'] : null,
