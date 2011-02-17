@@ -3,7 +3,7 @@
  * wmString.php :: Will Mason's string manipulation class
  *
  * @package dbdCommon
- * @version 1.4
+ * @version 1.5
  * @author Will Mason <will@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2007 by Don't Blink Design
  */
@@ -50,6 +50,8 @@ class wmString
 	const TIME_LEN_FORMAT_LONG = 1;
 	const VALID_EMAIL = '/[a-z0-9!#$%&\'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+\/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/i';
 	const VALID_DATE = '/\\A(?:^((\\d{2}(([02468][048])|([13579][26]))[\\-\\/\\s]?((((0?[13578])|(1[02]))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])))))|(\\d{2}(([02468][1235679])|([13579][01345789]))[\\-\\/\\s]?((((0?[13578])|(1[02]))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\\-\\/\\s]?((0?[1-9])|(1[0-9])|(2[0-8]))))))(\\s(((0?[0-9])|(1[0-9])|(2[0-3]))\\:([0-5][0-9])((\\s)|(\\:([0-5][0-9])))?))?$)\\z/';
+	const STRIP_HTML_FIND = '%<[^>]+>%';
+	const STRIP_HTML_REPLACE = '';
 	private static $random_word_cons = array('b', 'd', 'f', 'g', 'h', 'k', 'l', 'm', 'n', 'p', 'r', 's', 't', 'v', 'w', 'z', 'ng', 'ch', 'ty', 'ny', 'gy', 'py', 'by');
 	private static $random_word_vowl = array('a', 'e', 'i', 'o', 'u');
 	private static $number_suffixes = array('th', 'st', 'nd', 'rd');
@@ -386,6 +388,16 @@ class wmString
 	            return substr($str, 0, $len / 2).$etc.substr($str, -$len / 2);
 		}
 		return $str;
+	}
+	/**
+	 * Strip all HTML like tags
+	 * @static
+	 * @param string $string
+	 * @return return
+	 */
+	public static function stripHtml($string)
+	{
+		return preg_replace(self::STRIP_HTML_FIND, self::STRIP_HTML_REPLACE, $string);
 	}
 	/**
 	 * Test if an email address is valid.
