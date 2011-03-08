@@ -49,11 +49,11 @@ function smarty_function_dbduri($params, &$smarty)
 				$args = $value;
 				if (!is_array($args))
 				{
-					$tmp = explode(",", $args);
+					$tmp = preg_split('/(?<!\\\),/', $args);
 					$args = array();
 					dbdURI::set("");
 					for ($i = 0; $i < count($tmp); $i += 2)
-						dbdURI::setParam($tmp[$i], $tmp[$i + 1]);
+						dbdURI::setParam($tmp[$i], str_replace("\,", ",", $tmp[$i + 1]));
 					$args = dbdURI::getParams();
 				}
 				break;

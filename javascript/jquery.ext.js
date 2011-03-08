@@ -8,14 +8,6 @@
 				.attr('media', m || 'screen')
 				.appendTo('head');
 		},
-		isArray: function (arr){
-			if (typeof arr == 'object'){
-				if (arr.constructor == Array){
-					return true;
-				}
-			}
-			return false;
-		},
 		arrayMerge: function (){
 			var a = {};
 			var n = 0;
