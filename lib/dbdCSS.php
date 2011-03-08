@@ -3,7 +3,7 @@
  * dbdCSS.php :: dbdCSS Class File
  *
  * @package dbdMVC
- * @version 1.30
+ * @version 1.31
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2009 by Don't Blink Design
  */
@@ -123,7 +123,7 @@ class dbdCSS extends dbdController
 	/**
 	 * Css button definition pattern.
 	 */
-	const BUTT_DEF_TAG_REGEX = '/([#.][a-z][a-z0-9#.-]+ )?(?<![a-z0-9#.-])(a|button|input)([#.])([a-z][a-z0-9#.-]*)[,]?/i';
+	const BUTT_DEF_TAG_REGEX = '/([#.]?[a-z][a-z0-9#.:-]+ )?(?<![a-z0-9#.:-])(a|button|input)([#.])([a-z][a-z0-9#.-]*)[,]?/i';
 	/**
 	 * Css button property definition pattern.
 	 */
@@ -207,6 +207,7 @@ class dbdCSS extends dbdController
 			'src-high' => null
 		),
 		'generated_def' => array(
+			'sprite' => 'default',
 			'generated' => null,
 			'text' => null,
 			'background-color' => '#7fffffff',
@@ -219,6 +220,7 @@ class dbdCSS extends dbdController
 			'src-high' => null
 		),
 		'def' => array(
+			'sprite' => 'default',
 			'background-image' => null
 		)
 	);
@@ -243,6 +245,7 @@ class dbdCSS extends dbdController
 			'cap-width'
 		),
 		'generated_def' => array(
+			'sprite',
 			'generated',
 			'text',
 			'background-color',
@@ -255,6 +258,7 @@ class dbdCSS extends dbdController
 			'src-body'
 		),
 		'def' => array(
+			'sprite',
 			'background-image'
 		)
 	);
@@ -305,9 +309,9 @@ class dbdCSS extends dbdController
 	private $files = array();
 	/**
 	 * Sprite file name
-	 * @var string
+	 * @var array
 	 */
-	private $sprite = null;
+	private $sprites = array();
 	/**
 	 * Current parser file
 	 * @var string
@@ -348,8 +352,8 @@ class dbdCSS extends dbdController
 			$file = $path;
 			$this->ensureResource($file);
 			$files = array();
+			$sprites = array();
 			$info = false;
-			$sprite = false;
 			$i = 0;
 			while (!feof($file) && ($i++ == 0 || $info))
 			{
@@ -360,7 +364,7 @@ class dbdCSS extends dbdController
 				}
 				elseif (preg_match(self::CACHE_INFO_SPRITE, $line, $tmp))
 				{
-					$sprite = DBD_ASSET_DIR.$tmp[1];
+					$sprites = explode(",", $tmp[1]);
 				}
 				elseif (preg_match(self::CACHE_INFO_FILES, $line, $tmp))
 				{
@@ -369,8 +373,11 @@ class dbdCSS extends dbdController
 				elseif (preg_match("/^[ ]?\*\/$/", $line))
 				{
 					$info = false;
-					if ($sprite && !file_exists($sprite))
-						return false;
+					foreach ($sprites as $s)
+					{
+						if (!file_exists(DBD_CACHE_DIR.$s))
+							return false;
+					}
 					break;
 				}
 			}
@@ -403,7 +410,7 @@ class dbdCSS extends dbdController
 		{
 			$file = DBD_CACHE_DIR.$this->cache_file;
 			$info = "/**\n";
-			$info .= " * @sprite ".$this->sprite."\n";
+			$info .= " * @sprite ".implode(",", $this->sprites)."\n";
 			$info .= " * @files ".implode(",", $this->files)."\n";
 			$info .= " */\n";
 			$this->buffer = $info.$this->buffer;
@@ -817,7 +824,7 @@ class dbdCSS extends dbdController
 	{
 		if (count($this->buttons) == 0) return;
 		$this->genButtons();
-		$this->sprite = $this->genButtonSprite();
+		$this->sprites = $this->genButtonSprites();
 		$this->buffer .= ".hiddenButtonDiv{overflow: hidden; position: relative;}";
 		$this->buffer .= ".hiddenButton,.hiddenButtonDiv a{display: inline; font-size: 100px; height: 100%; opacity: 0; filter: alpha(opacity=0); position: absolute; right: 0; top: 0;}";
 		$this->buffer .= ".hiddenButtonDiv.disabled a,a.ui-state-disabled{cursor: default;}";
@@ -825,17 +832,23 @@ class dbdCSS extends dbdController
 		$this->buffer .= ".hiddenButtonDiv a{width: 100%;}";
 		$tmp = "";
 		$hide = "";
-		$i = 0;
+		$sprites = array();
+		$i = array();
 		foreach ($this->buttons as $s => $b)
 		{
-			if ($i++ > 0)
-				$this->buffer .= ",";
+//			dbdLog($b);
+			if (!key_exists($b['sprite'], $sprites))
+				$sprites[$b['sprite']] = "";
+			if (!key_exists($b['sprite'], $i))
+				$i[$b['sprite']] = 0;
+			if ($i[$b['sprite']]++ > 0)
+				$sprites[$b['sprite']] .= ",";
 			if ($b['tag'] == 'input')
 			{
 				$s = $b['parent'].$b['type'].$b['name'];
 				$l = $s."Off,".$s."On,".$s."Dn";
 				$d = $s."Div.disabled ".$b['type'].$b['name']."Off,".$s."Div.disabled ".$b['type'].$b['name']."On,".$s."Div.disabled ".$b['type'].$b['name']."Dn";
-				$this->buffer .= $l;
+				$sprites[$b['sprite']] .= $l;
 				$tmp .= $l.",".$s."Div{display: block; width: ".$b['css']['width']."; height: ".$b['css']['height'].";}";
 				$tmp .= $l."{";
 				foreach ($b['css'] as $k => $v)
@@ -865,7 +878,7 @@ class dbdCSS extends dbdController
 			}
 			else
 			{
-				$this->buffer .= $s;
+				$sprites[$b['sprite']] .= $s;
 				if (!empty($hide))
 					$hide .= ",";
 				$hide .= $s." span";
@@ -903,7 +916,8 @@ class dbdCSS extends dbdController
 				}
 			}
 		}
-		$this->buffer .= "{display: block; background: transparent url(".$this->sprite.") no-repeat 0 0; border: none;}";
+		foreach ($this->sprites as $name => $file)
+			$this->buffer .= $sprites[$name]."{display: block; background: transparent url(".$file.") no-repeat 0 0; border: none;}";
 		$this->buffer .= $tmp;
 		$this->buffer .= $hide."{position: absolute; display: block; width: 0; height: 0; overflow: hidden; font-size: 0;}";
 	}
@@ -912,108 +926,125 @@ class dbdCSS extends dbdController
 	 * and register their offsets in the properties array.
 	 * @return string filename
 	 */
-	private function genButtonSprite()
+	private function genButtonSprites()
 	{
 		$global = $this->checkButtonPropsRequired('global');
 		$imgs = array();
 		foreach ($this->buttons as $s => $b)
 		{
-			$imgs[$s] = array(
+			$b['props'] = array_merge($this->checkButtonPropsRequired('def', $s), $b['props']);
+			if (!key_exists($b['props']['sprite'], $imgs))
+				$imgs[$b['props']['sprite']] = array();
+			$imgs[$b['props']['sprite']][$s] = array(
 				'src' => $b['props']['background-image']
 			);
 			if (count($b['hover']['props']))
 			{
-				$imgs[$s.":hover"] = array(
+				$imgs[$b['props']['sprite']][$s.":hover"] = array(
 					'src' => isset($b['hover']['props']['background-image']) ? $b['hover']['props']['background-image'] : $b['props']['background-image']
 				);
 			}
 			if (count($b['hover']['props']))
 			{
-				$imgs[$s.":hover"] = array(
+				$imgs[$b['props']['sprite']][$s.":hover"] = array(
 					'src' => isset($b['hover']['props']['background-image']) ? $b['hover']['props']['background-image'] : $b['props']['background-image']
 				);
 			}
 			if (count($b['active']['props']))
 			{
-				$imgs[$s.":active"] = array(
+				$imgs[$b['props']['sprite']][$s.":active"] = array(
 					'src' => isset($b['active']['props']['background-image']) ? $b['active']['props']['background-image'] : $b['props']['background-image']
 				);
 			}
 			if (count($b['current']['props']))
 			{
-				$imgs[$s.":current"] = array(
+				$imgs[$b['props']['sprite']][$s.":current"] = array(
 					'src' => isset($b['current']['props']['background-image']) ? $b['current']['props']['background-image'] : $b['props']['background-image']
 				);
 			}
 			if (count($b['disabled']['props']))
 			{
-				$imgs[$s.":disabled"] = array(
+				$imgs[$b['props']['sprite']][$s.":disabled"] = array(
 					'src' => isset($b['disabled']['props']['background-image']) ? $b['disabled']['props']['background-image'] : $b['props']['background-image']
 				);
 			}
 		}
-		$width = 0;
-		$height = 0;
-		foreach (array_keys($imgs) as $i)
+		$dims = array();
+		$default = array(
+			'width' => 0,
+			'height' => 0,
+			'x' => 0,
+			'y' => 0
+		);
+		foreach (array_keys($imgs) as $s)
 		{
-			if (strpos($imgs[$i]['src'], DBD_DS) === false)
-				$imgs[$i]['src'] = DBD_ASSET_DIR.$global['src'].$imgs[$i]['src'];
-			list($imgs[$i]['width'], $imgs[$i]['height']) = getimagesize($imgs[$i]['src']);
-			if ($imgs[$i]['width'] > $width)
-				$width = $imgs[$i]['width'];
-			if ($height > 0)
-				$height += $global['offset'];
-			$height += $imgs[$i]['height'];
+			if (!key_exists($s, $dims))
+				$dims[$s] = $default;
+			foreach (array_keys($imgs[$s]) as $i)
+			{
+				if (strpos($imgs[$s][$i]['src'], DBD_DS) === false)
+					$imgs[$s][$i]['src'] = DBD_ASSET_DIR.$global['src'].$imgs[$s][$i]['src'];
+				list($imgs[$s][$i]['width'], $imgs[$s][$i]['height']) = getimagesize($imgs[$s][$i]['src']);
+				if ($imgs[$s][$i]['width'] > $dims[$s]['width'])
+					$dims[$s]['width'] = $imgs[$s][$i]['width'];
+				if ($dims[$s]['height'] > 0)
+					$dims[$s]['height'] += $global['offset'];
+				$dims[$s]['height'] += $imgs[$s][$i]['height'];
+			}
 		}
-		$a = array();
-		$x = 0;
-		$y = 0;
-		$out = imageCreateTrueColor($width, $height);
-		imagealphablending($out, false);
-		imagesavealpha($out, true);
-		$bgColor = new GDColor($out, $global['transparent']);
-		imageFill($out, 0, 0, $bgColor->getColor()); // this isn't automatic w/ imageCreateTrueColor
-		imagecolortransparent($out, $bgColor->getColor());
-		foreach (array_keys($imgs) as $i)
+		$sprites = array();
+		foreach ($dims as $s => $d)
 		{
-			$a[] = $imgs[$i]['src'];
-			$this->files[] = str_replace(DBD_ASSET_DIR, "", $imgs[$i]['src']);
-			$tmp = imageCreateFrom($imgs[$i]['src']);
-			imagecopy($out, $tmp, $x, $y, 0, 0, $imgs[$i]['width'], $imgs[$i]['height']);
-			$imgs[$i]['left'] = $x;
-			$imgs[$i]['top'] = $y;
-			if (strpos($i, ':hover'))
+			$a = array();
+			$out = imageCreateTrueColor($d['width'], $d['height']);
+			imagealphablending($out, false);
+			imagesavealpha($out, true);
+			$bgColor = new GDColor($out, $global['transparent']);
+			imageFill($out, 0, 0, $bgColor->getColor()); // this isn't automatic w/ imageCreateTrueColor
+			imagecolortransparent($out, $bgColor->getColor());
+			foreach (array_keys($imgs[$s]) as $i)
 			{
-				$j = str_replace(':hover', '', $i);
-				$this->buttons[$j]['hover']['css']['background-position'] = $x."px -".$y."px";
+				$a[] = $imgs[$s][$i]['src'];
+				$this->files[] = str_replace(DBD_ASSET_DIR, "", $imgs[$s][$i]['src']);
+				$tmp = imageCreateFrom($imgs[$s][$i]['src']);
+				imagecopy($out, $tmp, $d['x'], $d['y'], 0, 0, $imgs[$s][$i]['width'], $imgs[$s][$i]['height']);
+				$imgs[$s][$i]['left'] = $d['x'];
+				$imgs[$s][$i]['top'] = $d['y'];
+				if (preg_match('/:hover$/', $i))
+				{
+					$j = preg_replace('/:hover$/', '', $i);
+					$this->buttons[$j]['hover']['css']['background-position'] = $d['x']."px -".$d['y']."px";
+				}
+				elseif (preg_match('/:active$/', $i))
+				{
+					$j = preg_replace('/:active$/', '', $i);
+					$this->buttons[$j]['active']['css']['background-position'] = $d['x']."px -".$d['y']."px";
+				}
+				elseif (preg_match('/:current$/', $i))
+				{
+					$j = preg_replace('/:current$/', '', $i);
+					$this->buttons[$j]['current']['css']['background-position'] = $d['x']."px -".$d['y']."px";
+				}
+				elseif (preg_match('/:disabled$/', $i))
+				{
+					$j = preg_replace('/:disabled$/', '', $i);
+					$this->buttons[$j]['disabled']['css']['background-position'] = $d['x']."px -".$d['y']."px";
+				}
+				else
+				{
+					$this->buttons[$i]['css']['width'] = $imgs[$s][$i]['width']."px";
+					$this->buttons[$i]['css']['height'] = $imgs[$s][$i]['height']."px";
+					$this->buttons[$i]['css']['background-position'] = $d['x']."px -".$d['y']."px";
+					$this->buttons[$i]['sprite'] = $s;
+				}
+				$d['y'] += $imgs[$s][$i]['height'] + $global['offset'];
 			}
-			elseif (strpos($i, ':active'))
-			{
-				$j = str_replace(':active', '', $i);
-				$this->buttons[$j]['active']['css']['background-position'] = $x."px -".$y."px";
-			}
-			elseif (strpos($i, ':current'))
-			{
-				$j = str_replace(':current', '', $i);
-				$this->buttons[$j]['current']['css']['background-position'] = $x."px -".$y."px";
-			}
-			elseif (strpos($i, ':disabled'))
-			{
-				$j = str_replace(':disabled', '', $i);
-				$this->buttons[$j]['disabled']['css']['background-position'] = $x."px -".$y."px";
-			}
-			else
-			{
-				$this->buttons[$i]['css']['width'] = $imgs[$i]['width']."px";
-				$this->buttons[$i]['css']['height'] = $imgs[$i]['height']."px";
-				$this->buttons[$i]['css']['background-position'] = $x."px -".$y."px";
-			}
-			$y += $imgs[$i]['height'] + $global['offset'];
+			$a = array_merge($global, $a);
+			$file = $this->genButtonCacheFile($global['format'], $a);
+			outputAndDestroy($out, $global['format'], $file, true);
+			$sprites[$s] = $global['cache'].basename($file);
 		}
-		$a = array_merge($global, $a);
-		$file = $this->genButtonCacheFile($global['format'], $a);
-		outputAndDestroy($out, $global['format'], $file, true);
-		return $global['cache'].basename($file);
+		return $sprites;
 	}
 	/**
 	 * Genrate layered buttons from source images.
@@ -1314,7 +1345,7 @@ class dbdCSS extends dbdController
 		if (key_exists($name, $this->vars))
 			return $this->vars[$name];
 		else
-			dbdLog(__CLASS__.":".$this->file.":".$this->line_num.": Variable (".$name.") is not defined!");
+			(__CLASS__.":".$this->file.":".$this->line_num.": Variable (".$name.") is not defined!");
 	}
 	/**
 	 * Evaluate a math equation and return the value. (All PHP math functions are safe)

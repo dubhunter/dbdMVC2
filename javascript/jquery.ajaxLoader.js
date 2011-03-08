@@ -44,7 +44,7 @@
 		image: {},
 		init: function (data, options){
 			this.opts = $.extend({}, $.ajaxLoader.defaults, options);
-			this.overlay = $('<div>')
+			this.overlay = $('<div/>')
 				.attr('id', this.opts.overlayId)
 				.addClass(this.opts.overlayClass)
 				.css({
@@ -60,7 +60,7 @@
 					zIndex: this.opts.zIndex
 				})
 				.appendTo(this.opts.appendTo);
-			this.div = $('<div>')
+			this.div = $('<div/>')
 				.attr('id', this.opts.containerId)
 				.addClass(this.opts.containerClass)
 				.css({
@@ -68,14 +68,13 @@
 					right: '0',
 					bottom: '0',
 					textAlign: 'right',
-					display: 'none',
 					minHeight: this.opts.imageH,
 					padding: '3px',
 					paddingLeft: this.opts.imageW + 5,
 					zIndex: (this.opts.zIndex + 1)
 				})
 				.appendTo(this.overlay);
-			this.image = $('<img>')
+			this.image = $('<img/>')
 				.attr('id', this.opts.imageId)
 				.attr('src', this.opts.imageSrc)
 				.attr('alt', this.opts.imageAlt)
@@ -87,7 +86,7 @@
 					marginTop: '-' + (this.opts.imageH / 2) + 'px'
 				})
 				.appendTo(this.div);
-			this.msg = $('<span></span>')
+			this.msg = $('<span/>')
 				.text(this.opts.imageAlt)
 				.appendTo(this.div);
 			if (this.opts.bind)
@@ -108,13 +107,8 @@
 		},
 		loading: function (){
 			this.overlay.show();
-			this.div.show();
-			this.msg.show();
-			this.image.show();
 		},
 		doneLoading: function (){
-			this.image.hide();
-			this.msg.hide();
 			this.overlay.hide();
 		}
 	};
