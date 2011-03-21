@@ -3,9 +3,9 @@
  * dbdController.php :: dbdController Class File
  *
  * @package dbdMVC
- * @version 1.15
+ * @version 1.16
  * @author Don't Blink Design <info@dontblinkdesign.com>
- * @copyright Copyright (c) 2006-2009 by Don't Blink Design
+ * @copyright Copyright (c) 2006-2011 by Don't Blink Design
  */
 
 /**
@@ -177,7 +177,10 @@ abstract class dbdController
 			}
 			if (!$this->view->template_exists($this->template))
 				throw new dbdException("View (".$this->template.") could not be found!", 404);
+
+			dbdOB::start();
 			$this->view->display($this->template);
+			dbdOB::flush();
 		}
 	}
 	/**

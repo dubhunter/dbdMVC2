@@ -20,6 +20,7 @@
 
 	$.ajaxLoader.defaults = {
 		bind: true,
+		bindings: 0,
 		opacity: 100,
 		overlayId: 'ajaxLoader',
 		overlayClass: 'ajaxLoader',
@@ -94,16 +95,22 @@
 		},
 		bind: function (){
 			var a = this;
-			this.div.bind('ajaxStart', function (){
-				a.loading();
-			});
-			this.div.bind('ajaxStop', function (){
-				a.doneLoading();
-			});
+			if (a.bindings == 0){
+				this.div.bind('ajaxStart', function (){
+					a.loading();
+				});
+				this.div.bind('ajaxStop', function (){
+					a.doneLoading();
+				});
+			}
+			a.bindings++;
 		},
 		unBind: function (){
-			this.div.unbind('ajaxStart');
-			this.div.unbind('ajaxStop');
+			if (this.bindings == 1){
+				this.div.unbind('ajaxStart');
+				this.div.unbind('ajaxStop');
+			}
+			this.bindings--;
 		},
 		loading: function (){
 			this.overlay.show();

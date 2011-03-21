@@ -30,10 +30,12 @@
 		idUploadKey: 'APC_UPLOAD_PROGRESS',
 		idLoader: 'ajaxLoader',
 		idProgressDiv: 'FUuploadProgress',
+		idProgressWrapper: 'FUwrapper',
 		idPercentBar: 'FUpercentBar',
-		idPercent: 'FUpercent',
-		idAvgSpeed: 'FUavgSpeed',
-		idTimeLeft: 'FUtimeLeft',
+		classStats: 'FUstats',
+		classPercent: 'FUpercent',
+		classAvgSpeed: 'FUavgSpeed',
+		classTimeLeft: 'FUtimeLeft',
 		idCancel: 'FUcancel',
 		autoUpload: true,
 		classBound: 'FUbound',
@@ -70,20 +72,23 @@
 	$.fileUpload.impl = {
 		opts: {},
 		timer: null,
-		input: null,
-		iFrame: null,
-		div: null,
-		percentBar: null,
-		percent: null,
-		avgSpeed: null,
-		timeLeft: null,
-		cancelBtn: null,
+		input: $(),
+		iFrame: $(),
+		div: $(),
+		wrapper: $(),
+		percentBar: $(),
+		percent: $(),
+		avgSpeed: $(),
+		timeLeft: $(),
+		cancelBtn: $(),
 		count: 0,
 		init: function (options){
 			var f = this;
 			f.opts = $.extend({}, $.fileUpload.defaults, options);
-			$('#' + f.opts.idUploadKey).val($('#' + f.opts.idUploadKey).val() + '-' + f.count);
-			f.bind();
+			if ($('#' + f.opts.idUploadKey).size()){
+				$('#' + f.opts.idUploadKey).val($('#' + f.opts.idUploadKey).val().replace(/-.+$/,'') + '-' + f.count);
+				f.bind();
+			}
 		},
 		change: function (file){
 			this.input = $(file);
@@ -136,14 +141,10 @@
 		},
 		updateProgress: function (data){
 			var f = this;
-			if (f.percentBar)
-				f.percentBar.css('width', data.percent + '%');
-			if (f.percent)
-				f.percent.text(data.percent + '%');
-			if (f.timeLeft)
-				f.timeLeft.text(data.timeLeft);
-			if (f.avgSpeed)
-				f.avgSpeed.text(data.avgSpeed);
+			f.percentBar.css('width', data.percent + '%');
+			f.percent.text(data.percent + '%');
+			f.timeLeft.text(data.timeLeft);
+			f.avgSpeed.text(data.avgSpeed);
 		},
 		resetProgress: function (){
 			this.updateProgress({
@@ -158,18 +159,26 @@
 			var f = this;
 			$.ajaxLoader.unBind();
 			$.ajaxLoader.show();
-			if (!f.div){
-				f.div = $('<div></div>').attr('id', f.opts.idProgressDiv).css('display', 'none').appendTo($('#' + f.opts.idLoader));
-				if (f.opts.showPercentBar)
-					f.percentBar = $('<div></div>').attr('id', f.opts.idPercentBar).appendTo(f.div);
+			if (f.div.size() == 0){
+				f.div = $('<div/>').attr('id', f.opts.idProgressDiv).css('display', 'none').appendTo($('#' + f.opts.idLoader));
+				f.wrapper = $('<div/>').attr('id', f.opts.idProgressWrapper).appendTo(f.div);
+				var stats = $('<div/>').addClass(f.opts.classStats);
 				if (f.opts.showPercent)
-					f.percent = $('<span></span>').attr('id', f.opts.idPercent).appendTo(f.div);
+					$('<span></span>').addClass(f.opts.classPercent).appendTo(stats);
 				if (f.opts.showAvgSpeed)
-					f.avgSpeed = $('<span></span>').attr('id', f.opts.idAvgSpee).appendTo(f.div);
+					$('<span></span>').addClass(f.opts.classAvgSpeed).appendTo(stats);
 				if (f.opts.showTimeLeft)
-					f.timeLeft = $('<span></span>').attr('id', f.opts.idTimeLeft).appendTo(f.div);
+					$('<span></span>').addClass(f.opts.classTimeLeft).appendTo(stats);
+				stats.appendTo(f.wrapper);
+				if (f.opts.showPercentBar){
+					f.percentBar = $('<div/>').attr('id', f.opts.idPercentBar).appendTo(f.wrapper);
+					stats.clone(true).appendTo(f.percentBar);
+				}
+				f.percent = f.div.find('.' + f.opts.classPercent);
+				f.avgSpeed = f.div.find('.' + f.opts.classAvgSpeed);
+				f.timeLeft = f.div.find('.' + f.opts.classTimeLeft);
 				if (f.opts.showCancel){
-					f.cancelBtn = $('<a></a>').attr('id', f.opts.idCancel).attr('href', '#').html('<span>' + f.opts.textCancel + '</span>').appendTo(f.div);
+					f.cancelBtn = $('<a></a>').attr('id', f.opts.idCancel).attr('href', '#').html('<span>' + f.opts.textCancel + '</span>').appendTo(f.wrapper);
 					f.cancelBtn.click(function(e){
 						e.preventDefault();
 						f.cancel();

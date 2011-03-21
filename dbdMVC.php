@@ -2,8 +2,8 @@
 /**
  * dbdMVC.php :: dbdMVC Include File & Front Controller Class
  *
- * dbdMVC version 2.0.8
- * Copyright (c) 2006-2009 by Don't Blink Design
+ * dbdMVC version 2.0.9
+ * Copyright (c) 2006-2011 by Don't Blink Design
  * http://dbdmvc.com
  *
  * dbdMVC is a light weight model-view-controller framework.
@@ -26,9 +26,9 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @package dbdMVC
- * @version 2.0.8
+ * @version 2.0.9
  * @author Don't Blink Design <info@dontblinkdesign.com>
- * @copyright Copyright (c) 2006-2009 by Don't Blink Design
+ * @copyright Copyright (c) 2006-2011 by Don't Blink Design
  * @license http://www.gnu.org/copyleft/lesser.html
  * @todo Create readme and update dbdMVC description
  */
@@ -159,7 +159,7 @@ class dbdMVC
 	 * Current version number
 	 * <b>Note:</b> May not match file @version number
 	 */
-	const VERSION = "2.0.8";
+	const VERSION = "2.0.9";
 	/**
 	 * #@+
 	 * @access private

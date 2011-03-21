@@ -3,9 +3,9 @@
  * dbdJS.php :: dbdJS Class File
  *
  * @package dbdMVC
- * @version 1.9
+ * @version 1.10
  * @author Don't Blink Design <info@dontblinkdesign.com>
- * @copyright Copyright (c) 2006-2009 by Don't Blink Design
+ * @copyright Copyright (c) 2006-2011 by Don't Blink Design
  */
 /**
  * Controller class for compressing and serving js files.
@@ -159,8 +159,6 @@ class dbdJS extends dbdController
 			header("ETag: ".$etag);
 		}
 		header("Content-type: text/javascript");
-//		if (function_exists("mb_strlen"))
-//		header("Content-Length: ".strlen($this->buffer));
 		return true;
 	}
 	/**#@-*/
@@ -192,8 +190,12 @@ class dbdJS extends dbdController
 			$this->createCache();
 		}
 		$this->addVars();
+		dbdOB::start();
+		echo $this->buffer;
 		if ($this->setHeaders())
-			echo $this->buffer;
+			dbdOB::flush();
+		else
+			dbdOB::end();
 	}
 	/**
 	 * Set no render, debug, and load JSMin

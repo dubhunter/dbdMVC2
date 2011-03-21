@@ -5,7 +5,7 @@
  * @package dbdMVC
  * @version 1.8
  * @author Don't Blink Design <info@dontblinkdesign.com>
- * @copyright Copyright (c) 2006-2009 by Don't Blink Design
+ * @copyright Copyright (c) 2006-2011 by Don't Blink Design
  */
 
 /**

@@ -3,9 +3,9 @@
  * dbdCSS.php :: dbdCSS Class File
  *
  * @package dbdMVC
- * @version 1.31
+ * @version 1.32
  * @author Don't Blink Design <info@dontblinkdesign.com>
- * @copyright Copyright (c) 2006-2009 by Don't Blink Design
+ * @copyright Copyright (c) 2006-2011 by Don't Blink Design
  */
 
 /**
@@ -147,7 +147,7 @@ class dbdCSS extends dbdController
 	/**
 	 * Css caching info sprite pattern.
 	 */
-	const CACHE_INFO_SPRITE = '/^[ ]?\*[ ]?[@]sprite (.+)$/i';
+	const CACHE_INFO_SPRITE = '/^[ ]?\*[ ]?[@]sprites (.+)$/i';
 	/**
 	 * Css caching info file list pattern.
 	 */
@@ -375,7 +375,7 @@ class dbdCSS extends dbdController
 					$info = false;
 					foreach ($sprites as $s)
 					{
-						if (!file_exists(DBD_CACHE_DIR.$s))
+						if (!file_exists(DBD_ASSET_DIR.$s))
 							return false;
 					}
 					break;
@@ -410,11 +410,10 @@ class dbdCSS extends dbdController
 		{
 			$file = DBD_CACHE_DIR.$this->cache_file;
 			$info = "/**\n";
-			$info .= " * @sprite ".implode(",", $this->sprites)."\n";
+			$info .= " * @sprites ".implode(",", $this->sprites)."\n";
 			$info .= " * @files ".implode(",", $this->files)."\n";
 			$info .= " */\n";
-			$this->buffer = $info.$this->buffer;
-			@file_put_contents($file, $this->buffer);
+			@file_put_contents($file, $info.$this->buffer);
 			$this->cache_mtime = filemtime($file);
 		}
 	}
@@ -836,7 +835,6 @@ class dbdCSS extends dbdController
 		$i = array();
 		foreach ($this->buttons as $s => $b)
 		{
-//			dbdLog($b);
 			if (!key_exists($b['sprite'], $sprites))
 				$sprites[$b['sprite']] = "";
 			if (!key_exists($b['sprite'], $i))
@@ -1381,8 +1379,12 @@ class dbdCSS extends dbdController
 			$this->minify();
 			$this->createCache();
 		}
+		dbdOB::start();
+		echo $this->buffer;
 		if ($this->setHeaders())
-			echo $this->buffer;
+			dbdOB::flush();
+		else
+			dbdOB::end();
 	}
 	/**
 	 * Minify buffer.
@@ -1422,8 +1424,6 @@ class dbdCSS extends dbdController
 			header("ETag: ".$etag);
 		}
 		header("Content-type: text/css");
-//		if (function_exists("mb_strlen"))
-//		header("Content-Length: ".strlen($this->buffer));
 		return true;
 	}
 	/**#@-*/
@@ -1446,7 +1446,8 @@ class dbdCSS extends dbdController
 			$files = array($files);
 		try
 		{
-			if (!($cache = $this->checkCache()))
+			$cache = $this->checkCache();
+			if (!$cache)
 			{
 				foreach ($files as $f)
 				{

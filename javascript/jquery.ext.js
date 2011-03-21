@@ -52,15 +52,6 @@
 				console.log(msg);
 			else
 				alert(msg);
-		},
-		trim: function (str){
-			return str.replace(/^\s+|\s+$/g, '');
-		},
-		ltrim: function (str){
-			return str.replace(/^\s+/, '');
-		},
-		rtrim: function (str){
-			return str.replace(/\s+$/, '');
 		}
 	});
 	$.fn.extend({

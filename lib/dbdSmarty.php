@@ -3,9 +3,9 @@
  * dbdSmarty.php :: dbdSmarty Class File
  *
  * @package dbdMVC
- * @version 1.19
+ * @version 1.20
  * @author Don't Blink Design <info@dontblinkdesign.com>
- * @copyright Copyright (c) 2006-2009 by Don't Blink Design
+ * @copyright Copyright (c) 2006-2011 by Don't Blink Design
  */
 
 /**
@@ -203,7 +203,7 @@ class dbdSmarty extends Smarty
 		$html = parent::fetch($resource_name, $cache_id, $compile_id, $display);
 		if ($no_includes)
 			$this->register_outputfilter(array($this, "dbdIncludeFiles"));
-		if ($no_minify)
+		if ($no_minify && !$this->debug)
 			$this->register_outputfilter(array($this, "dbdMinify"));
 		return $html;
 	}

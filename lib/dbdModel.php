@@ -5,7 +5,7 @@
  * @package dbdMVC
  * @version 1.14
  * @author Don't Blink Design <info@dontblinkdesign.com>
- * @copyright Copyright (c) 2006-2009 by Don't Blink Design
+ * @copyright Copyright (c) 2006-2011 by Don't Blink Design
  */
 
 /**
@@ -80,8 +80,6 @@ abstract class dbdModel
 	public function __construct($id = 0)
 	{
 		$this->class_name = get_called_class();
-//		$this->table_name = self::getConstant($class, self::CONST_TABLE_NAME);
-//		$this->table_key = self::getConstant($class, self::CONST_TABLE_KEY);
 		$this->table_name = self::getConstant($this->class_name, self::CONST_TABLE_NAME);
 		$this->table_key = self::getConstant($this->class_name, self::CONST_TABLE_KEY);
 		self::ensureDB();
