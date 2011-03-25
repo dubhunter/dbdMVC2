@@ -47,6 +47,21 @@
 				return n;
 			}
 		},
+		formatNumber: function (n){
+			var neg = false;
+			if (n < 0){
+				neg = true;
+				n *= -1;
+			}
+			var s = '';
+			n += '';
+			for (var i = 0; i < n.length; i++){
+				if (i > 0 && i % 3 == 0) s = ',' + s;
+				s = n[n.length - i - 1] + s;
+			}
+			return (neg ? '-' : '' ) + s;
+
+		},
 		log: function (msg){
 			if (window.console)
 				console.log(msg);
