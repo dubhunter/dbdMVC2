@@ -3,7 +3,7 @@
  * dbdController.php :: dbdController Class File
  *
  * @package dbdMVC
- * @version 1.16
+ * @version 1.17
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2011 by Don't Blink Design
  */
@@ -43,6 +43,10 @@ abstract class dbdController
 	 * @var integer
 	 */
 	protected $win_type = null;
+	/**
+	 * @var integer
+	 */
+	protected $response_code = 200;
 	/**
 	 * #@+
 	 * @access private
@@ -194,7 +198,7 @@ abstract class dbdController
 	{
 		$this->autoRender();
 		if ($this->win_type != self::WIN_TYPE_IFRAME && $this->session !== null)
-			$this->session->logLanding($this->getController(), $this->getAction(), $this->getParams(), self::$title, $this->win_type);
+			$this->session->logLanding($this->getController(), $this->getAction(), $this->getParams(), self::$title, $this->win_type, $this->response_code);
 	}
 	/**
 	 * Disable auto render on destruction.
@@ -265,10 +269,16 @@ abstract class dbdController
 		if ($e instanceof dbdHoldableException)
 		{
 			foreach ($e->getHeld() as $he)
+			{
+				$this->response_code = $he->getCode();
 				$errors[] = $he->getMessage();
+			}
 		}
 		if (empty($errors))
+		{
+			$this->response_code = $e->getCode();
 			$errors[] = $e->getMessage();
+		}
 		$this->view->assign("errors", $errors);
 	}
 	/**
