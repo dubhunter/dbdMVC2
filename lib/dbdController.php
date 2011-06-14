@@ -3,7 +3,7 @@
  * dbdController.php :: dbdController Class File
  *
  * @package dbdMVC
- * @version 1.17
+ * @version 1.18
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2011 by Don't Blink Design
  */
@@ -288,7 +288,7 @@ abstract class dbdController
 	{
 		switch (true)
 		{
-			case ($this->router->getParam("HTTP_X_REQUESTED_BY") == "jqueryAjax"):
+			case ($this->router->getParam("HTTP_X_REQUESTED_BY") == "jqueryAjax" || $this->router->getParam("HTTP_X_REQUESTED_BY") == "dbdMVC.js"):
 				$this->win_type = self::WIN_TYPE_JQUERY;
 				break;
 			case $this->getParam("iframe"):
@@ -415,6 +415,14 @@ abstract class dbdController
 	protected function getURL($get_params = false, $host = false)
 	{
 		return ($host ? "http://".$this->router->getParam("HTTP_HOST") : "").$this->router->getURL($get_params);
+	}
+	/**
+	 * Get current request method.
+	 * @return string
+	 */
+	protected function getRequestMethod()
+	{
+		return $this->router->getParam("REQUEST_METHOD");
 	}
 	/**
 	 * Call to set the required headers and send a file for download.

@@ -18,6 +18,10 @@
 		containerClass: 'photoCropCon',
 		containerColor: '#000000',
 		containerWrap: false,
+		idWidth: 'width',
+		idHeight: 'height',
+		idX: 'x',
+		idY: 'y',
 		imageClass: 'photoCropImage',
 		imageOpacity: 0.4,
 		windowClass: 'photoCropWindow',
@@ -38,8 +42,6 @@
 		resizeOpacity: 0.5,
 		startWidth: 200,
 		startHeight: 200,
-//		maxWidth: -1,
-//		maxHeight: -1,
 		minWidth: -1,
 		minHeight: -1,
 		resizable: true,
@@ -48,41 +50,46 @@
 	$.photoCrop.impl = {
 		opts: {},
 		crop: {},
+		form: {},
 		init: function (img,options){
 			var p = this;
 			p.opts = $.extend({}, $.photoCrop.defaults, options);
 			p.crop.img = img;
-			p.crop.img.addClass(this.opts.imageClass);
-			p.crop.img.wrap('<div class="' + p.opts.containerClass + '"></div>');
-			p.crop.con = $('.' + p.opts.containerClass)
+			p.crop.img.addClass(p.opts.imageClass);
+			p.form.width = p.crop.img.parents('form').find('#' + p.opts.idWidth);
+			p.form.height = p.crop.img.parents('form').find('#' + p.opts.idHeight);
+			p.form.x = p.crop.img.parents('form').find('#' + p.opts.idX);
+			p.form.y = p.crop.img.parents('form').find('#' + p.opts.idY);
+			p.crop.con = $('<div/>')
+				.addClass(p.opts.windowClass)
 				.css({
 					position: 'relative',
 					overflow: 'hidden',
 					backgroundColor: p.opts.containerColor
-				});
-			p.crop.win = $('<div>')
+				}).appendTo(p.crop.img.parent());
+			p.crop.img.remove().appendTo(p.crop.con);
+			p.crop.win = $('<div/>')
 				.addClass(p.opts.windowClass)
-				.appendTo(p.crop.con)
 				.css({
 					position: 'absolute',
 					overflow: 'hidden',
 					cursor: p.opts.windowCursor
-				});
+				})
+				.appendTo(p.crop.con);
 			p.crop.winImg = p.crop.img.clone()
 				.removeClass()
 				.addClass(p.opts.containerClass)
-				.appendTo(p.crop.win)
 				.css({
 					position: 'absolute'
-				});
+				})
+				.appendTo(p.crop.win);
 			p.crop.img.css({
 					position: 'relative',
 					opacity: p.opts.imageOpacity
 				})
-			p.crop.dragNW = $('<div>')
+			p.crop.dragNW = $('<div/>')
 				.addClass(p.opts.resizeClass)
 				.addClass(p.opts.resizeClassNW)
-				.appendTo(p.crop.con)
 				.css({
 					position: 'absolute',
 					width: p.opts.resizeSize + 'px',
@@ -90,11 +97,11 @@
 					opacity: p.opts.resizeOpacity,
 					backgroundColor: p.opts.resizeColor,
 					cursor: p.opts.resizeNWCursor
-				});
-			p.crop.dragNE = $('<div>')
+				})
+				.appendTo(p.crop.con);
+			p.crop.dragNE = $('<div/>')
 				.addClass(p.opts.resizeClass)
 				.addClass(p.opts.resizeClassNE)
-				.appendTo(p.crop.con)
 				.css({
 					position: 'absolute',
 					width: p.opts.resizeSize + 'px',
@@ -102,11 +109,11 @@
 					opacity: p.opts.resizeOpacity,
 					backgroundColor: p.opts.resizeColor,
 					cursor: p.opts.resizeNECursor
-				});
-			p.crop.dragSW = $('<div>')
+				})
+				.appendTo(p.crop.con);
+			p.crop.dragSW = $('<div/>')
 				.addClass(p.opts.resizeClass)
 				.addClass(p.opts.resizeClassSW)
-				.appendTo(p.crop.con)
 				.css({
 					position: 'absolute',
 					width: p.opts.resizeSize + 'px',
@@ -114,11 +121,11 @@
 					opacity: p.opts.resizeOpacity,
 					backgroundColor: p.opts.resizeColor,
 					cursor: p.opts.resizeSWCursor
-				});
-			p.crop.dragSE = $('<div>')
+				})
+				.appendTo(p.crop.con);
+			p.crop.dragSE = $('<div/>')
 				.addClass(p.opts.resizeClass)
 				.addClass(p.opts.resizeClassSE)
-				.appendTo(p.crop.con)
 				.css({
 					position: 'absolute',
 					width: p.opts.resizeSize + 'px',
@@ -126,11 +133,12 @@
 					opacity: p.opts.resizeOpacity,
 					backgroundColor: p.opts.resizeColor,
 					cursor: p.opts.resizeSECursor
-				});
+				})
+				.appendTo(p.crop.con);
 			if (p.opts.containerWrap){
 				p.crop.con.css({
-					width: p.crop.img.width() + 'px',
-					height: p.crop.img.height() + 'px'
+					width: p.crop.img.attr('width') + 'px',
+					height: p.crop.img.attr('height') + 'px'
 				});
 			}
 			p.opts.resizeOffset = p.opts.resizeSize / 2;
@@ -352,6 +360,14 @@
 					top: (y + height - p.opts.resizeOffset) + 'px',
 					left: (x + width - p.opts.resizeOffset) + 'px'
 				});
+			if (p.form.width.size() > 0)
+				p.form.width.val(width);
+			if (p.form.height.size() > 0)
+				p.form.height.val(height);
+			if (p.form.x.size() > 0)
+				p.form.x.val(x);
+			if (p.form.y.size() > 0)
+				p.form.y.val(y);
 		},
 		getWidth: function (){
 			return this.crop.win.width();

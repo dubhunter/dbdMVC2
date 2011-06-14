@@ -2,7 +2,7 @@
 /**
  * dbdMVC.php :: dbdMVC Include File & Front Controller Class
  *
- * dbdMVC version 2.0.9
+ * dbdMVC version 2.1.1
  * Copyright (c) 2006-2011 by Don't Blink Design
  * http://dbdmvc.com
  *
@@ -26,7 +26,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @package dbdMVC
- * @version 2.0.9
+ * @version 2.1.0
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2011 by Don't Blink Design
  * @license http://www.gnu.org/copyleft/lesser.html
@@ -159,7 +159,7 @@ class dbdMVC
 	 * Current version number
 	 * <b>Note:</b> May not match file @version number
 	 */
-	const VERSION = "2.0.9";
+	const VERSION = "2.1.0";
 	/**
 	 * #@+
 	 * @access private
@@ -205,6 +205,11 @@ class dbdMVC
 	 */
 	private $error_controller = null;
 	/**
+	 * Controller prefix that can be used on controller files/classes (even if set, they are optional)
+	 * @var string
+	 */
+	private $controller_prefix = null;
+	/**
 	 * Error log file (if left null, system default will be used)
 	 * @var string
 	 */
@@ -233,7 +238,7 @@ class dbdMVC
 	{
 		ob_start();
 		set_exception_handler(array("dbdMVC", "e"));
-		$this->app_name = "dbdMVC v".dbdMVC::VERSION;
+		$this->app_name = "dbdMVC v".self::VERSION;
 	}
 	/**
 	 * Prepare for dispatch by setting up the dbdDispatcher
@@ -262,7 +267,7 @@ class dbdMVC
 	}
 	/**
 	 * Generate a URI from the Command Line Arguments.
-	 * <b>Usage:</b> php index.php -c controller -a action --param=value
+	 * <b>Usage:</b> dbdcli -c controller -a action --param=value
 	 */
 	private function genCLIURI()
 	{
@@ -327,6 +332,14 @@ class dbdMVC
 	public static function setErrorController($error)
 	{
 		self::getInstance()->error_controller = $error;
+	}
+	/**
+	 * Set controller_prefix property.
+	 * @param string $prefix
+	 */
+	public static function setControllerPrefix($prefix)
+	{
+		self::getInstance()->controller_prefix = $prefix;
 	}
 	/**
 	 * Set error_log property.
@@ -395,6 +408,7 @@ class dbdMVC
 	 */
 	public static function run($app_dir, $app_name = null, $fallback_controller = null, $error_controller = null, $error_log = null, $debug_mode = null)
 	{
+		header('X-Powered-By: dbdMVC/'.self::VERSION);
 		self::$start = microtime(true);
 		$that = self::getInstance();
 		if ($app_name !== null)
@@ -442,6 +456,14 @@ class dbdMVC
 	public static function getErrorController()
 	{
 		return self::getInstance()->error_controller;
+	}
+	/**
+	 * Set controller prefix.
+	 * @return string controller_prefix
+	 */
+	public static function getControllerPrefix()
+	{
+		return self::getInstance()->controller_prefix;
 	}
 	/**
 	 * Return the error_log file name.

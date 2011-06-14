@@ -3,7 +3,7 @@
  * dbdDispatcher.php :: dbdDispatcher Class File
  *
  * @package dbdMVC
- * @version 1.11
+ * @version 1.12
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2011 by Don't Blink Design
  */
@@ -70,6 +70,11 @@ class dbdDispatcher
 	 * @var string
 	 */
 	private $fallback_controller = null;
+	/**
+	 * User defined controller prefix
+	 * @var string
+	 */
+	private $controller_prefix = null;
 	/**#@-*/
 	/**
 	 * Set router, app_dir, and controller_dir.
@@ -83,6 +88,7 @@ class dbdDispatcher
 		$this->fallback_controller = dbdMVC::getFallbackController();
 		if ($this->fallback_controller === null)
 			$this->fallback_controller = self::FALLBACK_CONTROLLER;
+		$this->controller_prefix = dbdMVC::getControllerPrefix();
 		$this->controller_dirs = dbdLoader::getControllerDirs();
 	}
 	/**
@@ -119,6 +125,14 @@ class dbdDispatcher
 			{
 				if (dbdLoader::search($file, $d))
 				{
+					dbdLoader::load($file, $d);
+					$loaded = true;
+					break;
+				}
+				if ($this->controller_prefix !== null && dbdLoader::search($this->controller_prefix.$file, $d))
+				{
+					$controller = $this->controller_prefix.$controller;
+					$file = $this->controller_prefix.$file;
 					dbdLoader::load($file, $d);
 					$loaded = true;
 					break;

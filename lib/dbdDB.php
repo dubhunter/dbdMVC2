@@ -3,7 +3,7 @@
  * dbdDB.php :: dbdDB Class File
  *
  * @package dbdMVC
- * @version 1.6
+ * @version 1.7
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2011 by Don't Blink Design
  */
@@ -25,11 +25,22 @@ class dbdDB
 	 */
 	const DATE_FORMAT = "Y-m-d H:i:s";
 	/**
+	 * SQL compliant date formating string with timezone offset
+	 * @var string constant
+	 */
+	const DATE_FORMAT_TZ = "Y-m-d H:i:s P";
+	/**
 	 * SQL compliant time formating string
 	 * @var string constant
 	 */
 	const TIME_FORMAT = "H:i:s";
+	/**
+	 * SQL compliant time formating string with timezone offset
+	 * @var string constant
+	 */
+	const TIME_FORMAT_TZ = "H:i:s P";
 
+	const GROUP = "dbdDB::GROUP";
 	const COMP_TYPE = "dbdDB::COMP_TYPE";
 	const COMP_EQ = 1;
 	const COMP_NEQ = 2;
@@ -44,6 +55,19 @@ class dbdDB
 	const COMP_NLIKE = 11;
 	const COMP_BETWEEN = 12;
 	const COMP_NBETWEEN = 13;
+	const COMP_SUBQ_EQ = 101;
+	const COMP_SUBQ_NEQ = 102;
+	const COMP_SUBQ_NULLEQ = 103;
+	const COMP_SUBQ_GTEQ = 104;
+	const COMP_SUBQ_GT = 105;
+	const COMP_SUBQ_LTEQ = 106;
+	const COMP_SUBQ_LT = 107;
+	const COMP_SUBQ_IN = 108;
+	const COMP_SUBQ_NIN = 109;
+	const COMP_SUBQ_LIKE = 110;
+	const COMP_SUBQ_NLIKE = 111;
+	const COMP_SUBQ_BETWEEN = 112;
+	const COMP_SUBQ_NBETWEEN = 113;
 	/**
 	 * array of dbdDB objects
 	 * to be filled by the static
@@ -150,6 +174,17 @@ class dbdDB
 		return $timestamp ? date(self::DATE_FORMAT, $timestamp) : date(self::DATE_FORMAT);
 	}
 	/**
+	 * Format date from sql query
+	 * @param integer $timestamp
+	 * @return string
+	 */
+	public static function datez($timestamp = null)
+	{
+		if ($timestamp !== null && !is_numeric($timestamp))
+			$timestamp = strtotime($timestamp);
+		return $timestamp ? date(self::DATE_FORMAT_TZ, $timestamp) : date(self::DATE_FORMAT_TZ);
+	}
+	/**
 	 * Format time for SQL insert
 	 * @param integer $timestamp
 	 * @return string
@@ -159,6 +194,17 @@ class dbdDB
 		if ($timestamp !== null && !is_numeric($timestamp))
 			$timestamp = strtotime($timestamp);
 		return $timestamp ? date(self::TIME_FORMAT, $timestamp) : date(self::TIME_FORMAT);
+	}
+	/**
+	 * Format time from sql query
+	 * @param integer $timestamp
+	 * @return string
+	 */
+	public static function timez($timestamp = null)
+	{
+		if ($timestamp !== null && !is_numeric($timestamp))
+			$timestamp = strtotime($timestamp);
+		return $timestamp ? date(self::TIME_FORMAT_TZ, $timestamp) : date(self::TIME_FORMAT_TZ);
 	}
 	/**
 	 * Prepare & excute a query statement

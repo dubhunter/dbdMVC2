@@ -68,8 +68,8 @@ class InputCSS
 		$div_id = self::getDivID();
 		$input_id = self::getInputID($id);
 		$html = "<div class=\"hiddenButtonDiv ".$id."Div".($disabled ? " disabled" : "")."\">";
-		$html .= "<div id=\"".$div_id."\" class=\"".$id.($checked ? "On" : "Off")."\"></div>";
-		$html .= "<input type=\"".$type."\" id=\"".$input_id."\" name=\"".$name."\" class=\"hiddenButton\"";
+		$html .= "<div id=\"".$div_id."\" class=\"".$id.($checked ? "Dn" : "Off")."\"></div>";
+		$html .= "<input type=\"".$type."\" id=\"".$input_id."\" name=\"".$name."\" class=\"hiddenButton\" tabindex=\"-1\"";
 		if ($type != "file")
 			$html .= " value=\"".$value."\"";
 		if (!$disabled)
@@ -95,17 +95,19 @@ class InputCSS
 		{
 			$html .= "<a href=\"#\" onclick=\"if (!$('#".$input_id."').attr('checked')){";
 			if ($type == "radio")
-				$html .= "$('input[name=".$name."]:checked').siblings('div').each(function (i){var old = $(this).attr('class');$(this).removeClass().addClass(old.replace('On', 'Off'));});";
-			$html .= "$('#".$div_id."').removeClass().addClass('".$id."On');$('#".$input_id."').attr('checked', true);";
+				$html .= "$('input[name=".$name."]:checked').siblings('div').each(function (i){var old = $(this).attr('class');$(this).removeClass().addClass(old.replace('Dn', 'Off'));});";
+			$html .= "$('#".$div_id."').removeClass('".$id."Off').addClass('".$id."Dn');$('#".$input_id."').attr('checked', true);";
 			$html .= "}else{";
 			if ($type == "checkbox")
 				$html .= "$('#".$div_id."').removeClass().addClass('".$id."Off'); $('#".$input_id."').attr('checked', false);";
 			$html .= "} return false;\"";
-			$html .= " onmouseover=\"if (!$('#".$input_id."').attr('checked'))$('#".$div_id."').removeClass().addClass('".$id."On');\"";
-			$html .= " onmouseout=\"if (!$('#".$input_id."').attr('checked'))$('#".$div_id."').removeClass().addClass('".$id."Off');\"";
-			$html .= " onmousedown=\"if (!$('#".$input_id."').attr('checked'))$('#".$div_id."').addClass('".$id."Dn');\"";
-			$html .= " onmouseup=\"if (!$('#".$input_id."').attr('checked'))$('#".$div_id."').removeClass('".$id."Dn');\"";
-			$html .= ">".$value."</a>";
+			$html .= " onmouseover=\"if (!$('#".$input_id."').attr('disabled'))$('#".$div_id."').removeClass().addClass('".$id."On');\"";
+			$html .= " onfocus=\"if (!$('#".$input_id."').attr('disabled'))$('#".$div_id."').removeClass().addClass('".$id."On');\"";
+			$html .= " onmouseout=\"if (!$('#".$input_id."').attr('disabled')){ $('#".$div_id."').removeClass('".$id."On'); if ($('#".$input_id."').attr('checked'))$('#".$div_id."').addClass('".$id."Dn'); else $('#".$div_id."').addClass('".$id."Off');}\"";
+			$html .= " onblur=\"if (!$('#".$input_id."').attr('disabled')){ $('#".$div_id."').removeClass('".$id."On'); if ($('#".$input_id."').attr('checked'))$('#".$div_id."').addClass('".$id."Dn'); else $('#".$div_id."').addClass('".$id."Off');}\"";
+//			$html .= " onmousedown=\"if (!$('#".$input_id."').attr('disabled'))$('#".$div_id."').addClass('".$id."Dn');\"";
+//			$html .= " onmouseup=\"if (!$('#".$input_id."').attr('disabled'))$('#".$div_id."').removeClass('".$id."Dn');\"";
+			$html .= " title=\"".$value."\">".$value."</a>";
 		}
 		elseif (in_array($type, array("submit", "reset")))
 		{

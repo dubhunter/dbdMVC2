@@ -324,7 +324,8 @@
 			jQuery.trim(markup)
 				.replace( /([\\'])/g, "\\$1" )
 				.replace( /[\r\t\n]/g, " " )
-				.replace( /\$\{([^\}]*)\}/g, "{{= $1}}" )
+//				.replace( /\$\{([^\}]*)\}/g, "{{= $1}}" )
+				.replace( /\$\{((?:[^\{\}]*|\{[^\{\}]*\})*)\}/g, "{{= $1}}" ) //preserve inline { & } chars - wmason 2011-04-28
 				.replace( /\{\{(\/?)(\w+|.)(?:\(((?:[^\}]|\}(?!\}))*?)?\))?(?:\s+(.*?)?)?(\(((?:[^\}]|\}(?!\}))*?)\))?\s*\}\}/g,
 				function( all, slash, type, fnargs, target, parens, args ) {
 					var tag = jQuery.tmpl.tag[ type ], def, expr, exprAutoFnDetect;

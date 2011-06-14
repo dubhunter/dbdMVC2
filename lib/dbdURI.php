@@ -3,7 +3,7 @@
  * dbdURI.php :: dbdURI Class File
  *
  * @package dbdMVC
- * @version 1.14
+ * @version 1.15
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2011 by Don't Blink Design
  */
@@ -29,6 +29,16 @@ class dbdURI
 	 */
 	private $prefix = null;
 	/**
+	 * Parameter key lists for insertion before controller, organized by controller
+	 * @var array
+	 */
+	private $controller_position_lists = array();
+	/**
+	 * Parameter key lists, organized by controller by action
+	 * @var array
+	 */
+	private $position_lists = array();
+	/**
 	 * Controller name
 	 * @var string
 	 */
@@ -43,11 +53,6 @@ class dbdURI
 	 * @var array
 	 */
 	private $params = array();
-	/**
-	 * Parameter key lists, organized by controller by action
-	 * @var array
-	 */
-	private $position_lists = array();
 	/**#@-*/
 	/**
 	 * #@+
@@ -82,14 +87,19 @@ class dbdURI
 		$that->params = array();
 		$parts = preg_split("/(?<![\\\])\//", str_replace($that->prefix, "", $uri), null, PREG_SPLIT_NO_EMPTY);
 		$that->controller = array_shift($parts);
-		$that->action = array_shift($parts);
-		if (key_exists($that->controller, $that->position_lists) && key_exists($that->action, $that->position_lists[$that->controller]))
+		$cplist = self::getControllerPositionList($that->controller);
+		for ($i = 0; $i < count($cplist); $i++)
 		{
-			for ($i = 0; $i < count($that->position_lists[$that->controller][$that->action]); $i++)
-			{
-				if (isset($parts[0]) && $parts[0] != $that->position_lists[$that->controller][$that->action][$i])
-					self::setParam(rawurldecode($that->position_lists[$that->controller][$that->action][$i]), rawurldecode(rawurldecode(array_shift($parts))));
-			}
+			if (count($parts) == 0 || !preg_match('/^[0-9]+$/', $parts[0]))
+				break;
+			self::setParam(rawurldecode($cplist[$i]), rawurldecode(rawurldecode(array_shift($parts))));
+		}
+		$that->action = array_shift($parts);
+		$plist = self::getPositionList($that->controller, $that->action);
+		for ($i = 0; $i < count($plist); $i++)
+		{
+			if (isset($parts[0]) && $parts[0] != $plist[$i])
+				self::setParam(rawurldecode($plist[$i]), rawurldecode(rawurldecode(array_shift($parts))));
 		}
 		for ($i = 0; $i < count($parts); $i += 2)
 		{
@@ -125,6 +135,26 @@ class dbdURI
 		}
 	}
 	/**
+	 * Set a parameter position list for a specific controller.
+	 * This allows you to add parameters between the controller & action
+	 * @param string $controller
+	 * @param array $params
+	 */
+	public static function setControllerPositionList($controller, $params = array())
+	{
+		self::getInstance()->controller_position_lists[$controller] = $params;
+	}
+	/**
+	 * Get the parameter position list for a specific controller
+	 * @param string $controller
+	 * @return array $order
+	 */
+	public static function getControllerPositionList($controller)
+	{
+		$that = self::getInstance();
+		return key_exists($controller, $that->controller_position_lists) ? $that->controller_position_lists[$controller] : array();
+	}
+	/**
 	 * Set a parameter position list for a specific controller/action.
 	 * This allows for key-less parameritized urls
 	 * @param string $controller
@@ -137,6 +167,17 @@ class dbdURI
 		if (!key_exists($controller, $that->position_lists))
 			$that->position_lists[$controller] = array();
 		$that->position_lists[$controller][$action] = $params;
+	}
+	/**
+	 * Get the parameter position list for a specific controller/action.
+	 * @param string $controller
+	 * @param string $action
+	 * @param array $params
+	 */
+	public static function getPositionList($controller, $action)
+	{
+		$that = self::getInstance();
+		return key_exists($controller, $that->position_lists) && key_exists($action, $that->position_lists[$controller]) ? $that->position_lists[$controller][$action] : array();
 	}
 	/**
 	 * Get controller name
@@ -176,19 +217,30 @@ class dbdURI
 		if ($controller)
 		{
 			$uri .= $controller."/";
+			$cplist = self::getControllerPositionList($controller);
+			for ($i = 0; $i < count($cplist); $i++)
+			{
+				if (key_exists($cplist[$i], $args))
+				{
+					$uri .= preg_replace("/\//", "%5C/", rawurlencode($args[$cplist[$i]]))."/";
+					unset($args[$cplist[$i]]);
+				}
+//				else if ((!empty($action) && $action != dbdDispatcher::DEFAULT_ACTION) || count($args) > 0)
+//				{
+//					$uri .= "null/";
+//				}
+			}
 			if (empty($action))
 				$action = dbdDispatcher::DEFAULT_ACTION;
 			if (!(count($args) == 0 && $action == dbdDispatcher::DEFAULT_ACTION))
 				$uri .= $action."/";
-			if (key_exists($controller, $that->position_lists) && key_exists($action, $that->position_lists[$controller]))
+			$plist = self::getPositionList($controller, $action);
+			for ($i = 0; $i < count($plist); $i++)
 			{
-				for ($i = 0; $i < count($that->position_lists[$controller][$action]); $i++)
+				if (key_exists($plist[$i], $args))
 				{
-					if (key_exists($that->position_lists[$controller][$action][$i], $args))
-					{
-						$uri .= preg_replace("/\//", "%5C/", rawurlencode($args[$that->position_lists[$controller][$action][$i]]))."/";
-						unset($args[$that->position_lists[$controller][$action][$i]]);
-					}
+					$uri .= preg_replace("/\//", "%5C/", rawurlencode($args[$plist[$i]]))."/";
+					unset($args[$plist[$i]]);
 				}
 			}
 			$braces = false;

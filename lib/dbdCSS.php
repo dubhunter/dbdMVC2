@@ -3,7 +3,7 @@
  * dbdCSS.php :: dbdCSS Class File
  *
  * @package dbdMVC
- * @version 1.32
+ * @version 1.33
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2011 by Don't Blink Design
  */
@@ -66,32 +66,32 @@ class dbdCSS extends dbdController
 	 * Css import regular expression.
 	 * @todo allow for url() syntax
 	 */
-	const IMPORT_REGEX = '/^[@]import[ ][\'\"]([a-z0-9-_\.]+[\.][c][s][s])[\'\"][;]/i';
+	const IMPORT_REGEX = '/^@import [\'\"]([a-z0-9-_\.]+\.css)[\'\"];/i';
 	/**
 	 * Debug comment to turn off minification.
 	 */
-	const DEBUG_REGEX = '/^\/\*.*[@]debug.*\*\//i';
+	const DEBUG_REGEX = '/^\/\*.*@debug.*\*\//i';
 	/**
 	 * Css file extension pattern.
 	 */
-	const CSS_EXT_REGEX = '/^.+\.[c][s][s]$/i';
+	const CSS_EXT_REGEX = '/\.css$/i';
 	/**
 	 * Css block open pattern.
 	 */
-	const BLOCK_OPEN_REGEX = '/[{]/';
+	const BLOCK_OPEN_REGEX = '/{/';
 	/**
 	 * Css block close pattern.
 	 */
-	const BLOCK_CLOSE_REGEX = '/[}]/';
+	const BLOCK_CLOSE_REGEX = '/}/';
 	/**
 	 * Css variables at-tag pattern.
 	 * Uses implimentation specs from http://disruptive-innovations.com/zoo/cssvariables/
 	 */
-	const VAR_TAG_REGEX = '/^[@]variables/i';
+	const VAR_TAG_REGEX = '/^@variables/i';
 	/**
 	 * Css variable definition pattern.
 	 */
-	const VAR_DEF_REGEX = '/([a-z][a-z0-9-_]*)[ \t\n]*[:][ \t\n]*([^;]+)[;]/i';
+	const VAR_DEF_REGEX = '/([a-z][a-z0-9-_]*)[ \t\n]*:[ \t\n]*([^;]+);/i';
 	/**
 	 * Css variable call pattern. (for dereferencing)
 	 */
@@ -111,15 +111,15 @@ class dbdCSS extends dbdController
 	/**
 	 * Css buttons at-tag pattern.
 	 */
-	const BUTT_TAG_REGEX = '/^[@]buttons/i';
+	const BUTT_TAG_REGEX = '/^@buttons/i';
 	/**
 	 * Css generated buttons at-tag pattern.
 	 */
-	const BUTT_GEN_TAG_REGEX = '/[@]generated/i';
+	const BUTT_GEN_TAG_REGEX = '/@generated/i';
 	/**
 	 * Css generated buttons template tag pattern.
 	 */
-	const BUTT_GEN_TPL_TAG_REGEX = '/[#]([a-z][a-z0-9]*)(?![^;{]*[;])/i';
+	const BUTT_GEN_TPL_TAG_REGEX = '/#([a-z][a-z0-9]*)(?![^;{]*;)/i';
 	/**
 	 * Css button definition pattern.
 	 */
@@ -127,7 +127,7 @@ class dbdCSS extends dbdController
 	/**
 	 * Css button property definition pattern.
 	 */
-	const BUTT_PROP_DEF_REGEX = '/([a-z][a-z-]*)[ \t\n]*[:][ \t\n]*([^;]+)[;]/i';
+	const BUTT_PROP_DEF_REGEX = '/([a-z][a-z-]*)[ \t\n]*[:][ \t\n]*([^;]+);/i';
 	/**
 	 * Css button property hover pattern.
 	 */
@@ -145,13 +145,17 @@ class dbdCSS extends dbdController
 	 */
 	const BUTT_PROP_DEF_DISABLED_REGEX = '/[-]disabled$/i';
 	/**
+	 * Css button property loading pattern.
+	 */
+	const BUTT_PROP_DEF_LOADING_REGEX = '/[-]loading$/i';
+	/**
 	 * Css caching info sprite pattern.
 	 */
-	const CACHE_INFO_SPRITE = '/^[ ]?\*[ ]?[@]sprites (.+)$/i';
+	const CACHE_INFO_SPRITE = '/^[ ]?\*[ ]?@sprites (.+)$/i';
 	/**
 	 * Css caching info file list pattern.
 	 */
-	const CACHE_INFO_FILES = '/^[ ]?\*[ ]?[@]files (.+)$/i';
+	const CACHE_INFO_FILES = '/^[ ]?\*[ ]?@files (.+)$/i';
 	/**
 	 * Directory delimiter for passing a string of files
 	 */
@@ -209,6 +213,7 @@ class dbdCSS extends dbdController
 		'generated_def' => array(
 			'sprite' => 'default',
 			'generated' => null,
+			'align' => 'left',
 			'text' => null,
 			'background-color' => '#7fffffff',
 			'foreground-color' => null,
@@ -221,6 +226,7 @@ class dbdCSS extends dbdController
 		),
 		'def' => array(
 			'sprite' => 'default',
+			'align' => 'left',
 			'background-image' => null
 		)
 	);
@@ -247,6 +253,7 @@ class dbdCSS extends dbdController
 		'generated_def' => array(
 			'sprite',
 			'generated',
+			'align',
 			'text',
 			'background-color',
 //			'foreground-color',
@@ -259,6 +266,7 @@ class dbdCSS extends dbdController
 		),
 		'def' => array(
 			'sprite',
+			'align',
 			'background-image'
 		)
 	);
@@ -518,6 +526,10 @@ class dbdCSS extends dbdController
 									'disabled' => array(
 										'props' => array(),
 										'css' => array()
+									),
+									'loading' => array(
+										'props' => array(),
+										'css' => array()
 									)
 								);
 								$keys[] = $key;
@@ -552,7 +564,8 @@ class dbdCSS extends dbdController
 											'hover' => array(),
 											'active' => array(),
 											'current' => array(),
-											'disabled' => array()
+											'disabled' => array(),
+											'loading' => array()
 										);
 									}
 								}
@@ -563,6 +576,7 @@ class dbdCSS extends dbdController
 								$active = false;
 								$current = false;
 								$disabled = false;
+								$loading = false;
 								if (preg_match(self::BUTT_PROP_DEF_HOVER_REGEX, $k))
 								{
 									$hover = true;
@@ -583,6 +597,11 @@ class dbdCSS extends dbdController
 									$disabled = true;
 									$k = preg_replace(self::BUTT_PROP_DEF_DISABLED_REGEX, '', $k);
 								}
+								if (preg_match(self::BUTT_PROP_DEF_LOADING_REGEX, $k))
+								{
+									$loading = true;
+									$k = preg_replace(self::BUTT_PROP_DEF_LOADING_REGEX, '', $k);
+								}
 								foreach ($keys as $key)
 								{
 									if ($generated)
@@ -597,6 +616,8 @@ class dbdCSS extends dbdController
 												$this->buttons_generated[$key]['current'][$k] = $v;
 											elseif ($disabled)
 												$this->buttons_generated[$key]['disabled'][$k] = $v;
+											elseif ($loading)
+												$this->buttons_generated[$key]['loading'][$k] = $v;
 											else
 												$this->buttons_generated[$key][$k] = $v;
 										}
@@ -610,6 +631,8 @@ class dbdCSS extends dbdController
 												$this->buttons[$key]['current']['css'][$k] = $v;
 											elseif ($disabled)
 												$this->buttons[$key]['disabled']['css'][$k] = $v;
+											elseif ($loading)
+												$this->buttons[$key]['loading']['css'][$k] = $v;
 											else
 												$this->buttons[$key]['css'][$k] = $v;
 										}
@@ -626,6 +649,8 @@ class dbdCSS extends dbdController
 												$this->buttons[$key]['current']['props'][$k] = $v;
 											elseif ($disabled)
 												$this->buttons[$key]['disabled']['props'][$k] = $v;
+											elseif ($loading)
+												$this->buttons[$key]['loading']['props'][$k] = $v;
 											else
 												$this->buttons[$key]['props'][$k] = $v;
 										}
@@ -639,6 +664,8 @@ class dbdCSS extends dbdController
 												$this->buttons[$key]['current']['css'][$k] = $v;
 											elseif ($disabled)
 												$this->buttons[$key]['disabled']['css'][$k] = $v;
+											elseif ($loading)
+												$this->buttons[$key]['loading']['css'][$k] = $v;
 											else
 												$this->buttons[$key]['css'][$k] = $v;
 										}
@@ -670,7 +697,8 @@ class dbdCSS extends dbdController
 										'hover' => array(),
 										'active' => array(),
 										'current' => array(),
-										'disabled' => array()
+										'disabled' => array(),
+										'loading' => array()
 									);
 								}
 								if ($butt_gen_tpl_block)
@@ -685,6 +713,7 @@ class dbdCSS extends dbdController
 											$active = false;
 											$current = false;
 											$disabled = false;
+											$loading = false;
 											if (preg_match(self::BUTT_PROP_DEF_HOVER_REGEX, $k))
 											{
 												$hover = true;
@@ -705,6 +734,11 @@ class dbdCSS extends dbdController
 												$disabled = true;
 												$k = preg_replace(self::BUTT_PROP_DEF_DISABLED_REGEX, '', $k);
 											}
+											if (preg_match(self::BUTT_PROP_DEF_LOADING_REGEX, $k))
+											{
+												$loading = true;
+												$k = preg_replace(self::BUTT_PROP_DEF_LOADING_REGEX, '', $k);
+											}
 											if (key_exists($k, $this->button_props['generated_tpl']) || key_exists($k, $this->button_props['generated_def']))
 											{
 												if ($hover)
@@ -715,6 +749,8 @@ class dbdCSS extends dbdController
 													$this->button_props_generated_tpl[$key]['current'][$k] = $v;
 												elseif ($disabled)
 													$this->button_props_generated_tpl[$key]['disabled'][$k] = $v;
+												elseif ($loading)
+													$this->button_props_generated_tpl[$key]['loading'][$k] = $v;
 												else
 													$this->button_props_generated_tpl[$key][$k] = $v;
 											}
@@ -738,6 +774,7 @@ class dbdCSS extends dbdController
 									$active = false;
 									$current = false;
 									$disabled = false;
+									$loading = false;
 									if (preg_match(self::BUTT_PROP_DEF_HOVER_REGEX, $k))
 									{
 										$hover = true;
@@ -758,6 +795,11 @@ class dbdCSS extends dbdController
 										$disabled = true;
 										$k = preg_replace(self::BUTT_PROP_DEF_DISABLED_REGEX, '', $k);
 									}
+									if (preg_match(self::BUTT_PROP_DEF_LOADING_REGEX, $k))
+									{
+										$loading = true;
+										$k = preg_replace(self::BUTT_PROP_DEF_LOADING_REGEX, '', $k);
+									}
 									if (key_exists($k, $this->button_props['generated_global']) || key_exists($k, $this->button_props['generated_tpl']) || key_exists($k, $this->button_props['generated_def']))
 									{
 										if ($hover)
@@ -768,6 +810,8 @@ class dbdCSS extends dbdController
 											$this->button_props_generated_global['current'][$k] = $v;
 										elseif ($disabled)
 											$this->button_props_generated_global['disabled'][$k] = $v;
+										elseif ($loading)
+											$this->button_props_generated_global['loading'][$k] = $v;
 										else
 											$this->button_props_generated_global[$k] = $v;
 									}
@@ -826,7 +870,7 @@ class dbdCSS extends dbdController
 		$this->sprites = $this->genButtonSprites();
 		$this->buffer .= ".hiddenButtonDiv{overflow: hidden; position: relative;}";
 		$this->buffer .= ".hiddenButton,.hiddenButtonDiv a{display: inline; font-size: 100px; height: 100%; opacity: 0; filter: alpha(opacity=0); position: absolute; right: 0; top: 0;}";
-		$this->buffer .= ".hiddenButtonDiv.disabled a,a.ui-state-disabled{cursor: default;}";
+		$this->buffer .= ".hiddenButtonDiv.disabled a,.hiddenButtonDiv.loading a,a.ui-state-disabled{cursor: default;}";
 		$this->buffer .= ".hiddenButtonDiv div{position: absolute; top: 0; left: 0;}";
 		$this->buffer .= ".hiddenButtonDiv a{width: 100%;}";
 		$tmp = "";
@@ -846,6 +890,7 @@ class dbdCSS extends dbdController
 				$s = $b['parent'].$b['type'].$b['name'];
 				$l = $s."Off,".$s."On,".$s."Dn";
 				$d = $s."Div.disabled ".$b['type'].$b['name']."Off,".$s."Div.disabled ".$b['type'].$b['name']."On,".$s."Div.disabled ".$b['type'].$b['name']."Dn";
+				$d .= ",Div.loading ".$b['type'].$b['name']."Off,".$s."Div.loading ".$b['type'].$b['name']."On,".$s."Div.loading ".$b['type'].$b['name']."Dn";
 				$sprites[$b['sprite']] .= $l;
 				$tmp .= $l.",".$s."Div{display: block; width: ".$b['css']['width']."; height: ".$b['css']['height'].";}";
 				$tmp .= $l."{";
@@ -870,6 +915,13 @@ class dbdCSS extends dbdController
 				{
 					$tmp .= $d."{";
 					foreach ($b['disabled']['css'] as $k => $v)
+						$tmp .= $k.": ".$v.";";
+					$tmp .= "}";
+				}
+				if (count($b['loading']['css']))
+				{
+					$tmp .= $d."{";
+					foreach ($b['loading']['css'] as $k => $v)
 						$tmp .= $k.": ".$v.";";
 					$tmp .= "}";
 				}
@@ -912,6 +964,13 @@ class dbdCSS extends dbdController
 						$tmp .= $k.": ".$v.";";
 					$tmp .= "}";
 				}
+				if (count($b['loading']['css']))
+				{
+					$tmp .= $s.".loading{";
+					foreach ($b['loading']['css'] as $k => $v)
+						$tmp .= $k.": ".$v.";";
+					$tmp .= "}";
+				}
 			}
 		}
 		foreach ($this->sprites as $name => $file)
@@ -934,36 +993,49 @@ class dbdCSS extends dbdController
 			if (!key_exists($b['props']['sprite'], $imgs))
 				$imgs[$b['props']['sprite']] = array();
 			$imgs[$b['props']['sprite']][$s] = array(
-				'src' => $b['props']['background-image']
+				'src' => $b['props']['background-image'],
+				'align' => $b['props']['align']
 			);
 			if (count($b['hover']['props']))
 			{
 				$imgs[$b['props']['sprite']][$s.":hover"] = array(
-					'src' => isset($b['hover']['props']['background-image']) ? $b['hover']['props']['background-image'] : $b['props']['background-image']
+					'src' => isset($b['hover']['props']['background-image']) ? $b['hover']['props']['background-image'] : $b['props']['background-image'],
+					'align' => $b['props']['align']
 				);
 			}
 			if (count($b['hover']['props']))
 			{
 				$imgs[$b['props']['sprite']][$s.":hover"] = array(
-					'src' => isset($b['hover']['props']['background-image']) ? $b['hover']['props']['background-image'] : $b['props']['background-image']
+					'src' => isset($b['hover']['props']['background-image']) ? $b['hover']['props']['background-image'] : $b['props']['background-image'],
+					'align' => $b['props']['align']
 				);
 			}
 			if (count($b['active']['props']))
 			{
 				$imgs[$b['props']['sprite']][$s.":active"] = array(
-					'src' => isset($b['active']['props']['background-image']) ? $b['active']['props']['background-image'] : $b['props']['background-image']
+					'src' => isset($b['active']['props']['background-image']) ? $b['active']['props']['background-image'] : $b['props']['background-image'],
+					'align' => $b['props']['align']
 				);
 			}
 			if (count($b['current']['props']))
 			{
 				$imgs[$b['props']['sprite']][$s.":current"] = array(
-					'src' => isset($b['current']['props']['background-image']) ? $b['current']['props']['background-image'] : $b['props']['background-image']
+					'src' => isset($b['current']['props']['background-image']) ? $b['current']['props']['background-image'] : $b['props']['background-image'],
+					'align' => $b['props']['align']
 				);
 			}
 			if (count($b['disabled']['props']))
 			{
 				$imgs[$b['props']['sprite']][$s.":disabled"] = array(
-					'src' => isset($b['disabled']['props']['background-image']) ? $b['disabled']['props']['background-image'] : $b['props']['background-image']
+					'src' => isset($b['disabled']['props']['background-image']) ? $b['disabled']['props']['background-image'] : $b['props']['background-image'],
+					'align' => $b['props']['align']
+				);
+			}
+			if (count($b['loading']['props']))
+			{
+				$imgs[$b['props']['sprite']][$s.":loading"] = array(
+					'src' => isset($b['loading']['props']['background-image']) ? $b['loading']['props']['background-image'] : $b['props']['background-image'],
+					'align' => $b['props']['align']
 				);
 			}
 		}
@@ -1005,34 +1077,52 @@ class dbdCSS extends dbdController
 				$a[] = $imgs[$s][$i]['src'];
 				$this->files[] = str_replace(DBD_ASSET_DIR, "", $imgs[$s][$i]['src']);
 				$tmp = imageCreateFrom($imgs[$s][$i]['src']);
+				switch ($imgs[$s][$i]['align'])
+				{
+					case 'right':
+						$d['x'] = $d['width'] - $imgs[$s][$i]['width'];
+						$imgs[$s][$i]['left'] = 'right';
+						break;
+					case 'center':
+						$d['x'] = ($d['width'] - $imgs[$s][$i]['width']) / 2;
+						$imgs[$s][$i]['left'] = 'center';
+						break;
+					default:
+						$imgs[$s][$i]['left'] = 'left';
+						$d['x'] = 0;
+				}
 				imagecopy($out, $tmp, $d['x'], $d['y'], 0, 0, $imgs[$s][$i]['width'], $imgs[$s][$i]['height']);
-				$imgs[$s][$i]['left'] = $d['x'];
 				$imgs[$s][$i]['top'] = $d['y'];
 				if (preg_match('/:hover$/', $i))
 				{
 					$j = preg_replace('/:hover$/', '', $i);
-					$this->buttons[$j]['hover']['css']['background-position'] = $d['x']."px -".$d['y']."px";
+					$this->buttons[$j]['hover']['css']['background-position'] = $imgs[$s][$i]['left']." -".$imgs[$s][$i]['top']."px";
 				}
 				elseif (preg_match('/:active$/', $i))
 				{
 					$j = preg_replace('/:active$/', '', $i);
-					$this->buttons[$j]['active']['css']['background-position'] = $d['x']."px -".$d['y']."px";
+					$this->buttons[$j]['active']['css']['background-position'] = $imgs[$s][$i]['left']." -".$imgs[$s][$i]['top']."px";
 				}
 				elseif (preg_match('/:current$/', $i))
 				{
 					$j = preg_replace('/:current$/', '', $i);
-					$this->buttons[$j]['current']['css']['background-position'] = $d['x']."px -".$d['y']."px";
+					$this->buttons[$j]['current']['css']['background-position'] = $imgs[$s][$i]['left']." -".$imgs[$s][$i]['top']."px";
 				}
 				elseif (preg_match('/:disabled$/', $i))
 				{
 					$j = preg_replace('/:disabled$/', '', $i);
-					$this->buttons[$j]['disabled']['css']['background-position'] = $d['x']."px -".$d['y']."px";
+					$this->buttons[$j]['disabled']['css']['background-position'] = $imgs[$s][$i]['left']." -".$imgs[$s][$i]['top']."px";
+				}
+				elseif (preg_match('/:loading$/', $i))
+				{
+					$j = preg_replace('/:loading$/', '', $i);
+					$this->buttons[$j]['loading']['css']['background-position'] = $imgs[$s][$i]['left']." -".$imgs[$s][$i]['top']."px";
 				}
 				else
 				{
 					$this->buttons[$i]['css']['width'] = $imgs[$s][$i]['width']."px";
 					$this->buttons[$i]['css']['height'] = $imgs[$s][$i]['height']."px";
-					$this->buttons[$i]['css']['background-position'] = $d['x']."px -".$d['y']."px";
+					$this->buttons[$i]['css']['background-position'] = $imgs[$s][$i]['left']." -".$imgs[$s][$i]['top']."px";
 					$this->buttons[$i]['sprite'] = $s;
 				}
 				$d['y'] += $imgs[$s][$i]['height'] + $global['offset'];
@@ -1061,6 +1151,8 @@ class dbdCSS extends dbdController
 				$this->buttons[$id]['current']['props']['background-image'] = $this->genButton($id, array_merge($p, $p['current']));
 			if (key_exists('disabled', $p))
 				$this->buttons[$id]['disabled']['props']['background-image'] = $this->genButton($id, array_merge($p, $p['disabled']));
+			if (key_exists('loading', $p))
+				$this->buttons[$id]['loading']['props']['background-image'] = $this->genButton($id, array_merge($p, $p['loading']));
 		}
 	}
 	/**
@@ -1072,7 +1164,7 @@ class dbdCSS extends dbdController
 	private function genButton($id, $p)
 	{
 		$dir = DBD_ASSET_DIR.$p['src'];
-		$srcs = array("body" => $dir.$p['src-body']);
+		$srcs = array('body' => $dir.$p['src-body']);
 		if (isset($p['src-shade']))
 			$srcs['shade'] = $dir.$p['src-shade'];
 		if (isset($p['src-high']))
@@ -1136,6 +1228,14 @@ class dbdCSS extends dbdController
 				"fg" => isset($p['foreground-color-disabled']) ? $p['foreground-color-disabled'] : isset($p['foreground-color']) ? $p['foreground-color'] : null,
 				"fc" => isset($p['font-color-disabled']) ? $p['font-color-disabled'] : $p['font-color'],
 				"ts" => isset($p['text-shadow-disabled']) ? $p['text-shadow-disabled'] : isset($p['text-shadow']) ? $p['text-shadow'] : null
+			);
+		}
+		if (isset($p['foreground-color-loading']) || isset($p['font-color-loading']) || isset($p['text-shadow-loading']))
+		{
+			$butts[] = array(
+				"fg" => isset($p['foreground-color-loading']) ? $p['foreground-color-loading'] : isset($p['foreground-color']) ? $p['foreground-color'] : null,
+				"fc" => isset($p['font-color-loading']) ? $p['font-color-loading'] : $p['font-color'],
+				"ts" => isset($p['text-shadow-loading']) ? $p['text-shadow-loading'] : isset($p['text-shadow']) ? $p['text-shadow'] : null
 			);
 		}
 		$out_ht = ($btn_ht + $p['offset']) * count($butts) - $p['offset'];
@@ -1217,6 +1317,8 @@ class dbdCSS extends dbdController
 			unset($params['current']);
 		if (key_exists('disabled', $params))
 			unset($params['disabled']);
+		if (key_exists('loading', $params))
+			unset($params['loading']);
 		$str .= ".".md5(strtolower(implode(",", $params)));
 		$file = DBD_ASSET_DIR.$params['cache'].$str.".".$type;
 		return $file;

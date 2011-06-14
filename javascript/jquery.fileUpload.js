@@ -1,6 +1,6 @@
 (function ($){
-	$.fileUpload = function (options){
-		return $.fileUpload.impl.init(options);
+	$.fileUpload = function (options, context, key){
+		return $.fileUpload.impl.init(options, context, key);
 	};
 	$.fileUpload.checkProgress = function (){
 		return $.fileUpload.impl.checkProgress();
@@ -27,6 +27,7 @@
 		showCancel: true,
 		interval: 600,
 		progressUrl: '/index/uploadProgress/',
+		progressCallback: null,
 		idUploadKey: 'APC_UPLOAD_PROGRESS',
 		idLoader: 'ajaxLoader',
 		idProgressDiv: 'FUuploadProgress',
@@ -71,6 +72,7 @@
 
 	$.fileUpload.impl = {
 		opts: {},
+		context: {},
 		timer: null,
 		input: $(),
 		iFrame: $(),
@@ -82,11 +84,12 @@
 		timeLeft: $(),
 		cancelBtn: $(),
 		count: 0,
-		init: function (options){
+		init: function (options, context, key){
 			var f = this;
 			f.opts = $.extend({}, $.fileUpload.defaults, options);
-			if ($('#' + f.opts.idUploadKey).size()){
-				$('#' + f.opts.idUploadKey).val($('#' + f.opts.idUploadKey).val().replace(/-.+$/,'') + '-' + f.count);
+			f.context = $(context || window);
+			if (f.context.find('#' + f.opts.idUploadKey).size()){
+				f.context.find('#' + f.opts.idUploadKey).val(key || f.context.find('#' + f.opts.idUploadKey).val().replace(/-.+$/,'') + '-' + f.count);
 				f.bind();
 			}
 		},
@@ -134,9 +137,17 @@
 		},
 		checkProgress: function (){
 			var f = this;
-			$.getJSON(f.opts.progressUrl, {id: $('#' + f.opts.idUploadKey).val()}, function (data){
-				f.updateProgress(data);
-			});
+			var p = {id: f.context.find('#' + f.opts.idUploadKey).val()};
+			if (f.opts.progressCallback){
+				f.opts.progressCallback(p).done(function (data){
+					f.updateProgress(data);
+				});
+
+			}else{
+				$.getJSON(f.opts.progressUrl, p).done(function (data){
+					f.updateProgress(data);
+				});
+			}
 			f.timer = setTimeout('$.fileUpload.checkProgress()', f.opts.interval);
 		},
 		updateProgress: function (data){
@@ -152,8 +163,8 @@
 				timeLeft: 'Calculating...',
 				avgSpeed: ''
 			});
-			var id = $('#' + this.opts.idUploadKey).val();
-			$('#' + this.opts.idUploadKey).val(id.substring(0, id.length - 1) + (this.count++));
+			var id = this.context.find('#' + this.opts.idUploadKey).val();
+			this.context.find('#' + this.opts.idUploadKey).val(id.substring(0, id.length - 1) + (this.count++));
 		},
 		show: function (){
 			var f = this;
@@ -194,7 +205,7 @@
 		},
 		bind: function (){
 			var f = this;
-			var $file = $(':file');
+			var $file = f.context.find(':file');
 			var $form = $file.parents('form');
 			$form.not('.' + f.opts.classBound).submit(function (e){
 				f.start(this);
@@ -203,7 +214,7 @@
 				f.change(this);
 			}).addClass(f.opts.classBound);
 			$form.each(function (){
-				if ($('#' + this.target).size() == 0){
+				if (f.context.find('#' + this.target).size() == 0){
 					$('<iframe/>')
 						.attr('id', this.target)
 						.attr('name', this.target)

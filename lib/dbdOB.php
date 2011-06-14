@@ -3,7 +3,7 @@
  * dbdOB.php :: dbdOB Class File
  *
  * @package dbdMVC
- * @version 1.0
+ * @version 1.1
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2011 by Don't Blink Design
  */
@@ -51,7 +51,10 @@ class dbdOB
 		{
 			//calculate size of gz'ed content (flush the gz'ed buffer)
 			ob_end_flush();
-			header('Content-Length: '.(ob_get_length() + 1));
+			$length = ob_get_length();
+			if (preg_match('/Mozilla.*Firefox/i', dbdMVC::getRequest()->get('HTTP_USER_AGENT')))
+				$length++;
+			header('Content-Length: '.$length);
 			//send to browser
 			ob_end_flush();
 			//for some reason we need both...

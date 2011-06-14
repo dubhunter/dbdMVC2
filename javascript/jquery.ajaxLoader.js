@@ -34,13 +34,16 @@
 		imageW: 16,
 		imageH: 16,
 		appendTo: '#pageAll',
-		zIndex: 10000
+		zIndex: 10000,
+		preloadClass: 'ajaxLoaderPrelaod',
+		preload: []
 	};
 
 	$.ajaxLoader.impl = {
 		opts: {},
 		overlay: {},
 		div: {},
+		preload: {},
 		msg: {},
 		image: {},
 		init: function (data, options){
@@ -90,6 +93,17 @@
 			this.msg = $('<span/>')
 				.text(this.opts.imageAlt)
 				.appendTo(this.div);
+			this.preload = $('<div/>')
+				.addClass(this.opts.preloadClass)
+				.hide()
+				.appendTo(this.overlay);
+			for (var i in this.opts.preload){
+				$('<img/>')
+					.attr('src', this.opts.preload[i])
+					.attr('alt', '')
+					.addClass(this.opts.preloadClass)
+					.appendTo(this.preload);
+			}
 			if (this.opts.bind)
 				this.bind();
 		},
@@ -100,6 +114,9 @@
 					a.loading();
 				});
 				this.div.bind('ajaxStop', function (){
+					a.doneLoading();
+				});
+				this.div.bind('ajaxError', function (){
 					a.doneLoading();
 				});
 			}

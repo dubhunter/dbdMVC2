@@ -3,7 +3,7 @@
  * dbdRequest.php :: dbdRequest Class File
  *
  * @package dbdMVC
- * @version 1.2
+ * @version 1.3
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2011 by Don't Blink Design
  */
@@ -21,6 +21,16 @@ class dbdRequest
 	 * @var string
 	 */
 	private $request_uri = null;
+	/**
+	 * PUT parameters since $_SUPER_GLOBAL's don't exist.
+	 * @var array
+	 */
+	private $_PUT = array();
+	/**
+	 * PUT parameters since $_SUPER_GLOBAL's don't exist.
+	 * @var array
+	 */
+	private $_DELETE = array();
 	/**
 	 * Additional parameters set at runtime since the $_SUPER_GLOBAL's seem to be read only.
 	 * @var array
@@ -43,6 +53,15 @@ class dbdRequest
 		else
 		{
 			$this->setRequestURI(preg_replace("/\?.*$/", "", key_exists('REDIRECT_URL', $_SERVER) ? $_SERVER['REDIRECT_URL'] : $_SERVER['REQUEST_URI']));
+		}
+		switch ($this->getHeader("REQUEST_METHOD"))
+		{
+			case 'PUT':
+				parse_str(file_get_contents('php://input'), $this->_PUT);
+				break;
+			case 'DELETE':
+				parse_str(file_get_contents('php://input'), $this->_DELETE);
+				break;
 		}
 	}
 	/**
@@ -72,7 +91,7 @@ class dbdRequest
 	}
     /**
      * Access values contained in the superglobals as public members
-     * Order of precedence: 1. GET, 2. POST, 3. COOKIE, 4. SERVER, 5. ENV
+     * Order of precedence: 1. GET, 2. POST, 3. PUT, 4. DELETE, 5. COOKIE, 6. SERVER, 7. ENV
      * @see http://msdn.microsoft.com/en-us/library/system.web.httprequest.item.aspx
      * @param string $key
      * @return mixed
@@ -89,6 +108,10 @@ class dbdRequest
                 return $_GET[$key];
             case isset($_POST[$key]):
                 return $_POST[$key];
+            case isset($this->_PUT[$key]):
+                return $this->_PUT[$key];
+            case isset($this->_DELETE[$key]):
+                return $this->_DELETE[$key];
             case isset($_COOKIE[$key]):
                 return $_COOKIE[$key];
             case isset($_SERVER[$key]):
@@ -115,6 +138,10 @@ class dbdRequest
             case isset($_GET[$key]):
                 return true;
             case isset($_POST[$key]):
+                return true;
+            case isset($this->_PUT[$key]):
+                return true;
+            case isset($this->_DELETE[$key]):
                 return true;
             case isset($_COOKIE[$key]):
                 return true;
@@ -164,6 +191,34 @@ class dbdRequest
         if (null === $key)
             return $_POST;
         return (isset($_POST[$key])) ? $_POST[$key] : $default;
+    }
+    /**
+     * Retrieve a member of the $this->_PUT fake superglobal.
+     * If no $key is passed, returns the entire $this->_PUT array.
+     * @todo How to retrieve from nested arrays
+     * @param string $key
+     * @param mixed $default Default value to use if key not found
+     * @return mixed Returns null if key does not exist
+     */
+    public function getPut($key = null, $default = null)
+    {
+        if (null === $key)
+            return $this->_PUT;
+        return (isset($this->_PUT[$key])) ? $this->_PUT[$key] : $default;
+    }
+    /**
+     * Retrieve a member of the $this->_DELETE fake superglobal.
+     * If no $key is passed, returns the entire $this->_DELETE array.
+     * @todo How to retrieve from nested arrays
+     * @param string $key
+     * @param mixed $default Default value to use if key not found
+     * @return mixed Returns null if key does not exist
+     */
+    public function getDelete($key = null, $default = null)
+    {
+        if (null === $key)
+            return $this->_DELETE;
+        return (isset($this->_DELETE[$key])) ? $this->_DELETE[$key] : $default;
     }
     /**
      * Retrieve a member of the $_COOKIE superglobal.

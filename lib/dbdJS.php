@@ -3,7 +3,7 @@
  * dbdJS.php :: dbdJS Class File
  *
  * @package dbdMVC
- * @version 1.10
+ * @version 1.11
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2011 by Don't Blink Design
  */
@@ -17,6 +17,18 @@
  */
 class dbdJS extends dbdController
 {
+	/**
+	 * Js file extension pattern.
+	 */
+	const JS_EXT_REGEX = '/\.js$/i';
+	/**
+	 * JS import regular expression.
+	 */
+	const IMPORT_REGEX = '%^//@import [\'\"]?([a-z0-9-_\./]+\.js)[\'\"]?;%i';
+	/**
+	 * JS caching info file list pattern.
+	 */
+	const CACHE_INFO_FILES = '/^[ ]?\*[ ]?@files (.+)$/i';
 	/**
 	 * Directory delimiter for passing a string of files
 	 */
@@ -73,14 +85,38 @@ class dbdJS extends dbdController
 		$this->cache_file = $this->genCacheName();
 		if (($path = dbdLoader::search($this->cache_file, DBD_CACHE_DIR)) && !$this->debug)
 		{
-			$this->cache_mtime = filemtime($path);
-			foreach ($this->files as $f)
+			$file = $path;
+			$this->ensureResource($file);
+			$files = array();
+			$sprites = array();
+			$info = false;
+			$i = 0;
+			while (!feof($file) && ($i++ == 0 || $info))
 			{
-				if (filemtime($f) > $this->cache_mtime)
+				$line = fgets($file, 16384);
+				if (!$info && preg_match("/^\/\*\*$/", $line))
+				{
+					$info = true;
+				}
+				elseif (preg_match(self::CACHE_INFO_FILES, $line, $tmp))
+				{
+					$files = explode(",", $tmp[1]);
+				}
+				elseif (preg_match("/^[ ]?\*\/$/", $line))
+				{
+					$info = false;
+					break;
+				}
+			}
+			$this->cache_mtime = filemtime($path);
+			foreach ($files as $f)
+			{
+				if (file_exists(DBD_JS_PLUG_DIR.$f) && filemtime(DBD_JS_PLUG_DIR.$f) > $this->cache_mtime)
+					return false;
+				if (file_exists(DBD_JS_DIR.$f) && filemtime(DBD_JS_DIR.$f) > $this->cache_mtime)
 					return false;
 			}
-			$this->files = array();
-			$this->addFile($this->cache_file, DBD_CACHE_DIR);
+			$this->dumpFile($file);
 			return true;
 		}
 		return false;
@@ -93,8 +129,43 @@ class dbdJS extends dbdController
 		if (is_writable(DBD_CACHE_DIR))
 		{
 			$file = DBD_CACHE_DIR.$this->cache_file;
-			@file_put_contents($file, $this->buffer);
+			$info = "/**\n";
+			$info .= " * @files ".implode(",", $this->files)."\n";
+			$info .= " */\n";
+			@file_put_contents($file, $info.$this->buffer);
 			$this->cache_mtime = filemtime($file);
+		}
+	}
+	/**
+	 * Parse js files for import statements and recurse when found.
+	 * Dump files upon no match.
+	 * @param string $file
+	 * @param string $dir
+	 * @throws dbdException
+	 */
+	private function parseImports($file, $dir)
+	{
+		if (!preg_match(self::JS_EXT_REGEX, $file))
+			$file .= ".js";
+		$path = dbdLoader::search($file, $dir);
+		if ($path === false)
+			throw new dbdException("Invalid file (".$file.")!");
+		$this->files[] = $dir.$file;
+		$this->ensureResource($path);
+		$this->buffer .= "\n/* dbdJS(".$file.") */\n";
+		while (!feof($path))
+		{
+			$this->line = fgets($path, 4096);
+			if (preg_match(self::IMPORT_REGEX, $this->line, $tmp))
+			{
+				$this->parseImports($tmp[1], $dir);
+			}
+			else
+			{
+				$this->buffer .= $this->line;
+				$this->dumpFile($path);
+				break;
+			}
 		}
 	}
 	/**
@@ -119,27 +190,25 @@ class dbdJS extends dbdController
 		$this->buffer = $vars.$this->buffer;
 	}
 	/**
-	 * Read and close a file.
+	 * Dump and close a file.
 	 * <b>Note:</b> Can except a string file name or open resource.
 	 * @param mixed $fp
 	 */
-	private function readFiles()
+	private function dumpFile(&$fp)
 	{
-		foreach ($this->files as $fp)
-		{
-			$this->buffer .= "\n/**\n * ".get_class()."(".$fp.")\n */\n";
-			$this->ensureResource($fp);
-			while (!feof($fp))
-				$this->buffer .= fgets($fp, 4096);
-			fclose($fp);
-		}
+		$this->ensureResource($fp);
+		while (!feof($fp))
+			$this->buffer .= fgets($fp, 4096);
+		fclose($fp);
 	}
 	/**
 	 * Minify buffer.
 	 */
 	private function minify()
 	{
-		if (dbdLoader::search("jsMin.php") && class_exists("JSMin"))
+		if (dbdLoader::search("UglifyJS.php") && class_exists("UglifyJS") && UglifyJS::installed())
+			$this->buffer = UglifyJS::uglify($this->buffer);
+		elseif (dbdLoader::search("jsMin.php") && class_exists("JSMin"))
 			$this->buffer = JSMin::minify($this->buffer);
 	}
 	/**
@@ -163,27 +232,12 @@ class dbdJS extends dbdController
 	}
 	/**#@-*/
 	/**
-	 * Check a file for existence and then
-	 * add it to the array for later proccessing.
-	 * @param string $file
-	 * @param string $dir
-	 */
-	protected function addFile($file, $dir)
-	{
-		if (!preg_match("/^.+\.[jJ][sS]$/", $file))
-			$file .= ".js";
-		$path = dbdLoader::search($file, $dir);
-		if ($path === false)
-			throw new dbdException("Invalid file (".$file.")!");
-		$this->files[] = $path;
-	}
-	/**
 	 * Set headers, minify, and echo buffer.
 	 */
-	protected function output()
+	protected function output($cache = false)
 	{
-		$cache = $this->checkCache();
-		$this->readFiles();
+//		$cache = $this->checkCache();
+//		$this->readFiles();
 		if (!$cache && !$this->debug)
 		{
 			$this->minify();
@@ -228,17 +282,44 @@ class dbdJS extends dbdController
 	 */
 	public function doCombine()
 	{
+
 		$files = $this->getParam("files");
 		if (!is_array($files))
 			$files = array($files);
-		foreach ($files as $f)
+		try
 		{
-			$tmp = preg_split(self::DIR_DELIM_REGEX, $f);
-			$file = array_pop($tmp);
-			$dir = count($tmp) ? implode(DBD_DS, $tmp).DBD_DS : null;
-			$this->addFile($file, $dir);
+			$cache = $this->checkCache();
+			if (!$cache)
+			{
+				foreach ($files as $f)
+				{
+					$tmp = preg_split(self::DIR_DELIM_REGEX, $f);
+					$file = array_pop($tmp);
+					$dir = count($tmp) ? implode(DBD_DS, $tmp).DBD_DS : null;
+					$this->parseImports($file, $dir);
+				}
+			}
+			$this->output($cache);
 		}
-		$this->output();
+		catch (dbdException $e)
+		{
+			header("HTTP/1.1 ".$e->getCode()." ".$e->getMessage());
+			dbdLog($e->getCode()." - ".$e->getMessage());
+			echo $e->getCode()." - ".$e->getMessage();
+		}
+
+
+//		$files = $this->getParam("files");
+//		if (!is_array($files))
+//			$files = array($files);
+//		foreach ($files as $f)
+//		{
+//			$tmp = preg_split(self::DIR_DELIM_REGEX, $f);
+//			$file = array_pop($tmp);
+//			$dir = count($tmp) ? implode(DBD_DS, $tmp).DBD_DS : null;
+//			$this->addFile($file, $dir);
+//		}
+//		$this->output();
 	}
 	/**
 	 * Generate a combine url from an array of files
@@ -248,6 +329,8 @@ class dbdJS extends dbdController
 	 */
 	public static function genURL($files = array(), $vars = array())
 	{
+		if (count($files) == 1 && count($vars) == 0)
+			return DBD_DS.$files[0];
 		for ($i = 0; $i < count($files); $i++)
 			$files[$i] = str_replace(DBD_DS, ",", $files[$i]);
 		$vars['files'] = $files;
