@@ -166,7 +166,6 @@ var dbdMVC = function (){
 		_request = new dbdRequest(uri, data);
 		_router = new dbdRouter();
 		_dispatcher = new dbdDispatcher();
-		var defaultError = window.onerror;
 	};
 
 	var _dispatch = function (){
@@ -345,10 +344,12 @@ var dbdRequest = Class.extend({
 	_post: {},
 	__construct: function (uri, data){
 		this.setRequestURI(uri || window.location.hash);
+		this._params = {};
 		this._post = data || {};
 	},
 	setRequestURI: function (uri){
 		this._request_uri = uri.replace(/\?.*$/, '');
+		this._query = {};
 		if (uri.indexOf('?') > 0){
 			var parts = uri.replace(/^.*\?/, '').split(/&/);
 			for (var i = 0; i < parts.length; i++){
