@@ -738,10 +738,11 @@ var dbdRunner = function (){
 			}
 			return false;
 		},
-		timed: function (name, interval, task, context, noFirstRun){
-			if (arguments.length == 1 || arguments.length == 2 || $.isFunction(task)){
-				if (!_timed[name]){
-					_timed[name] = {
+		timed: function (group, name, interval, task, context, noFirstRun){
+			if (!_timed[group]) _timed[group] = {};
+			if (arguments.length == 2 || arguments.length == 3 || $.isFunction(task)){
+				if (!_timed[group][name]){
+					_timed[group][name] = {
 						deferred: $.Deferred(),
 						firstRun: true,
 						started: false,
@@ -750,49 +751,59 @@ var dbdRunner = function (){
 						timer: 0,
 						interval: interval,
 						task: function (){
-							_timed[name].started = true;
-							if (!(_timed[name].firstRun && noFirstRun)){
-								_timed[name].running = true;
+							_timed[group][name].started = true;
+							if (!(_timed[group][name].firstRun && noFirstRun)){
+								_timed[group][name].running = true;
 								$.when(task.call(context || window)).done(function (){
-									_timed[name].firstRun = false;
-									_timed[name].running = false;
-									_timed[name].timer = setTimeout(_timed[name].task, _timed[name].interval);
-									_timed[name].deferred.resolveWith(task, arguments);
+									_timed[group][name].firstRun = false;
+									_timed[group][name].running = false;
+									_timed[group][name].timer = setTimeout(_timed[group][name].task, _timed[group][name].interval);
+									_timed[group][name].deferred.resolveWith(task, arguments);
 								}).fail(function (){
-									_timed[name].firstRun = false;
-									_timed[name].running = false;
-									_timed[name].failed = true;
-									_timed[name].timer = setTimeout(_timed[name].task, _timed[name].interval);
-									_timed[name].deferred.rejectWith(task, arguments);
+									_timed[group][name].firstRun = false;
+									_timed[group][name].running = false;
+									_timed[group][name].failed = true;
+									_timed[group][name].timer = setTimeout(_timed[group][name].task, _timed[group][name].interval);
+									_timed[group][name].deferred.rejectWith(task, arguments);
 								});
 							}else{
-								_timed[name].timer = setTimeout(_timed[name].task, _timed[name].interval);
-								_timed[name].firstRun = false;
+								_timed[group][name].timer = setTimeout(_timed[group][name].task, _timed[group][name].interval);
+								_timed[group][name].firstRun = false;
 							}
 						}
 					};
 				}
-				if (!_timed[name].started){
-					_timed[name].task();
-				}else if (arguments.length == 2 && !_timed[name].running){
-					clearTimeout(_timed[name].timer);
-					_timed[name].task();
+				if (!_timed[group][name].started){
+					_timed[group][name].task();
+				}else if (arguments.length == 3 && !_timed[group][name].running){
+					clearTimeout(_timed[group][name].timer);
+					_timed[group][name].task();
 				}
-				return _timed[name].deferred.promiseForever();
+				return _timed[group][name].deferred.promiseForever();
 			}
 			return false;
 		},
-		clearTimed: function (name){
+		clearTimed: function (group, name){
 			if (name){
-				if (_timed[name] && _timed[name].started){
-					clearTimeout(_timed[name].timer);
-					delete _timed[name];
+				if (_timed[group] && _timed[group][name] && _timed[group][name].started){
+					clearTimeout(_timed[group][name].timer);
+					delete _timed[group][name];
+				}
+			}else if (group){
+				if (_timed[group]){
+					for (var name in _timed[group]){
+						if (_timed[group][name].started)
+							clearTimeout(_timed[group][name].timer);
+						delete _timed[group][name];
+					}
 				}
 			}else{
-				for (var name in _timed){
-					if (_timed[name].started)
-						clearTimeout(_timed[name].timer);
-					delete _timed[name];
+				for (var group in _timed){
+					for (var name in _timed[group]){
+						if (_timed[group][name].started)
+							clearTimeout(_timed[group][name].timer);
+						delete _timed[group][name];
+					}
 				}
 			}
 		}

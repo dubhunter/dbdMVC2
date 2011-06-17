@@ -109,6 +109,7 @@
 			var time = date instanceof Date ? date : $.global.parseDate(date),
 				now = new Date(), diff, n, past;
 			diff = now.getTime() - time.getTime();
+			if (diff < 0) diff = 0;
 			if (Math.floor(diff / times.day) > 0){
 				time.setHours(0, 0, 0, 0);
 				diff = now.getTime() - time.getTime();
