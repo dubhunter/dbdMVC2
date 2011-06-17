@@ -75,7 +75,7 @@ String.prototype.lcfirst = function (){
 	return this;
 };
 String.prototype.nl2br = function (){
-	return this.replace(/\n/, '<br />');
+	return this.replace(/\n/g, '<br />');
 };
 String.prototype.truncate = function (length, string){
 	if (this.length > length){
@@ -766,6 +766,7 @@ var dbdRunner = function (){
 								});
 							}else{
 								_timed[name].timer = setTimeout(_timed[name].task, _timed[name].interval);
+								_timed[name].firstRun = false;
 							}
 						}
 					};

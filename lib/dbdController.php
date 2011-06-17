@@ -198,7 +198,7 @@ abstract class dbdController
 	{
 		$this->autoRender();
 		if ($this->win_type != self::WIN_TYPE_IFRAME && $this->session !== null)
-			$this->session->logLanding($this->getController(), $this->getAction(), $this->getParams(), self::$title, $this->win_type, $this->response_code);
+			$this->session->logLanding($this->getController(), $this->getAction(), $this->getParams(), self::$title, $this->win_type, $this->response_code, $this->getRequestMethod());
 	}
 	/**
 	 * Disable auto render on destruction.

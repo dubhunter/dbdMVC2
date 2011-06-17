@@ -1,6 +1,8 @@
 (function(jQuery) {
 	$.fn.charLimit = function(limit, counter, limit2, counter2, negativeClass) {
 		$.each(this, function (){
+			if ($(this).is('.clb'))
+				return true;
 			var that = this;
 			var isCtrl = false;
 			updateCounter();
@@ -34,7 +36,8 @@
 					this.value = this.value.substr(0, limit);
 				}
 				updateCounter();
-			});
+			}).addClass('clb');
 		});
+		return this;
 	};
 })(jQuery);
