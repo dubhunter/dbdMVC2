@@ -162,7 +162,7 @@ var dbdMVC = function (){
 	var _dispatcher = {};
 
 	var _init = function (event, uri, data){
-		_event = event || null;
+		_event = event || _event;
 		_request = new dbdRequest(uri, data);
 		_router = new dbdRouter();
 		_dispatcher = new dbdDispatcher();
@@ -590,6 +590,22 @@ var dbdDataList = Class.extend({
 	unshift: function (data){
 		for (var i = data.length - 1; i >= 0; i--)
 			this._list.unshift(data[i]);
+		return this;
+	},
+	merge: function (data, key){
+		var merged;
+		for (var i = data.length - 1; i >= 0; i--){
+			merged = false;
+			for (var i in this._list){
+				if (this._list[i][key] == data[i][key]){
+					this._list[i] = data[i];
+					merged = true;
+					break;
+				}
+			}
+			if (!merged)
+				this._list.unshift(data[i]);
+		}
 		return this;
 	},
 	replace: function (item, key){
