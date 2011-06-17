@@ -596,9 +596,9 @@ var dbdDataList = Class.extend({
 		var merged;
 		for (var i = data.length - 1; i >= 0; i--){
 			merged = false;
-			for (var i in this._list){
-				if (this._list[i][key] == data[i][key]){
-					this._list[i] = data[i];
+			for (var j in this._list){
+				if (this._list[j][key] == data[i][key]){
+					this._list[j] = data[i];
 					merged = true;
 					break;
 				}
