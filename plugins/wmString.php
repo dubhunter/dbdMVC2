@@ -397,7 +397,8 @@ class wmString
 	 */
 	public static function stripHtml($string)
 	{
-		return preg_replace(self::STRIP_HTML_FIND, self::STRIP_HTML_REPLACE, $string);
+		$return = preg_replace(self::STRIP_HTML_FIND, self::STRIP_HTML_REPLACE, $string);
+		return htmlspecialchars($string, ENT_QUOTES);
 	}
 	/**
 	 * Test if an email address is valid.

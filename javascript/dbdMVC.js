@@ -74,6 +74,19 @@ String.prototype.lcfirst = function (){
 		return this.substring(0, 1).toLowerCase() + this.substring(1);
 	return this;
 };
+String.prototype.escape = function (){
+	var c = [
+		['&', '&amp;'],
+		['"', '&quot;'],
+		['\'', '&#039;'],
+		['<', '&lt;'],
+		['>', '&gt;']
+	];
+	var s = this;
+	for (var i in c)
+		s = s.replace(c[i][0], c[i][1]);
+	return s;
+};
 String.prototype.nl2br = function (){
 	return this.replace(/\n/g, '<br />');
 };
@@ -840,7 +853,11 @@ var dbdController = Class.extend({
 	_init: function (){},
 	_forward: function (url){
 		var $D = $.Deferred();
-		window.location.assign(url || '/#!/');
+		url = url || '/#!/';
+		if (url.replace(/^\//, '') == window.location.hash)
+			$(window).trigger('hashchange');
+		else
+			window.location.assign(url);
 		$D.reject();
 		return $D.promise();
 	},
