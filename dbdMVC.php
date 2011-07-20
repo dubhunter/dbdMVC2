@@ -2,7 +2,7 @@
 /**
  * dbdMVC.php :: dbdMVC Include File & Front Controller Class
  *
- * dbdMVC version 2.1.1
+ * dbdMVC version 2.1.2
  * Copyright (c) 2006-2011 by Don't Blink Design
  * http://dbdmvc.com
  *

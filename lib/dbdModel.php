@@ -3,7 +3,7 @@
  * dbdModel.php :: dbdModel Class File
  *
  * @package dbdMVC
- * @version 1.15
+ * @version 1.16
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2011 by Don't Blink Design
  */
