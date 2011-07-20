@@ -36,6 +36,8 @@ abstract class dbdModel
 {
 	const CONST_TABLE_NAME = 'TABLE_NAME';
 	const CONST_TABLE_KEY = 'TABLE_KEY';
+	const OPT_IDS_ONLY = 'dbdModel::OPT_IDS_ONLY';
+	const OPT_GROUP_BY = 'dbdModel::OPT_GROUP_BY';
 	/**
 	 * A list of class reflections to limit overhead
 	 * @var array ReflectionClass
@@ -169,13 +171,15 @@ abstract class dbdModel
 	 * @param array $table_keys
 	 * @return array dbdModel
 	 */
-	public static function getCount($table_keys = array())
+	public static function getCount($table_keys = array(), $options = array())
 	{
 		self::ensureDB();
 		$class = get_called_class();
 		$tmp = array();
 		$sql = "select count(1) from `".self::getConstant($class, self::CONST_TABLE_NAME)."`";
 		$sql .= self::buildWhereClause($table_keys);
+		if (is_array($options) && key_exists(self::OPT_GROUP_BY, $options) && $options[self::OPT_GROUP_BY] !== null)
+			$sql .= " group by ".$options[self::OPT_GROUP_BY];
 		return self::$db->prepExec($sql, $table_keys)->fetchColumn();
 	}
 	/**
@@ -186,19 +190,21 @@ abstract class dbdModel
 	 * @param boolean $ids_only
 	 * @return array dbdModel
 	 */
-	public static function getAll($table_keys = array(), $order = null, $limit = null, $ids_only = false)
+	public static function getAll($table_keys = array(), $order = null, $limit = null, $options = array())
 	{
 		self::ensureDB();
 		$class = get_called_class();
 		$tmp = array();
 		$sql = "select `".self::getConstant($class, self::CONST_TABLE_KEY)."` from `".self::getConstant($class, self::CONST_TABLE_NAME)."`";
 		$sql .= self::buildWhereClause($table_keys);
+		if (is_array($options) && key_exists(self::OPT_GROUP_BY, $options) && $options[self::OPT_GROUP_BY] !== null)
+			$sql .= " group by ".$options[self::OPT_GROUP_BY];
 		if ($order !== null)
 			$sql .= " order by ".$order;
 		if ($limit !== null)
 			$sql .= " limit ".$limit;
 		foreach (self::$db->prepExec($sql, $table_keys)->fetchAll(PDO::FETCH_COLUMN, 0) as $id)
-			$tmp[] = $ids_only ? $id : self::getReflection($class)->newInstance($id);
+			$tmp[] = $options === true || (is_array($options) && key_exists(self::OPT_IDS_ONLY, $options) && $options[self::OPT_IDS_ONLY]) ? $id : self::getReflection($class)->newInstance($id);
 		return $tmp;
 	}
 	/**
@@ -206,7 +212,7 @@ abstract class dbdModel
 	 * @param array $table_keys
 	 * @return string
 	 */
-	private static function buildWhereClause(&$table_keys = array(), $group = false)
+	private static function buildWhereClause(&$table_keys = array(), $group = false, $options = array())
 	{
 		$sql = "";
 		$i = 0;

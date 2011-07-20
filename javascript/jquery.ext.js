@@ -57,6 +57,11 @@
 				return n;
 			}
 		},
+		round: function (n, precision){
+			n = n || 0;
+			var m = precision ? Math.pow(10, precision) : 1;
+			return Math.round(n * m) / m;
+		},
 		formatNumber: function (n){
 			n = n || 0;
 			var neg = false;
@@ -71,7 +76,6 @@
 				s = n[n.length - i - 1] + s;
 			}
 			return (neg ? '-' : '' ) + s;
-
 		},
 		timePast: function (date, short_names, lower){
 			var times = {
