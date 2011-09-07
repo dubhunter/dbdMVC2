@@ -3,7 +3,7 @@
  * dbdCSS.php :: dbdCSS Class File
  *
  * @package dbdMVC
- * @version 1.33
+ * @version 1.34
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2011 by Don't Blink Design
  */
@@ -945,7 +945,7 @@ class dbdCSS extends dbdController
 				}
 				if (count($b['active']['css']))
 				{
-					$tmp .= $s.":active{";
+					$tmp .= $s.".active,".$s.":active{";
 					foreach ($b['active']['css'] as $k => $v)
 						$tmp .= $k.": ".$v.";";
 					$tmp .= "}";

@@ -178,20 +178,19 @@ function resizeImage(&$src, $w, $h, $force_upscale = false)
 
 function cropImage(&$src, $w, $h)
 {
-
 	$sw = imagesx($src);
 	$sh = imagesy($src);
 	if ($sw > $sh)
 	{
 		$cw = $ch = $sh;
-		$x = ($sw - $cw) / 2;
+		$x = floor(($sw - $cw) / 2);
 		$y = 0;
 	}
 	else
 	{
 		$cw = $ch = $sw;
 		$x = 0;
-		$y = ($sh - $ch) / 2;
+		$y = floor(($sh - $ch) / 2);
 	}
 	$out = imagecreatetruecolor($w, $h);
 	imagealphablending($out, false);
@@ -244,6 +243,44 @@ function cropResizeImage(&$src, $w, $h, $align = 1)
 	imagealphablending($out, false);
 	imagesavealpha($out, true);
 	imagecopyresampled($out, $src, 0, 0, $x, $y, $w, $h, $cw, $ch);
+	return $out;
+}
+
+function padImage(&$src, $w, $h, $bgcolor = '7fffffff')
+{
+	$sw = imagesx($src);
+	$sh = imagesy($src);
+	if ($sw < $w)
+	{
+		$px = 0;
+		$x = floor(($w - $sw) / 2);
+		$pw = $sw;
+	}
+	else
+	{
+		$x = 0;
+		$px = floor(($sw - $w) / 2);
+		$pw = $w;
+	}
+	if ($sh < $h)
+	{
+		$py = 0;
+		$y = floor(($h - $sh) / 2);
+		$ph = $sh;
+	}
+	else
+	{
+		$y = 0;
+		$py = floor(($sh - $h) / 2);
+		$ph = $h;
+	}
+	$out = imagecreatetruecolor($w, $h);
+	imagealphablending($out, false);
+	imagesavealpha($out, true);
+	$bg = new GDColor($out, $bgcolor);
+	imagefill($out, 0, 0, $bg->getColor());
+//	imagecolortransparent($out, $bg->getColor());
+	imagecopyresampled($out, $src, $x, $y, $px, $py, $pw, $ph, $pw, $ph);
 	return $out;
 }
 
