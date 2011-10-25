@@ -470,7 +470,12 @@ abstract class dbdController
 		if (is_array($attachments))
 		{
 			foreach($attachments as $attachment)
-				$mime->addAttachment($attachment, wmFileSystem::mimeType($attachment), basename($attachment));
+			{
+				if (is_array($attachment))
+					$mime->addAttachment($attachment[0], $attachment[1], $attachment[2], is_file($attachment[0]));
+				else
+					$mime->addAttachment($attachment, wmFileSystem::mimeType($attachment), basename($attachment));
+			}
 		}
 		$body = $mime->get();
 		$hdrs = $mime->headers($hdrs);

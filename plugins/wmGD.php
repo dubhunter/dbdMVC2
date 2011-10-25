@@ -176,6 +176,38 @@ function resizeImage(&$src, $w, $h, $force_upscale = false)
 	return $out;
 }
 
+function resizeFillImage(&$src, $w, $h, $force_upscale = false)
+{
+	$sw = imagesx($src);
+	$sh = imagesy($src);
+	if ($sw > $sh)
+	{
+		$ow = $w;
+		$oh = $w / $sw * $sh;
+		$oy = round(($h - $oh) / 2);
+		$ox = 0;
+	}
+	else
+	{
+		$oh = $h;
+		$ow = $h / $sh * $sw;
+		$ox = round(($w - $ow) / 2);
+		$oy = 0;
+	}
+	if (!$force_upscale)
+	{
+		$ow = min($ow, $sw);
+		$oh = min($oh, $sh);
+	}
+	$out = imagecreatetruecolor($w, $h);
+	$color = imagecolorallocate($out, 255, 255, 255);
+	imagefill($out, 0, 0, $color);
+	imagealphablending($out, false);
+	imagesavealpha($out, true);
+	imagecopyresampled($out, $src, $ox, $oy, 0, 0, $ow, $oh, $sw, $sh);
+	return $out;
+}
+
 function cropImage(&$src, $w, $h)
 {
 	$sw = imagesx($src);
