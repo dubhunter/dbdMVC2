@@ -3,7 +3,7 @@
  * dbdJS.php :: dbdJS Class File
  *
  * @package dbdMVC
- * @version 1.11
+ * @version 1.12
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2011 by Don't Blink Design
  */
@@ -283,15 +283,15 @@ class dbdJS extends dbdController
 	public function doCombine()
 	{
 
-		$files = $this->getParam("files");
-		if (!is_array($files))
-			$files = array($files);
+		$this->files = $this->getParam("files");
+		if (!is_array($this->files))
+			$this->files = array($files);
 		try
 		{
 			$cache = $this->checkCache();
 			if (!$cache)
 			{
-				foreach ($files as $f)
+				foreach ($this->files as $f)
 				{
 					$tmp = preg_split(self::DIR_DELIM_REGEX, $f);
 					$file = array_pop($tmp);
