@@ -414,7 +414,7 @@ abstract class dbdController
 	 */
 	protected function getURL($get_params = false, $host = false)
 	{
-		return ($host ? "http://".$this->router->getParam("HTTP_HOST") : "").$this->router->getURL($get_params);
+		return ($host ? ($this->router->getParam('HTTPS') ? 'https' : 'http').'://'.$this->router->getParam('HTTP_HOST') : '').$this->router->getURL($get_params);
 	}
 	/**
 	 * Get current request method.
