@@ -216,17 +216,17 @@ class dbdMVC
 	private $error_log = null;
 	/**
 	 * Instance of dbdRequest
-	 * @var object
+	 * @var object dbdRequest
 	 */
 	private $request = null;
 	/**
 	 * Instance of dbdRouter
-	 * @var object
+	 * @var object dbdRouter
 	 */
 	private $router = null;
 	/**
 	 * Instance of dbdDispatcher
-	 * @var object
+	 * @var object dbdDispatcher
 	 */
 	private $dispatcher = null;
 	/**
@@ -343,7 +343,7 @@ class dbdMVC
 	}
 	/**
 	 * Set error_log property.
-	 * @param string $error
+	 * @param string $path
 	 */
 	public static function setErrorLog($path)
 	{

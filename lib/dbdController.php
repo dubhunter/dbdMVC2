@@ -3,7 +3,7 @@
  * dbdController.php :: dbdController Class File
  *
  * @package dbdMVC
- * @version 1.18
+ * @version 1.19
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2011 by Don't Blink Design
  */
@@ -268,8 +268,10 @@ abstract class dbdController
 		$errors = array();
 		if ($e instanceof dbdHoldableException)
 		{
+			/** @var $e dbdHoldableException */
 			foreach ($e->getHeld() as $he)
 			{
+				/** @var $he dbdHoldableException */
 				$this->response_code = $he->getCode();
 				$errors[] = $he->getMessage();
 			}

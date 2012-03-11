@@ -146,7 +146,7 @@ class dbdLoader
 	}
 	/**
 	 * Get controller directory
-	 * @return string
+	 * @return array
 	 */
 	public static function getControllerDirs()
 	{
