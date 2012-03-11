@@ -3,7 +3,7 @@
  * dbdSmarty.php :: dbdSmarty Class File
  *
  * @package dbdMVC
- * @version 1.20
+ * @version 1.22
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2011 by Don't Blink Design
  */
@@ -11,7 +11,7 @@
 /**
  * Load Smarty core class
  */
-dbdLoader::load("Smarty.class.php");
+dbdLoader::load('Smarty.class.php');
 /**
  * dbdMVC Smarty subclass
  * @package dbdMVC
@@ -24,31 +24,34 @@ class dbdSmarty extends Smarty
 	/**
 	 * Path to directory where smarty templates will live relative to view dir.
 	 */
-	const TEMPLATE_DIR = "templates";
+	const TEMPLATE_DIR = 'templates';
 	/**
 	 * Path to directory where smarty complied templates will live relative to view dir.
 	 */
-	const COMPILED_TEMPLATE_DIR = ".templates_c";
+	const COMPILED_TEMPLATE_DIR = '.templates_c';
 	/**
 	 * Path to directory where smarty configs will live relative to view dir.
 	 */
-	const CONFIG_DIR = "configs";
+	const CONFIG_DIR = 'configs';
 	/**
 	 * Path to directory where smarty cache will live relative to view dir.
 	 */
-	const CACHE_DIR = ".cache";
+	const CACHE_DIR = '.cache';
 	/**
-	 * Array of regex pairs for minifying the  xhtml.
+	 * Array of regex pairs for minifying the xhtml.
 	 * @var array
 	 */
 	private $minify_regex = array(
-		"printable_tabs" => array("%(?<=[^<>])\t(?=[^<>]*</(textarea|code|pre)>)%i", "&#09;"),
-		"printable_newlines" => array("%(?<=[^<>])\r?\n(?=[^<>]*</(textarea|code|pre)>)%i", "&#10;"),
-		"printable_spaces" => array("%(?<=[^<>])[ ](?=[^<>]*</(textarea|code|pre)>)%i", "&#32;"),
-		"whitespace" => array("/(\r?\n|\t)+/", ""),
-		"inline_spaces" => array("%(<[^/<>]+/?>+) (<[^/<>]+/?>+)%", "\\1\\2"),
-		"double_spaces" => array("/ [ ]+/", " "),
-		"comments" => array("/<!--(?![ ]?\[(end)?if).*?-->/", "")
+		'printable_tabs' => array('%(?<=[^<>])\t(?=[^<>]*</(textarea|code|pre)>)%i', '&#09;'),
+		'printable_newlines' => array('%(?<=[^<>])\r?\n(?=[^<>]*</(textarea|code|pre)>)%i', '&#10;'),
+		'printable_spaces' => array('%(?<=[^<>])[ ](?=[^<>]*</(textarea|code|pre)>)%i', '&#32;'),
+		'whitespace' => array('%(\r?\n|\t)+%', ' '),
+		'inline_spaces_block_left' => array('%(</?(address|blockquote|div|dl|fieldset|form|h1|h2|h3|h4|h5|h6|hr|noscript|ol|p|pre|table|ul|dd|dt|li|tbody|td|tfoot|th|thead|tr|button|del|ins|map|object|script)[^/<>]*/?>+|{{[^}]+}}) (</?[^/<>]*/?>+|{{[^}]+}})%i', '$1$3'),
+		'inline_spaces_block_left2' => array('%(</?(address|blockquote|div|dl|fieldset|form|h1|h2|h3|h4|h5|h6|hr|noscript|ol|p|pre|table|ul|dd|dt|li|tbody|td|tfoot|th|thead|tr|button|del|ins|map|object|script)[^/<>]*/?>+|{{[^}]+}}) (</?[^/<>]*/?>+|{{[^}]+}})%i', '$1$3'),
+		'inline_spaces_block_right' => array('%(</?[^/<>]*/?>+|{{[^}]+}}) (</?(address|blockquote|div|dl|fieldset|form|h1|h2|h3|h4|h5|h6|hr|noscript|ol|p|pre|table|ul|dd|dt|li|tbody|td|tfoot|th|thead|tr|button|del|ins|map|object|script)[^/<>]*/?>+|{{[^}]+}})%i', '$1$2'),
+		'inline_spaces_block_right2' => array('%(</?[^/<>]*/?>+|{{[^}]+}}) (</?(address|blockquote|div|dl|fieldset|form|h1|h2|h3|h4|h5|h6|hr|noscript|ol|p|pre|table|ul|dd|dt|li|tbody|td|tfoot|th|thead|tr|button|del|ins|map|object|script)[^/<>]*/?>+|{{[^}]+}})%i', '$1$2'),
+		'double_spaces' => array('%[ ]{2,}%', ' '),
+		'comments' => array('%<!--(?![ ]?\[(end)?if).*?-->%', '')
 	);
 	/**
 	 * Flag to designate if the template has been rendered.
@@ -127,10 +130,10 @@ class dbdSmarty extends Smarty
 
 		$this->plugins_dir[] = DBD_SMARTY_PLUG_DIR;
 
-		$this->register_outputfilter(array($this, "dbdIncludeFiles"));
+		$this->register_outputfilter(array($this, 'dbdIncludeFiles'));
 		if (!$this->debug)
-			$this->register_outputfilter(array($this, "dbdMinify"));
-		$this->register_outputfilter(array($this, "dbdTag"));
+			$this->register_outputfilter(array($this, 'dbdMinify'));
+		$this->register_outputfilter(array($this, 'dbdTag'));
 	}
 	/**
 	 * Set the template directory
@@ -197,14 +200,14 @@ class dbdSmarty extends Smarty
 	public function fetch($resource_name, $cache_id = null, $compile_id = null, $display = false, $no_includes = false, $no_minify = false)
 	{
 		if ($no_includes)
-			$this->unregister_outputfilter(array($this, "dbdIncludeFiles"));
+			$this->unregister_outputfilter(array($this, 'dbdIncludeFiles'));
 		if ($no_minify)
-			$this->unregister_outputfilter(array($this, "dbdMinify"));
+			$this->unregister_outputfilter(array($this, 'dbdMinify'));
 		$html = parent::fetch($resource_name, $cache_id, $compile_id, $display);
 		if ($no_includes)
-			$this->register_outputfilter(array($this, "dbdIncludeFiles"));
+			$this->register_outputfilter(array($this, 'dbdIncludeFiles'));
 		if ($no_minify && !$this->debug)
-			$this->register_outputfilter(array($this, "dbdMinify"));
+			$this->register_outputfilter(array($this, 'dbdMinify'));
 		return $html;
 	}
 	/**
@@ -299,7 +302,7 @@ class dbdSmarty extends Smarty
 	 */
 	public function initFlash()
 	{
-		if (class_exists("FlashLoaderSWFO", 1))
+		if (class_exists('FlashLoaderSWFO', 1))
 		{
 			if (!$this->flash_loader instanceof FlashLoaderSWFO)
 			{
@@ -330,7 +333,7 @@ class dbdSmarty extends Smarty
 	 */
 	public function initQuickTime()
 	{
-		if (class_exists("QTLoader", 1))
+		if (class_exists('QTLoader', 1))
 		{
 			if (!$this->qt_loader instanceof QTLoader)
 			{
@@ -375,9 +378,9 @@ class dbdSmarty extends Smarty
 		{
 			$href = dbdCSS::genURL($this->css_files, $this->css_vars);
 			if ($this->css_host !== null)
-				$href = "http://".$this->css_host.$href;
+				$href = 'http://'.$this->css_host.$href;
 			$tag = '<link href="'.$href.'" rel="stylesheet" type="text/css" media="all" />';
-			if (preg_match("/<script[^>]+>/", $tpl) && strpos($tpl, "<script") < strpos($tpl, "</head>"))
+			if (preg_match('/<script[^>]+>/', $tpl) && strpos($tpl, '<script') < strpos($tpl, '</head>'))
 				$tpl = preg_replace("/(<script[^>]+>)/", $tag."\n\\1", $tpl, 1);
 			else
 				$tpl = preg_replace("/(<\/head>)/", $tag."\n\\1", $tpl, 1);
@@ -388,14 +391,14 @@ class dbdSmarty extends Smarty
 			$ext = array();
 			foreach ($this->js_files as $j)
 			{
-				if (preg_match("%^https?://%", $j))
+				if (preg_match('%^https?://%', $j))
 					$ext[] = $j;
 				else
 					$int[] = $j;
 			}
 			$src = dbdJS::genURL($int, $this->js_vars);
 			if ($this->js_host !== null)
-				$src = "http://".$this->js_host.$src;
+				$src = 'http://'.$this->js_host.$src;
 			$tag = "";
 			foreach (array_merge(array($src), $ext) as $s)
 				$tag .= '<script type="text/javascript" src="'.$s.'"></script>';
@@ -451,7 +454,7 @@ class dbdSmarty extends Smarty
 	public function dbdTag($tpl, $smarty)
 	{
 		$tag = "<!--".dbdMVC::getAppName()." (".dbdMVC::getExecutionTime().")-->\n";
-		if (preg_match("/(<\/html>)/", $tpl))
+		if (preg_match('%(</html>)%', $tpl))
 			$tpl .= $tag;
 		return $tpl;
 	}
