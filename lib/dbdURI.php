@@ -216,7 +216,7 @@ class dbdURI
 		$uri = $that->prefix."/";
 		if ($controller)
 		{
-			if (!(count($args) == 0 && $controller == dbdDispatcher::DEFAULT_CONTROLLER && $action == dbdDispatcher::DEFAULT_ACTION))
+			if (!(count($args) == 0 && $controller == dbdDispatcher::DEFAULT_CONTROLLER && ($action == dbdDispatcher::DEFAULT_ACTION || empty($action))))
 				$uri .= $controller."/";
 			$cplist = self::getControllerPositionList($controller);
 			for ($i = 0; $i < count($cplist); $i++)
