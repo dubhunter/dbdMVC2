@@ -572,7 +572,7 @@ var dbdApi = Class.extend({
 		return this._request(endpoint, data, 'DELETE');
 	},
 	options: function (endpoint){
-		return this._request(endpoint, {}, 'OPTIONS', true);
+		return this._request(endpoint, {}, 'OPTIONS');
 	}
 });
 
