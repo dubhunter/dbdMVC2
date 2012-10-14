@@ -3,7 +3,7 @@
  * dbdURI.php :: dbdURI Class File
  *
  * @package dbdMVC
- * @version 1.15
+ * @version 1.16
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2011 by Don't Blink Design
  */
@@ -216,7 +216,8 @@ class dbdURI
 		$uri = $that->prefix."/";
 		if ($controller)
 		{
-			$uri .= $controller."/";
+			if (!(count($args) == 0 && $controller == dbdDispatcher::DEFAULT_CONTROLLER && ($action == dbdDispatcher::DEFAULT_ACTION || empty($action))))
+				$uri .= $controller."/";
 			$cplist = self::getControllerPositionList($controller);
 			for ($i = 0; $i < count($cplist); $i++)
 			{
@@ -225,10 +226,6 @@ class dbdURI
 					$uri .= preg_replace("/\//", "%5C/", rawurlencode($args[$cplist[$i]]))."/";
 					unset($args[$cplist[$i]]);
 				}
-//				else if ((!empty($action) && $action != dbdDispatcher::DEFAULT_ACTION) || count($args) > 0)
-//				{
-//					$uri .= "null/";
-//				}
 			}
 			if (empty($action))
 				$action = dbdDispatcher::DEFAULT_ACTION;

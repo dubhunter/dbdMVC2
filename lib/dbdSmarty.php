@@ -46,10 +46,10 @@ class dbdSmarty extends Smarty
 		'printable_newlines' => array('%(?<=[^<>])\r?\n(?=[^<>]*</(textarea|code|pre)>)%i', '&#10;'),
 		'printable_spaces' => array('%(?<=[^<>])[ ](?=[^<>]*</(textarea|code|pre)>)%i', '&#32;'),
 		'whitespace' => array('%(\r?\n|\t)+%', ' '),
-		'inline_spaces_block_left' => array('%(</?(address|blockquote|div|dl|fieldset|form|h1|h2|h3|h4|h5|h6|hr|noscript|ol|p|pre|table|ul|dd|dt|li|tbody|td|tfoot|th|thead|tr|button|del|ins|map|object|script)[^/<>]*/?>+|{{[^}]+}}) (</?[^/<>]*/?>+|{{[^}]+}})%i', '$1$3'),
-		'inline_spaces_block_left2' => array('%(</?(address|blockquote|div|dl|fieldset|form|h1|h2|h3|h4|h5|h6|hr|noscript|ol|p|pre|table|ul|dd|dt|li|tbody|td|tfoot|th|thead|tr|button|del|ins|map|object|script)[^/<>]*/?>+|{{[^}]+}}) (</?[^/<>]*/?>+|{{[^}]+}})%i', '$1$3'),
-		'inline_spaces_block_right' => array('%(</?[^/<>]*/?>+|{{[^}]+}}) (</?(address|blockquote|div|dl|fieldset|form|h1|h2|h3|h4|h5|h6|hr|noscript|ol|p|pre|table|ul|dd|dt|li|tbody|td|tfoot|th|thead|tr|button|del|ins|map|object|script)[^/<>]*/?>+|{{[^}]+}})%i', '$1$2'),
-		'inline_spaces_block_right2' => array('%(</?[^/<>]*/?>+|{{[^}]+}}) (</?(address|blockquote|div|dl|fieldset|form|h1|h2|h3|h4|h5|h6|hr|noscript|ol|p|pre|table|ul|dd|dt|li|tbody|td|tfoot|th|thead|tr|button|del|ins|map|object|script)[^/<>]*/?>+|{{[^}]+}})%i', '$1$2'),
+		'inline_spaces_block_left' => array('%(</?(address|blockquote|div|dl|fieldset|form|h1|h2|h3|h4|h5|h6|hr|noscript|ol|p|pre|table|ul|dd|dt|li|tbody|td|tfoot|th|thead|tr|button|del|ins|map|object|script)[^<>]*/?>+|{{[^}]+}}) (</?[^<>]*/?>+|{{[^}]+}})%i', '$1$3'),
+		'inline_spaces_block_left2' => array('%(</?(address|blockquote|div|dl|fieldset|form|h1|h2|h3|h4|h5|h6|hr|noscript|ol|p|pre|table|ul|dd|dt|li|tbody|td|tfoot|th|thead|tr|button|del|ins|map|object|script)[^<>]*/?>+|{{[^}]+}}) (</?[^<>]*/?>+|{{[^}]+}})%i', '$1$3'),
+		'inline_spaces_block_right' => array('%(</?[^<>]*/?>+|{{[^}]+}}) (</?(address|blockquote|div|dl|fieldset|form|h1|h2|h3|h4|h5|h6|hr|noscript|ol|p|pre|table|ul|dd|dt|li|tbody|td|tfoot|th|thead|tr|button|del|ins|map|object|script)[^<>]*/?>+|{{[^}]+}})%i', '$1$2'),
+		'inline_spaces_block_right2' => array('%(</?[^<>]*/?>+|{{[^}]+}}) (</?(address|blockquote|div|dl|fieldset|form|h1|h2|h3|h4|h5|h6|hr|noscript|ol|p|pre|table|ul|dd|dt|li|tbody|td|tfoot|th|thead|tr|button|del|ins|map|object|script)[^<>]*/?>+|{{[^}]+}})%i', '$1$2'),
 		'double_spaces' => array('%[ ]{2,}%', ' '),
 		'comments' => array('%<!--(?![ ]?\[(end)?if).*?-->%', '')
 	);
