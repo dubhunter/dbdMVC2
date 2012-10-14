@@ -117,7 +117,7 @@ class dbdDB
 	 * @param string $user
 	 * @param string $pass
 	 * @param array $driver_options
-	 * @return dbdDB object
+	 * @return dbdDB
 	 */
 	public static function getInstance($dsn = "", $user = "", $pass = "", $driver_options = array())
 	{

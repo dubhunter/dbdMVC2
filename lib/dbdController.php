@@ -32,11 +32,11 @@ abstract class dbdController
 	 */
 	protected static $title = "";
 	/**
-	 * @var dbdSession
+	 * @var dbdSession|null
 	 */
 	protected $session = null;
 	/**
-	 * @var dbdUser
+	 * @var dbdUser|null
 	 */
 	protected $user = null;
 	/**
