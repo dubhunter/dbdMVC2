@@ -3,7 +3,7 @@
  * dbdRequest.php :: dbdRequest Class File
  *
  * @package dbdMVC
- * @version 1.3
+ * @version 1.4
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2011 by Don't Blink Design
  */
@@ -16,6 +16,7 @@
 class dbdRequest
 {
 	/**
+	 * An array of rewrite rules
 	 * @var array
 	 */
 	private static $rewrites = array();
@@ -68,18 +69,20 @@ class dbdRequest
 				break;
 		}
 	}
-
 	/**
-	 * @param $pattern
-	 * @param $replacement
+	 * Add a regular expression rewrite
+	 * @param string $pattern
+	 * @param string $replacement
 	 */
 	public static function addRewrite($pattern, $replacement)
 	{
 		self::$rewrites[$pattern] = $replacement;
 	}
 	/**
-	 * @param $url
-	 * @return mixed
+	 * Perform url rewrites
+	 * @see dbdRequest::addRewrite()
+	 * @param string $url
+	 * @return string Rewritten url
 	 */
 	private function rewrite($url)
 	{
@@ -89,9 +92,7 @@ class dbdRequest
 			$tmp = explode("?", $rewrittenUrl, 2);
 			$rewrittenUrl = $tmp[0];
 			if (isset($tmp[1]))
-			{
 				parse_str($tmp[1], $this->params);
-			}
 		}
 		return $rewrittenUrl;
 	}
