@@ -1507,7 +1507,7 @@ class dbdCSS extends dbdController
 		if (is_string($fp))
 			$fp = @fopen($fp, 'r');
 		if (!is_resource($fp))
-			throw new dbdException(__CLASS__.": Invalid path (".$path.")!");
+			throw new dbdException(__CLASS__.": Invalid resource (".$fp.")!");
 	}
 	/**
 	 * Set css headers

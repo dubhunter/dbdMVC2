@@ -178,7 +178,7 @@ class dbdJS extends dbdController
 		if (is_string($fp))
 			$fp = @fopen($fp, 'r');
 		if (!is_resource($fp))
-			throw new dbdException("Invalid path (".$path.")!");
+			throw new dbdException(__CLASS__.": Invalid resource (".$fp.")!");
 	}
 	/**
 	 * Add external variables to the buffer.
@@ -285,7 +285,7 @@ class dbdJS extends dbdController
 
 		$this->files = $this->getParam("files");
 		if (!is_array($this->files))
-			$this->files = array($files);
+			$this->files = array($this->files);
 		try
 		{
 			$cache = $this->checkCache();
