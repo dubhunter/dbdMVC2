@@ -81,15 +81,17 @@ class dbdRequest
 	 * @param $url
 	 * @return mixed
 	 */
-	private function rewrite()
+	private function rewrite($url)
 	{
 		$rewrittenUrl = preg_replace(array_keys(self::$rewrites), array_values(self::$rewrites), $url, 1);
 		if ($rewrittenUrl != $url)
 		{
 			$tmp = explode("?", $rewrittenUrl, 2);
 			$rewrittenUrl = $tmp[0];
-			$this->set("REDIRECT_URL", $rewrittenUrl);
-			$this->set("REDIRECT_QUERY_STRING", isset($tmp[1]) ? $tmp[1] : "");
+			if (isset($tmp[1]))
+			{
+				parse_str($tmp[1], $this->params);
+			}
 		}
 		return $rewrittenUrl;
 	}
