@@ -297,7 +297,7 @@ class dbdMVC
 					$a = $v;
 					break;
 				default:
-					$p[ltrim($k, '-')] = urlencode($v);
+					$p[ltrim($k, '-')] = $v;
 					break;
 			}
 		}
