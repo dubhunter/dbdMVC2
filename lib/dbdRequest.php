@@ -16,6 +16,10 @@
 class dbdRequest
 {
 	/**
+	 * @var array
+	 */
+	private static $rewrites = array();
+	/**
 	 * HTTP request URI
 	 * @access private
 	 * @var string
@@ -64,13 +68,38 @@ class dbdRequest
 				break;
 		}
 	}
+
+	/**
+	 * @param $pattern
+	 * @param $replacement
+	 */
+	public static function addRewrite($pattern, $replacement)
+	{
+		self::$rewrites[$pattern] = $replacement;
+	}
+	/**
+	 * @param $url
+	 * @return mixed
+	 */
+	private function rewrite()
+	{
+		$rewrittenUrl = preg_replace(array_keys(self::$rewrites), array_values(self::$rewrites), $url, 1);
+		if ($rewrittenUrl != $url)
+		{
+			$tmp = explode("?", $rewrittenUrl, 2);
+			$rewrittenUrl = $tmp[0];
+			$this->set("REDIRECT_URL", $rewrittenUrl);
+			$this->set("REDIRECT_QUERY_STRING", isset($tmp[1]) ? $tmp[1] : "");
+		}
+		return $rewrittenUrl;
+	}
 	/**
 	 * Set request uri
 	 * @param string $uri
 	 */
 	public function setRequestURI($uri)
 	{
-		$this->request_uri = $uri;
+		$this->request_uri = $this->rewrite($uri);
 	}
 	/**
 	 * Get request uri
