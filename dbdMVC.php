@@ -110,12 +110,12 @@ define("DBD_DEBUG_CSS", 8);
  */
 if (!function_exists("dbdLog"))
 {
-	require_once(DBD_FIREPHP_DIR."FirePHP.class.php");
+//	require_once(DBD_FIREPHP_DIR."FirePHP.class.php");
 	function dbdLog($msg = "", $type = null, $dest = null)
 	{
-		$firephp = FirePHP::getInstance(true);
-		if (dbdMVC::PHPisExposed())
-			$firephp->log($msg, "dbdLog");
+//		$firephp = FirePHP::getInstance(true);
+//		if (dbdMVC::PHPisExposed())
+//			$firephp->log($msg, "dbdLog");
 		if (is_array($msg) || is_object($msg))
 			$msg = print_r($msg, 1);
 		if ($dest === null)
