@@ -43,7 +43,8 @@ class NotifyrClient {
 		$response = Requests::post(self::ENDPOINT . $resource, $opts);
 
 		if (!$response->ok) {
-			throw new Exception(__CLASS__ . ' Error: ' . $response->error, $response->code);
+			$error = json_decode($response->text, true);
+			throw new Exception(__CLASS__ . ' Error: ' . $error, $response->code);
 		}
 
 		return json_decode($response->text, true);
