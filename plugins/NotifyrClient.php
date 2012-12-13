@@ -44,7 +44,7 @@ class NotifyrClient {
 
 		if (!$response->ok) {
 			$error = json_decode($response->text, true);
-			throw new Exception(__CLASS__ . ' Error: ' . $error, $response->code);
+			throw new Exception(__CLASS__ . ' Error: ' . $error['error'], $response->code);
 		}
 
 		return json_decode($response->text, true);
