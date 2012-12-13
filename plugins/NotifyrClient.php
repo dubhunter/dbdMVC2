@@ -20,7 +20,7 @@ class NotifyrClient {
 	 * @param $resource
 	 * @param array $data
 	 * @return mixed json_decoded response
-	 * @throws DeveloperException
+	 * @throws Exception
 	 */
 	protected function sendRequest($resource, $data = array()) {
 		$opts = array(
@@ -43,7 +43,7 @@ class NotifyrClient {
 		$response = Requests::post(self::ENDPOINT . $resource, $opts);
 
 		if (!$response->ok) {
-			throw new DeveloperException(__CLASS__ . ' Error: ' . $response->error, $response->code);
+			throw new Exception(__CLASS__ . ' Error: ' . $response->error, $response->code);
 		}
 
 		return json_decode($response->text, true);
