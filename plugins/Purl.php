@@ -1,13 +1,16 @@
 <?php
 
-class Request {
+class Purl {
 
 	private $curlopts = array();
-	private $retryAttempts = 0;
-	private $shouldRetryRequestCallback = null;
 
+	/**
+	 * @param $url
+	 * @param $method
+	 * @param array $opts
+	 */
 	public function __construct($url, $method, array $opts = array()) {
-		$default = array(
+		$defaults = array(
 			'params' => array(),
 			'data' => array(),
 			'headers' => array(),
@@ -16,12 +19,10 @@ class Request {
 			'proxy' => array(),
 			'auth' => false,
 			'allow_redirects' => true,
-			'retryAttempts' => 0,
-			'shouldRetryRequestCallback' => function($response) { return false; },
 			'queryStringStyle' => 'strict' // can be 'php' to do "loose" array styles in query strings
 		);
 
-		$options = array_merge($default, $opts);
+		$options = array_merge($defaults, $opts);
 		$parsed = parse_url($url);
 
 		if (count($options['params'])) {
@@ -76,25 +77,22 @@ class Request {
 				$this->curlopts[CURLOPT_PROXYAUTH] = $proxyOptions["auth"];
 			}
 		}
-
-		$this->retryAttempts = $options['retryAttempts'];
-		$this->shouldRetryRequestCallback = $options['shouldRetryRequestCallback'];
 	}
 
+	/**
+	 * @return PurlResponse
+	 */
 	public function send() {
-		$numberOfAttempts = 0;
-		do {
-			$ch = curl_init();
-			curl_setopt_array($ch, $this->curlopts);
-			$response = new Response(curl_exec($ch), $ch);
-			if (call_user_func($this->shouldRetryRequestCallback, $response) == false) {
-				return $response;
-			}
-		} while ($numberOfAttempts++ < $this->retryAttempts);
-
+		$ch = curl_init();
+		curl_setopt_array($ch, $this->curlopts);
+		$response = new PurlResponse(curl_exec($ch), $ch);
 		return $response;
 	}
 
+	/**
+	 * @param $parsed
+	 * @return bool|string
+	 */
 	public static function buildUrl($parsed) {
 		if (!isset($parsed['host'])) {
 			return FALSE;
@@ -183,9 +181,91 @@ class Request {
 		}
 		return $query;
 	}
+
+	/**
+	 * @static
+	 * @param $method
+	 * @param $url
+	 * @param array $opts
+	 * @return PurlResponse
+	 */
+	public static function request($method, $url, array $opts = array()) {
+		$request = new self($url, $method, $opts);
+		return $request->send();
+	}
+
+	/**
+	 * @static
+	 * @param $url
+	 * @param array $opts
+	 * @return PurlResponse
+	 */
+	public static function get($url, array $opts = array()) {
+		return self::request('GET', $url, $opts);
+	}
+
+	/**
+	 * @static
+	 * @param $url
+	 * @param array $opts
+	 * @return PurlResponse
+	 */
+	public static function post($url, array $opts = array()) {
+		return self::request('POST', $url, $opts);
+	}
+
+	/**
+	 * @static
+	 * @param $url
+	 * @param array $opts
+	 * @return PurlResponse
+	 */
+	public static function put($url, array $opts = array()) {
+		return self::request('PUT', $url, $opts);
+	}
+
+	/**
+	 * @static
+	 * @param $url
+	 * @param array $opts
+	 * @return PurlResponse
+	 */
+	public static function delete($url, array $opts = array()) {
+		return self::request('DELETE', $url, $opts);
+	}
+
+	/**
+	 * @static
+	 * @param $url
+	 * @param array $opts
+	 * @return PurlResponse
+	 */
+	public static function patch($url, array $opts = array()) {
+		return self::request('PATCH', $url, $opts);
+	}
+
+	/**
+	 * @static
+	 * @param $url
+	 * @param array $opts
+	 * @return PurlResponse
+	 */
+	public static function head($url, array $opts = array()) {
+		return self::request('HEAD', $url, $opts);
+	}
+
+	/**
+	 * @static
+	 * @param $url
+	 * @param array $opts
+	 * @return PurlResponse
+	 */
+	public static function options($url, array $opts = array()) {
+		return self::request('OPTIONS', $url, $opts);
+	}
 }
 
-class Response {
+class PurlResponse {
 
 	public $error = null;
 	public $ok = true;
@@ -193,8 +273,11 @@ class Response {
 	public $url;
 	public $code;
 
+	/**
+	 * @param $result
+	 * @param $ch
+	 */
 	public function __construct($result, $ch) {
-
 		if ($result === false) {
 			$this->ok = false;
 			$this->error = curl_error($ch);
@@ -212,94 +295,4 @@ class Response {
 
 		curl_close($ch);
 	}
-}
-
-class Requests {
-
-	/**
-	 * @static
-	 * @param $method
-	 * @param $url
-	 * @param array $opts
-	 * @return Response
-	 */
-	public static function request($method, $url, array $opts = array()) {
-		$request = new Request($url, $method, $opts);
-		return $request->send();
-	}
-
-	/**
-	 * @static
-	 * @param $url
-	 * @param array $opts
-	 * @return Response
-	 */
-	public static function get($url, array $opts = array()) {
-		return self::request('GET', $url, $opts);
-	}
-
-	/**
-	 * @static
-	 * @param $url
-	 * @param array $opts
-	 * @return Response
-	 */
-	public static function post($url, array $opts = array()) {
-		return self::request('POST', $url, $opts);
-	}
-
-	/**
-	 * @static
-	 * @param $url
-	 * @param array $opts
-	 * @return Response
-	 */
-	public static function put($url, array $opts = array()) {
-		return self::request('PUT', $url, $opts);
-	}
-
-	/**
-	 * @static
-	 * @param $url
-	 * @param array $opts
-	 * @return Response
-	 */
-	public static function delete($url, array $opts = array()) {
-		return self::request('DELETE', $url, $opts);
-	}
-
-	/**
-	 * @static
-	 * @param $url
-	 * @param array $opts
-	 * @return Response
-	 */
-	public static function patch($url, array $opts = array()) {
-		return self::request('PATCH', $url, $opts);
-	}
-
-	/**
-	 * @static
-	 * @param $url
-	 * @param array $opts
-	 * @return Response
-	 */
-	public static function head($url, array $opts = array()) {
-		return self::request('HEAD', $url, $opts);
-	}
-
-	/**
-	 * @static
-	 * @param $url
-	 * @param array $opts
-	 * @return Response
-	 */
-	public static function options($url, array $opts = array()) {
-		return self::request('OPTIONS', $url, $opts);
-	}
-
-	public function __call($name, $arguments) {
-		return call_user_func_array(array(__CLASS__, $name), $arguments);
-	}
-
 }

@@ -40,7 +40,7 @@ class NotifyrClient {
 
 		$opts['data'] = json_encode($payload);
 
-		$response = Requests::post(self::ENDPOINT . $resource, $opts);
+		$response = Purl::post(self::ENDPOINT . $resource, $opts);
 
 		if (!$response->ok) {
 			$error = json_decode($response->text, true);
