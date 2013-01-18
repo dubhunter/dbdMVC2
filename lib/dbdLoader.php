@@ -96,7 +96,7 @@ class dbdLoader
 	 */
 	/**
 	 * Get the active instance or create one.
-	 * @return object instance of dbdLoader
+	 * @return dbdLoader object instance of dbdLoader
 	 */
 	public static function getInstance()
 	{
@@ -260,4 +260,3 @@ function __autoload($class)
 		dbdLog("Class (".$class.") could not be autoloaded!");
 	}
 }
-?>

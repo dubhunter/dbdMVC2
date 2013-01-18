@@ -1584,4 +1584,3 @@ class dbdCSS extends dbdController
 		return dbdURI::create("dbdCSS", "combine", $vars);
 	}
 }
-?>

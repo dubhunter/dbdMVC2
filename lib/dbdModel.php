@@ -545,4 +545,3 @@ abstract class dbdModel
 		throw new dbdException("Method (".$this->class_name."::".$name.") does not exists!");
 	}
 }
-?>

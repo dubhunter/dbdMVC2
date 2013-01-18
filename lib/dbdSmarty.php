@@ -459,4 +459,3 @@ class dbdSmarty extends Smarty
 		return $tpl;
 	}
 }
-?>

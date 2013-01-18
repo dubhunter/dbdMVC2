@@ -75,4 +75,3 @@ class dbdHoldableException extends dbdException
 		return self::$held;
 	}
 }
-?>

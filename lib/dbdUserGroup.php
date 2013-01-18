@@ -17,4 +17,3 @@ class dbdUserGroup extends dbdModel
 		return $a;
 	}
 }
-?>

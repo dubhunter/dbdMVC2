@@ -49,4 +49,3 @@ class dbdInfo extends dbdController
 		}
 	}
 }
-?>

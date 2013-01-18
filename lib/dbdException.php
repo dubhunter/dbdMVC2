@@ -24,4 +24,3 @@ class dbdException extends Exception
 		parent::__construct($message, $code);
 	}
 }
-?>

@@ -513,4 +513,3 @@ abstract class dbdController
 	}
 	/**#@-*/
 }
-?>

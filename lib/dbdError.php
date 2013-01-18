@@ -95,4 +95,3 @@ class dbdError extends dbdController
 		return $name;
 	}
 }
-?>

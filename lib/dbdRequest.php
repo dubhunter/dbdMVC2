@@ -330,4 +330,3 @@ class dbdRequest
         return ($this->getHeader("X_REQUESTED_WITH") == "XMLHttpRequest");
     }
 }
-?>

@@ -88,4 +88,3 @@ class dbdUser extends dbdModel
 		return $this->getUserGroup()->getAccess();
 	}
 }
-?>

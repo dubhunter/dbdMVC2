@@ -15,4 +15,3 @@
  */
 class dbdEmptyController extends dbdController
 {}
-?>

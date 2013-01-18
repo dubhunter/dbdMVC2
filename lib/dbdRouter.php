@@ -193,4 +193,3 @@ class dbdRouter
 		return $this->baseUrl;
 	}
 }
-?>

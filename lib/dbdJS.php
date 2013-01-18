@@ -337,4 +337,3 @@ class dbdJS extends dbdController
 		return dbdURI::create("dbdJS", "combine", $vars);
 	}
 }
-?>

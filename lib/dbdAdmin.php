@@ -143,4 +143,3 @@ class dbdAdmin extends dbdController
 //		echo "done!";
 //	}
 }
-?>

@@ -30,4 +30,3 @@ class dbdAdminException extends dbdHoldableException
 			self::intercept(new self($code));
 	}
 }
-?>
