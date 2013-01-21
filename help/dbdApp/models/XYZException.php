@@ -35,4 +35,3 @@ class XYZException extends dbdHoldableException
 			self::intercept(new self($code));
 	}
 }
-?>

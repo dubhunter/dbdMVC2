@@ -13,4 +13,3 @@
  */
 define('RECAPTCHA_PUBKEY', '6LcwQwgAAAAAALmnnpetDtygwG1r3BNP2vam54bZ');
 define('RECAPTCHA_PRIKEY', '6LcwQwgAAAAAAMZ8wyoICaHF688yVSKwHgUvNtky');
-?>

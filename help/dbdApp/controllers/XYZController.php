@@ -14,4 +14,3 @@ class XYZController extends dbdController
 //		$this->view->clear_config();
 	}
 }
-?>

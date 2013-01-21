@@ -51,5 +51,3 @@ dbdMVC::run(DBD_APP_DIR);
  * Log execution time of dbdMVC.
  */
 //dbdMVC::logExecutionTime();
-?>
-

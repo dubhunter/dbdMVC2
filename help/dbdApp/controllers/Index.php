@@ -23,4 +23,3 @@ class Index extends XYZController
 		$this->view->assign("title", "Welcome to ".dbdMVC::getAppName()."!");
 	}
 }
-?>

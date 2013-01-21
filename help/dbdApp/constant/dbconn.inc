@@ -25,4 +25,3 @@ define('DB_HOST', 'localhost');
 define('DB_PORT', '3306');
 define('DB_USER', 'dbdmvc');
 define('DB_PASS', 'i$th3$hit');
-?>

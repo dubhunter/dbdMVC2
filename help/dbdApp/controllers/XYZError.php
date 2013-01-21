@@ -6,4 +6,3 @@ class XYZError extends XYZController
 		dbdError::doError($this);
 	}
 }
-?>
