@@ -75,6 +75,11 @@ class dbdDispatcher
 	 * @var string
 	 */
 	private $controller_prefix = null;
+	/**
+	 * User defined controller suffix
+	 * @var string
+	 */
+	private $controller_suffix = null;
 	/**#@-*/
 	/**
 	 * Set router, app_dir, and controller_dir.
@@ -89,6 +94,7 @@ class dbdDispatcher
 		if ($this->fallback_controller === null)
 			$this->fallback_controller = self::FALLBACK_CONTROLLER;
 		$this->controller_prefix = dbdMVC::getControllerPrefix();
+		$this->controller_suffix = dbdMVC::getControllerSuffix();
 		$this->controller_dirs = dbdLoader::getControllerDirs();
 	}
 	/**
@@ -119,7 +125,7 @@ class dbdDispatcher
 		if (!preg_match("/^".self::BUILTIN_PREFIX.".+$/", $controller))
 		{
 			$controller = ucfirst($controller);
-			$file = $controller.".php";
+			$file = $controller.'.php';
 			$loaded = false;
 			foreach ($this->controller_dirs as $d)
 			{
@@ -133,6 +139,14 @@ class dbdDispatcher
 				{
 					$controller = $this->controller_prefix.$controller;
 					$file = $this->controller_prefix.$file;
+					dbdLoader::load($file, $d);
+					$loaded = true;
+					break;
+				}
+				if ($this->controller_suffix !== null && dbdLoader::search($controller.$this->controller_suffix.'.php', $d))
+				{
+					$controller = $controller.$this->controller_suffix;
+					$file = $controller.'.php';
 					dbdLoader::load($file, $d);
 					$loaded = true;
 					break;

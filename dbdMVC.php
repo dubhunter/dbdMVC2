@@ -342,6 +342,14 @@ class dbdMVC
 		self::getInstance()->controller_prefix = $prefix;
 	}
 	/**
+	 * Set controller_suffix property.
+	 * @param string $suffix
+	 */
+	public static function setControllerSuffix($suffix)
+	{
+		self::getInstance()->controller_suffix = $suffix;
+	}
+	/**
 	 * Set error_log property.
 	 * @param string $path
 	 */
@@ -464,6 +472,14 @@ class dbdMVC
 	public static function getControllerPrefix()
 	{
 		return self::getInstance()->controller_prefix;
+	}
+	/**
+	 * Set controller suffix.
+	 * @return string controller_suffix
+	 */
+	public static function getControllerSuffix()
+	{
+		return self::getInstance()->controller_suffix;
 	}
 	/**
 	 * Return the error_log file name.
