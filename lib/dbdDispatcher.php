@@ -3,7 +3,7 @@
  * dbdDispatcher.php :: dbdDispatcher Class File
  *
  * @package dbdMVC
- * @version 1.12
+ * @version 2.0
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2011 by Don't Blink Design
  */
