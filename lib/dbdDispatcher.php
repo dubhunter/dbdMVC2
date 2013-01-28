@@ -178,6 +178,11 @@ class dbdDispatcher
 		$action = $this->router->getAction();
 		if (empty($action))
 		{
+			$method = self::ACTION_PREFIX.ucfirst(strtolower($this->router->getParam("REQUEST_METHOD")));
+			if (method_exists($controller, $method))
+			{
+				return $method;
+			}
 			$this->router->setAction(self::DEFAULT_ACTION);
 			$action = $this->router->getAction();
 		}
