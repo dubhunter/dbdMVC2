@@ -3,7 +3,7 @@
  * dbdRequest.php :: dbdRequest Class File
  *
  * @package dbdMVC
- * @version 1.4
+ * @version 1.5
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2011 by Don't Blink Design
  */
@@ -62,10 +62,10 @@ class dbdRequest
 		switch ($this->getHeader("REQUEST_METHOD"))
 		{
 			case 'PUT':
-				parse_str(file_get_contents('php://input'), $this->_PUT);
+				parse_str(self::getRawInputData(), $this->_PUT);
 				break;
 			case 'DELETE':
-				parse_str(file_get_contents('php://input'), $this->_DELETE);
+				parse_str(self::getRawInputData(), $this->_DELETE);
 				break;
 		}
 	}
@@ -77,6 +77,14 @@ class dbdRequest
 	public static function addRewrite($pattern, $replacement)
 	{
 		self::$rewrites[$pattern] = $replacement;
+	}
+	/**
+	 * Get the raw stdinput data
+	 * @return string
+	 */
+	public static function getRawInputData()
+	{
+		return file_get_contents('php://input');
 	}
 	/**
 	 * Perform url rewrites
