@@ -68,7 +68,7 @@ class dbdHoldableException extends dbdException
 	/**
 	 * Get array of held exceptions
 	 * @static
-	 * @return array dbdHoldableException
+	 * @return dbdHoldableException[]
 	 */
 	public static function getHeld()
 	{
