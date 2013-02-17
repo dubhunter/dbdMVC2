@@ -138,6 +138,10 @@ Handlebars.registerHelper('date', function(date, options) {
 	return $.global.format(date instanceof Date ? date : $.global.parseDate(date), options.hash['format']);
 });
 
+Handlebars.registerHelper('time', function(date, options) {
+	return $.global.format(date instanceof Date ? date : $.global.parseDate('1970-01-01 ' + date), options.hash['format']);
+});
+
 Handlebars.registerHelper('number', function(number, options) {
 	return $.global.format(parseFloat(number), 'n' + options.hash['format']);
 });
