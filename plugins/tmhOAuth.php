@@ -63,7 +63,7 @@ class tmhOAuth {
         'curl_ssl_verifypeer'        => true,
 
         // you can get the latest cacert.pem from here http://curl.haxx.se/ca/cacert.pem
-        'curl_cainfo'                => dirname(__FILE__) . DIRECTORY_SEPARATOR . 'tmhOauth-cacert.pem',
+        'curl_cainfo'                => dirname(__FILE__) . DIRECTORY_SEPARATOR . 'tmhOAuth-cacert.pem',
         'curl_capath'                => dirname(__FILE__),
 
         'curl_followlocation'        => false, // whether to follow redirects or not
