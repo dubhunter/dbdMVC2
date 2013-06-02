@@ -292,7 +292,7 @@ var dbdURI = function (){
 				var cplist = dbdURI.getControllerPositionList(controller);
 				for (i = 0; i < cplist.length; i++){
 					if (args[cplist[i]]){
-						uri += args[cplist[i]].replace(/\//, '%5C/') + '/';
+						uri += args[cplist[i]].toString().replace(/\//, '%5C/') + '/';
 						delete args[cplist[i]];
 					}
 				}
@@ -303,7 +303,7 @@ var dbdURI = function (){
 				var plist = dbdURI.getPositionList(controller, action);
 				for (i = 0; i < plist.length; i++){
 					if (args[plist[i]]){
-						uri += args[plist[i]].replace(/\//, '%5C/') + '/';
+						uri += args[plist[i]].toString().replace(/\//, '%5C/') + '/';
 						delete args[plist[i]];
 					}
 				}
