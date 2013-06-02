@@ -2,7 +2,7 @@
 /**
  * dbdMVC.php :: dbdMVC Include File & Front Controller Class
  *
- * dbdMVC version 2.2.0
+ * dbdMVC version 2.2.1
  * Copyright (c) 2006-2011 by Don't Blink Design
  * http://dbdmvc.com
  *
@@ -26,7 +26,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @package dbdMVC
- * @version 2.2.0
+ * @version 2.2.1
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2011 by Don't Blink Design
  * @license http://www.gnu.org/copyleft/lesser.html
@@ -159,7 +159,7 @@ class dbdMVC
 	 * Current version number
 	 * <b>Note:</b> May not match file @version number
 	 */
-	const VERSION = "2.2.0";
+	const VERSION = "2.2.1";
 	/**
 	 * #@+
 	 * @access private
@@ -308,7 +308,7 @@ class dbdMVC
 		}
 		return dbdURI::create($c, $a, $p);
 	}
-    /**#@-*/
+	/**#@-*/
 	/**
 	 * #@+
 	 * dbdMVC interface methods
@@ -392,7 +392,7 @@ class dbdMVC
 		return self::$instance;
 	}
 	/**
-	 * Default ecpetion handler
+	 * Default exception handler
 	 * @param Exception $e
 	 */
 	public static function e(Exception $e)
@@ -413,11 +413,16 @@ class dbdMVC
 			echo "<h1>".$e->getCode()." - ".$e->getMessage()."</h1>";
 		}
 	}
+
 	/**
 	 * Run dbdMVC on the given dbdApp dir.
 	 * This is the main method of dbdMVC.
 	 * @param string $app_dir
 	 * @param string $app_name
+	 * @param null $fallback_controller
+	 * @param null $error_controller
+	 * @param null $error_log
+	 * @param null $debug_mode
 	 */
 	public static function run($app_dir, $app_name = null, $fallback_controller = null, $error_controller = null, $error_log = null, $debug_mode = null)
 	{
@@ -530,6 +535,7 @@ class dbdMVC
 	}
 	/**
 	 * Check if debug mode is set.
+	 * @param $mode
 	 * @return boolean
 	 */
 	public static function debugMode($mode)

@@ -3,7 +3,7 @@
  * dbdRequest.php :: dbdRequest Class File
  *
  * @package dbdMVC
- * @version 1.5
+ * @version 1.6
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2011 by Don't Blink Design
  */
@@ -26,6 +26,11 @@ class dbdRequest
 	 * @var string
 	 */
 	private $request_uri = null;
+	/**
+	 * POST parameters since $_SUPER_GLOBAL's won't handle JSON data.
+	 * @var array
+	 */
+	private $_POST = array();
 	/**
 	 * PUT parameters since $_SUPER_GLOBAL's don't exist.
 	 * @var array
@@ -57,15 +62,39 @@ class dbdRequest
 		}
 		else
 		{
-			$this->setRequestURI(preg_replace("/\?.*$/", "", key_exists('REDIRECT_URL', $_SERVER) ? $_SERVER['REDIRECT_URL'] : $_SERVER['REQUEST_URI']));
+			$this->setRequestURI(preg_replace("/\?.*$/", "", isset($_SERVER['REDIRECT_URL']) ? $_SERVER['REDIRECT_URL'] : $_SERVER['REQUEST_URI']));
 		}
-		switch ($this->getHeader("REQUEST_METHOD"))
+		switch ($_SERVER['REQUEST_METHOD'])
 		{
+			case 'POST':
+				if ($this->getHeader('Content-Type') == 'application/json')
+				{
+					$this->_POST = json_decode(self::getRawInputData(), true) ?: array();
+				}
+				else
+				{
+					$this->_POST = $_POST;
+				}
+				break;
 			case 'PUT':
-				parse_str(self::getRawInputData(), $this->_PUT);
+				if ($this->getHeader('Content-Type') == 'application/json')
+				{
+					$this->_PUT = json_decode(self::getRawInputData(), true) ?: array();
+				}
+				else
+				{
+					parse_str(self::getRawInputData(), $this->_PUT);
+				}
 				break;
 			case 'DELETE':
-				parse_str(self::getRawInputData(), $this->_DELETE);
+				if ($this->getHeader('Content-Type') == 'application/json')
+				{
+					$this->_DELETE = json_decode(self::getRawInputData(), true) ?: array();
+				}
+				else
+				{
+					parse_str(self::getRawInputData(), $this->_DELETE);
+				}
 				break;
 		}
 	}
@@ -129,212 +158,226 @@ class dbdRequest
 	{
 		$this->params[$key] = $val;
 	}
-    /**
-     * Access values contained in the superglobals as public members
-     * Order of precedence: 1. GET, 2. POST, 3. PUT, 4. DELETE, 5. COOKIE, 6. SERVER, 7. ENV
-     * @see http://msdn.microsoft.com/en-us/library/system.web.httprequest.item.aspx
-     * @param string $key
-     * @return mixed
-     */
-    public function get($key)
-    {
-        switch (true)
-        {
-            case isset($this->params[$key]):
-                return $this->params[$key];
-            case ($key == 'REQUEST_URI'):
-                return $this->getRequestURI();
-            case isset($_GET[$key]):
-                return $_GET[$key];
-            case isset($_POST[$key]):
-                return $_POST[$key];
-            case isset($this->_PUT[$key]):
-                return $this->_PUT[$key];
-            case isset($this->_DELETE[$key]):
-                return $this->_DELETE[$key];
-            case isset($_COOKIE[$key]):
-                return $_COOKIE[$key];
-            case isset($_SERVER[$key]):
-                return $_SERVER[$key];
-            case isset($_ENV[$key]):
-                return $_ENV[$key];
-            case isset($_FILES[$key]):
-                return $_FILES[$key];
-            default:
-                return null;
-        }
-    }
-    /**
-     * Check to see if a property is set
-     * @param string $key
-     * @return boolean
-     */
-    public function __isset($key)
-    {
-        switch (true)
-        {
-            case isset($this->params[$key]):
-                return true;
-            case isset($_GET[$key]):
-                return true;
-            case isset($_POST[$key]):
-                return true;
-            case isset($this->_PUT[$key]):
-                return true;
-            case isset($this->_DELETE[$key]):
-                return true;
-            case isset($_COOKIE[$key]):
-                return true;
-            case isset($_SERVER[$key]):
-                return true;
-            case isset($_ENV[$key]):
-                return true;
-            default:
-                return false;
-        }
-    }
+	/**
+	 * Access values contained in the superglobals as public members
+	 * Order of precedence: 1. GET, 2. POST, 3. PUT, 4. DELETE, 5. COOKIE, 6. SERVER, 7. ENV
+	 * @see http://msdn.microsoft.com/en-us/library/system.web.httprequest.item.aspx
+	 * @param string $key
+	 * @return mixed
+	 */
+	public function get($key)
+	{
+		switch (true)
+		{
+			case isset($this->params[$key]):
+				return $this->params[$key];
+			case ($key == 'REQUEST_URI'):
+				return $this->getRequestURI();
+			case isset($_GET[$key]):
+				return $_GET[$key];
+			case isset($this->_POST[$key]):
+				return $this->_POST[$key];
+			case isset($this->_PUT[$key]):
+				return $this->_PUT[$key];
+			case isset($this->_DELETE[$key]):
+				return $this->_DELETE[$key];
+			case isset($_COOKIE[$key]):
+				return $_COOKIE[$key];
+			case isset($_SERVER[$key]):
+				return $_SERVER[$key];
+			case isset($_ENV[$key]):
+				return $_ENV[$key];
+			case isset($_FILES[$key]):
+				return $_FILES[$key];
+			default:
+				return null;
+		}
+	}
+	/**
+	 * Check to see if a property is set
+	 * @param string $key
+	 * @return boolean
+	 */
+	public function __isset($key)
+	{
+		switch (true)
+		{
+			case isset($this->params[$key]):
+				return true;
+			case isset($_GET[$key]):
+				return true;
+			case isset($this->_POST[$key]):
+				return true;
+			case isset($this->_PUT[$key]):
+				return true;
+			case isset($this->_DELETE[$key]):
+				return true;
+			case isset($_COOKIE[$key]):
+				return true;
+			case isset($_SERVER[$key]):
+				return true;
+			case isset($_ENV[$key]):
+				return true;
+			default:
+				return false;
+		}
+	}
 
-    /**
-     * Alias to __isset()
-     * @param string $key
-     * @return boolean
-     */
-    public function has($key)
-    {
-        return $this->__isset($key);
-    }
+	/**
+	 * Alias to __isset()
+	 * @param string $key
+	 * @return boolean
+	 */
+	public function has($key)
+	{
+		return $this->__isset($key);
+	}
 
-    /**
-     * Retrieve a member of the $_GET superglobal.
-     * If no $key is passed, returns the entire $_GET array.
-     * @todo How to retrieve from nested arrays
-     * @param string $key
-     * @param mixed $default Default value to use if key not found
-     * @return mixed Returns null if key does not exist
-     */
-    public function getQuery($key = null, $default = null)
-    {
-        if (null === $key)
-            return $_GET;
-        return (isset($_GET[$key])) ? $_GET[$key] : $default;
-    }
-    /**
-     * Retrieve a member of the $_POST superglobal.
-     * If no $key is passed, returns the entire $_POST array.
-     * @todo How to retrieve from nested arrays
-     * @param string $key
-     * @param mixed $default Default value to use if key not found
-     * @return mixed Returns null if key does not exist
-     */
-    public function getPost($key = null, $default = null)
-    {
-        if (null === $key)
-            return $_POST;
-        return (isset($_POST[$key])) ? $_POST[$key] : $default;
-    }
-    /**
-     * Retrieve a member of the $this->_PUT fake superglobal.
-     * If no $key is passed, returns the entire $this->_PUT array.
-     * @todo How to retrieve from nested arrays
-     * @param string $key
-     * @param mixed $default Default value to use if key not found
-     * @return mixed Returns null if key does not exist
-     */
-    public function getPut($key = null, $default = null)
-    {
-        if (null === $key)
-            return $this->_PUT;
-        return (isset($this->_PUT[$key])) ? $this->_PUT[$key] : $default;
-    }
-    /**
-     * Retrieve a member of the $this->_DELETE fake superglobal.
-     * If no $key is passed, returns the entire $this->_DELETE array.
-     * @todo How to retrieve from nested arrays
-     * @param string $key
-     * @param mixed $default Default value to use if key not found
-     * @return mixed Returns null if key does not exist
-     */
-    public function getDelete($key = null, $default = null)
-    {
-        if (null === $key)
-            return $this->_DELETE;
-        return (isset($this->_DELETE[$key])) ? $this->_DELETE[$key] : $default;
-    }
-    /**
-     * Retrieve a member of the $_COOKIE superglobal.
-     * If no $key is passed, returns the entire $_COOKIE array.
-     * @todo How to retrieve from nested arrays
-     * @param string $key
-     * @param mixed $default Default value to use if key not found
-     * @return mixed Returns null if key does not exist
-     */
-    public function getCookie($key = null, $default = null)
-    {
-        if (null === $key)
-            return $_COOKIE;
-        return (isset($_COOKIE[$key])) ? $_COOKIE[$key] : $default;
-    }
-    /**
-     * Retrieve a member of the $_SERVER superglobal.
-     * If no $key is passed, returns the entire $_COOKIE array.
-     * @param string $key
-     * @param mixed $default Default value to use if key not found
-     * @return mixed Returns null if key does not exist
-     */
-    public function getServer($key = null, $default = null)
-    {
-        if (null === $key)
-            return $_SERVER;
-        return (isset($_SERVER[$key])) ? $_SERVER[$key] : $default;
-    }
-    /**
-     * Retrieve a member of the $_ENV superglobal.
-     * If no $key is passed, returns the entire $_COOKIE array.
-     * @param string $key
-     * @param mixed $default Default value to use if key not found
-     * @return mixed Returns null if key does not exist
-     */
-    public function getEnv($key = null, $default = null)
-    {
-        if (null === $key)
-            return $_ENV;
-        return (isset($_ENV[$key])) ? $_ENV[$key] : $default;
-    }
-    /**
-     * Return the value of the given HTTP header. Pass the header name as the
-     * plain, HTTP-specified header name. Ex.: Ask for 'Accept' to get the
-     * Accept header, 'Accept-Encoding' to get the Accept-Encoding header.
-     * @param string HTTP header name
-     * @return string|false HTTP header value, or false if not found
-     * @throws dbdException
-     */
-    public function getHeader($header)
-    {
-        if (empty($header))
-            throw new dbdException("An HTTP header name is required");
+	/**
+	 * Retrieve a member of the $this->params fake superglobal.
+	 * If no $key is passed, returns the entire $this->params array.
+	 * @param string $key
+	 * @param mixed $default Default value to use if key not found
+	 * @return mixed Returns null if key does not exist
+	 */
+	public function getParam($key = null, $default = null)
+	{
+		if (null === $key)
+			return $this->params;
+		return (isset($this->params[$key])) ? $this->params[$key] : $default;
+	}
 
-        // Try to get it from the $_SERVER array first
-        $temp = "HTTP_" . strtoupper(str_replace("-", "_", $header));
-        if (!empty($_SERVER[$temp]))
-            return $_SERVER[$temp];
+	/**
+	 * Retrieve a member of the $_GET superglobal.
+	 * If no $key is passed, returns the entire $_GET array.
+	 * @todo How to retrieve from nested arrays
+	 * @param string $key
+	 * @param mixed $default Default value to use if key not found
+	 * @return mixed Returns null if key does not exist
+	 */
+	public function getQuery($key = null, $default = null)
+	{
+		if (null === $key)
+			return $_GET;
+		return (isset($_GET[$key])) ? $_GET[$key] : $default;
+	}
+	/**
+	 * Retrieve a member of the $this->_POST fake superglobal.
+	 * If no $key is passed, returns the entire $this->_POST array.
+	 * @todo How to retrieve from nested arrays
+	 * @param string $key
+	 * @param mixed $default Default value to use if key not found
+	 * @return mixed Returns null if key does not exist
+	 */
+	public function getPost($key = null, $default = null)
+	{
+		if (null === $key)
+			return $this->_POST;
+		return (isset($this->_POST[$key])) ? $this->_POST[$key] : $default;
+	}
+	/**
+	 * Retrieve a member of the $this->_PUT fake superglobal.
+	 * If no $key is passed, returns the entire $this->_PUT array.
+	 * @todo How to retrieve from nested arrays
+	 * @param string $key
+	 * @param mixed $default Default value to use if key not found
+	 * @return mixed Returns null if key does not exist
+	 */
+	public function getPut($key = null, $default = null)
+	{
+		if (null === $key)
+			return $this->_PUT;
+		return (isset($this->_PUT[$key])) ? $this->_PUT[$key] : $default;
+	}
+	/**
+	 * Retrieve a member of the $this->_DELETE fake superglobal.
+	 * If no $key is passed, returns the entire $this->_DELETE array.
+	 * @todo How to retrieve from nested arrays
+	 * @param string $key
+	 * @param mixed $default Default value to use if key not found
+	 * @return mixed Returns null if key does not exist
+	 */
+	public function getDelete($key = null, $default = null)
+	{
+		if (null === $key)
+			return $this->_DELETE;
+		return (isset($this->_DELETE[$key])) ? $this->_DELETE[$key] : $default;
+	}
+	/**
+	 * Retrieve a member of the $_COOKIE superglobal.
+	 * If no $key is passed, returns the entire $_COOKIE array.
+	 * @todo How to retrieve from nested arrays
+	 * @param string $key
+	 * @param mixed $default Default value to use if key not found
+	 * @return mixed Returns null if key does not exist
+	 */
+	public function getCookie($key = null, $default = null)
+	{
+		if (null === $key)
+			return $_COOKIE;
+		return (isset($_COOKIE[$key])) ? $_COOKIE[$key] : $default;
+	}
+	/**
+	 * Retrieve a member of the $_SERVER superglobal.
+	 * If no $key is passed, returns the entire $_COOKIE array.
+	 * @param string $key
+	 * @param mixed $default Default value to use if key not found
+	 * @return mixed Returns null if key does not exist
+	 */
+	public function getServer($key = null, $default = null)
+	{
+		if (null === $key)
+			return $_SERVER;
+		return (isset($_SERVER[$key])) ? $_SERVER[$key] : $default;
+	}
+	/**
+	 * Retrieve a member of the $_ENV superglobal.
+	 * If no $key is passed, returns the entire $_COOKIE array.
+	 * @param string $key
+	 * @param mixed $default Default value to use if key not found
+	 * @return mixed Returns null if key does not exist
+	 */
+	public function getEnv($key = null, $default = null)
+	{
+		if (null === $key)
+			return $_ENV;
+		return (isset($_ENV[$key])) ? $_ENV[$key] : $default;
+	}
+	/**
+	 * Return the value of the given HTTP header. Pass the header name as the
+	 * plain, HTTP-specified header name. Ex.: Ask for 'Accept' to get the
+	 * Accept header, 'Accept-Encoding' to get the Accept-Encoding header.
+	 * @param string HTTP header name
+	 * @return string|false HTTP header value, or false if not found
+	 * @throws dbdException
+	 */
+	public function getHeader($header)
+	{
+		if (empty($header))
+			throw new dbdException("An HTTP header name is required");
 
-        // This seems to be the only way to get the Authorization header on
-        // Apache
-        if (function_exists("apache_request_headers"))
-        {
-            $headers = apache_request_headers();
-            if (!empty($headers[$header]))
-                return $headers[$header];
-        }
-        return false;
-    }
-    /**
-     * Is the request a Javascript XMLHttpRequest?
-     * Should work with Prototype/Script.aculo.us, possibly others.
-     * @return boolean
-     */
-    public function isXmlHttpRequest()
-    {
-        return ($this->getHeader("X_REQUESTED_WITH") == "XMLHttpRequest");
-    }
+		// Try to get it from the $_SERVER array first
+		$temp = "HTTP_" . strtoupper(str_replace("-", "_", $header));
+		if (!empty($_SERVER[$temp]))
+			return $_SERVER[$temp];
+
+		// This seems to be the only way to get the Authorization header on
+		// Apache
+		if (function_exists("apache_request_headers"))
+		{
+			$headers = apache_request_headers();
+			if (!empty($headers[$header]))
+				return $headers[$header];
+		}
+		return false;
+	}
+	/**
+	 * Is the request a Javascript XMLHttpRequest?
+	 * Should work with Prototype/Script.aculo.us, possibly others.
+	 * @return boolean
+	 */
+	public function isXmlHttpRequest()
+	{
+		return ($this->getHeader("X_REQUESTED_WITH") == "XMLHttpRequest");
+	}
 }

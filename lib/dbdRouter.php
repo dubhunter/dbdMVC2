@@ -3,7 +3,7 @@
  * dbdRouter.php :: dbdRouter Class File
  *
  * @package dbdMVC
- * @version 1.5
+ * @version 1.6
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2011 by Don't Blink Design
  */
@@ -174,6 +174,7 @@ class dbdRouter
 	public function getParams()
 	{
 		$params = $this->params;
+		$params = array_merge_recursive($params, $this->request->getParam());
 		$params = array_merge_recursive($params, $this->request->getQuery());
 		$params = array_merge_recursive($params, $this->request->getPost());
 		$params = array_merge_recursive($params, $this->request->getPut());

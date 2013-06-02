@@ -3,7 +3,7 @@
  * dbdModel.php :: dbdModel Class File
  *
  * @package dbdMVC
- * @version 1.16
+ * @version 1.17
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2011 by Don't Blink Design
  */
@@ -13,20 +13,11 @@
  *
  * <b>Simple Model Example</b>
  * <code>
- * class Widget extends dbdModel
- * {
+ * class Widget extends dbdModel {
+ *
  * 	const TABLE_NAME = "widgets";
  * 	const TABLE_KEY = "widget_id";
  *
- * 	public function __construct($id = 0)
- * 	{
- * 		parent::__construct(__CLASS__, $id);
- * 	}
- *
- * 	public static function getAll()
- * 	{
- * 		return parent::getAll(__CLASS__);
- * 	}
  * }
  * </code>
  * @package dbdMVC
@@ -169,7 +160,7 @@ abstract class dbdModel
 	/**
 	 * Get a count of all rows from this table
 	 * @param array $table_keys
-	 * @return array dbdModel
+	 * @return int
 	 */
 	public static function getCount($table_keys = array(), $options = array())
 	{
@@ -180,7 +171,7 @@ abstract class dbdModel
 		$sql .= self::buildWhereClause($table_keys);
 		if (is_array($options) && key_exists(self::OPT_GROUP_BY, $options) && $options[self::OPT_GROUP_BY] !== null)
 			$sql .= " group by ".$options[self::OPT_GROUP_BY];
-		return self::$db->prepExec($sql, $table_keys)->fetchColumn();
+		return (int)self::$db->prepExec($sql, $table_keys)->fetchColumn();
 	}
 	/**
 	 * Get all rows from this table
@@ -470,9 +461,9 @@ abstract class dbdModel
 	 * Get the row id
 	 * @return integer
 	 */
-	public function getID()
+	public function getId()
 	{
-		return $this->id;
+		return (int)$this->id;
 	}
 	/**
 	 * Get the fields for this row
