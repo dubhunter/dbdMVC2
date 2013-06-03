@@ -174,11 +174,11 @@ class dbdRouter
 	public function getParams()
 	{
 		$params = $this->params;
-		$params = array_merge_recursive($params, $this->request->getParam());
 		$params = array_merge_recursive($params, $this->request->getQuery());
 		$params = array_merge_recursive($params, $this->request->getPost());
 		$params = array_merge_recursive($params, $this->request->getPut());
 		$params = array_merge_recursive($params, $this->request->getDelete());
+		$params = array_merge_recursive($params, $this->request->getParam());
 		return $params;
 	}
 	/**
