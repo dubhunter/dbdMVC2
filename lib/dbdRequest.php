@@ -3,7 +3,7 @@
  * dbdRequest.php :: dbdRequest Class File
  *
  * @package dbdMVC
- * @version 1.6
+ * @version 1.7
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2011 by Don't Blink Design
  */
@@ -64,38 +64,40 @@ class dbdRequest
 		{
 			$this->setRequestURI(preg_replace("/\?.*$/", "", isset($_SERVER['REDIRECT_URL']) ? $_SERVER['REDIRECT_URL'] : $_SERVER['REQUEST_URI']));
 		}
-		switch ($_SERVER['REQUEST_METHOD'])
-		{
-			case 'POST':
-				if ($this->getHeader('Content-Type') == 'application/json')
-				{
-					$this->_POST = json_decode(self::getRawInputData(), true) ?: array();
-				}
-				else
-				{
-					$this->_POST = $_POST;
-				}
-				break;
-			case 'PUT':
-				if ($this->getHeader('Content-Type') == 'application/json')
-				{
-					$this->_PUT = json_decode(self::getRawInputData(), true) ?: array();
-				}
-				else
-				{
-					parse_str(self::getRawInputData(), $this->_PUT);
-				}
-				break;
-			case 'DELETE':
-				if ($this->getHeader('Content-Type') == 'application/json')
-				{
-					$this->_DELETE = json_decode(self::getRawInputData(), true) ?: array();
-				}
-				else
-				{
-					parse_str(self::getRawInputData(), $this->_DELETE);
-				}
-				break;
+		if (isset($_SERVER['REQUEST_METHOD'])) {
+			switch ($_SERVER['REQUEST_METHOD'])
+			{
+				case 'POST':
+					if ($this->getHeader('Content-Type') == 'application/json')
+					{
+						$this->_POST = json_decode(self::getRawInputData(), true) ?: array();
+					}
+					else
+					{
+						$this->_POST = $_POST;
+					}
+					break;
+				case 'PUT':
+					if ($this->getHeader('Content-Type') == 'application/json')
+					{
+						$this->_PUT = json_decode(self::getRawInputData(), true) ?: array();
+					}
+					else
+					{
+						parse_str(self::getRawInputData(), $this->_PUT);
+					}
+					break;
+				case 'DELETE':
+					if ($this->getHeader('Content-Type') == 'application/json')
+					{
+						$this->_DELETE = json_decode(self::getRawInputData(), true) ?: array();
+					}
+					else
+					{
+						parse_str(self::getRawInputData(), $this->_DELETE);
+					}
+					break;
+			}
 		}
 	}
 	/**
