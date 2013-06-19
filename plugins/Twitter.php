@@ -23,7 +23,7 @@ class Twitter
 	/* Version */
 	const VERSION = 'v0.0.1';
 	/* Set up the API root URL. */
-	public $host = 'https://api.twitter.com/1/';
+	public $host = 'https://api.twitter.com/1.1/';
 	/* Respons format. */
 	public $format = 'json';
 	/* Decode returned json data. */
@@ -145,7 +145,6 @@ class Twitter
 		$parameters['x_auth_password'] = $password;
 		$parameters['x_auth_mode'] = 'client_auth';
 		$response = $this->request($this->accessTokenURL(), $parameters, OAUTH_HTTP_METHOD_POST);
-//		dbdLog($response);
 		$token = $response;
 		return $token;
 	}
