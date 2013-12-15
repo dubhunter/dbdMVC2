@@ -77,6 +77,67 @@
 			}
 			return (neg ? '-' : '' ) + s;
 		},
+		timeLength: function (time, short_names, lower){
+			time *= 1000;
+			$.log(time);
+			var times = {
+				sec: 1000,
+				min: 60000,
+				hrs: 3600000,
+				day: 86400000,
+				week: 604800000,
+				mon: 2592000000,
+				year: 31536000000
+			};
+			var names = {};
+			if (short_names){
+				names.sec = 'Sec';
+				names.min = 'Min';
+				names.hrs = 'Hr';
+				names.day = 'Day';
+				names.week = 'Wk';
+				names.mon = 'Mon';
+				names.year = 'Yr';
+			}else{
+				names.sec = 'Second';
+				names.min = 'Minute';
+				names.hrs = 'Hour';
+				names.day = 'Day';
+				names.week = 'Week';
+				names.mon = 'Month';
+				names.year = 'Year';
+			}
+			var n, ret = '';
+			if ((n = Math.floor(time / times.year)) > 0){
+				ret += n + ' ' + names.year + (n > 1 ? 's' : '') + ' ';
+				time -= (n * times.year);
+			}
+			if ((n = Math.floor(time / times.mon)) > 0){
+				ret += n + ' ' + names.mon + (n > 1 ? 's' : '') + ' ';
+				time -= (n * times.mon);
+			}
+			if ((n = Math.floor(time / times.week)) > 0){
+				ret += n + ' ' + names.week + (n > 1 ? 's' : '') + ' ';
+				time -= (n * times.week);
+			}
+			if ((n = Math.floor(time / times.day)) > 0){
+				ret += n + ' ' + names.day + (n > 1 ? 's' : '') + ' ';
+				time -= (n * times.day);
+			}
+			if ((n = Math.floor(time / times.hrs)) > 0){
+				ret += n + ' ' + names.hrs + (n > 1 ? 's' : '') + ' ';
+				time -= (n * times.hrs);
+			}
+			if ((n = Math.floor(time / times.min)) > 0){
+				ret += n + ' ' + names.min + (n > 1 ? 's' : '') + ' ';
+				time -= (n * times.min);
+			}
+			if (time > 0){
+				ret += Math.floor(time / times.sec) + ' ' + names.sec + (n > 1 ? 's' : '');
+			}
+			ret = ret.trim();
+			return lower ? ret.toLowerCase() : ret;
+		},
 		timePast: function (date, short_names, lower){
 			var times = {
 				sec: 1000,

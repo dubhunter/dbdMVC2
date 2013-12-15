@@ -158,8 +158,12 @@ Handlebars.registerHelper('currency', function(number, options) {
 	return $.global.format(parseFloat(number), 'c' + options.hash['format']);
 });
 
+Handlebars.registerHelper('timelength', function(date, options) {
+	return $.timeLength(date, options.hash['short-names'], options.hash['lower']);
+});
+
 Handlebars.registerHelper('timepast', function(date, options) {
-	return $.timePast(date, options.hash['short-names'], options.hash['lower'], options.hash['seconds-only']);
+	return $.timePast(date, options.hash['short-names'], options.hash['lower']);
 });
 
 var bError = {
