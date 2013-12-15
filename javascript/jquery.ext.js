@@ -79,7 +79,6 @@
 		},
 		timeLength: function (time, short_names, lower){
 			time *= 1000;
-			$.log(time);
 			var times = {
 				sec: 1000,
 				min: 60000,
