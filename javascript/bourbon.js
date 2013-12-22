@@ -124,6 +124,10 @@ $.global.cultures['default'].calendar.patterns.Q = 'yyyy-MM-dd zzz';
 $.global.cultures['default'].calendar.patterns.QQ = 'yyyy-MM-dd HH:mm:ss zzz';
 
 Handlebars.registerHelper('view', function(data, name) {
+	if (typeof name != 'string') {
+		name = data;
+		data = this.view.data;
+	}
 	var ret = '';
 	if (!$.isArray(data)) {
 		data = [data];
