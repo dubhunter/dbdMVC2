@@ -132,7 +132,7 @@
 				time -= (n * times.min);
 			}
 			if (time > 0){
-				ret += Math.floor(time / times.sec) + ' ' + names.sec + (n > 1 ? 's' : '');
+				ret += Math.floor(time / times.sec) + ' ' + names.sec + (time > 1 ? 's' : '');
 			}
 			ret = ret.trim();
 			return lower ? ret.toLowerCase() : ret;
