@@ -28,7 +28,7 @@
 		interval: 600,
 		progressUrl: '/index/uploadProgress/',
 		progressCallback: null,
-		idUploadKey: 'PHP_SESSION_UPLOAD_PROGRESS',
+		idUploadKey: 'UPLOAD_IDENTIFIER',
 		idLoader: 'ajaxLoader',
 		idProgressDiv: 'FUuploadProgress',
 		idProgressWrapper: 'FUwrapper',
