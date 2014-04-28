@@ -509,7 +509,13 @@ abstract class dbdController
 		{
 			return uploadprogress_get_info($id);
 		}
-		throw new dbdException("APC not installed or misconfigured! Cannot get upload progress!");
+		else if (ini_get('session.upload_progress.enabled') && $prefix = ini_get('session.upload_progress.prefix'))
+		{
+			$a = $_SESSION[$prefix.$id];
+			$a['rate'] = $a['bytes_processed'] / (microtime(true) - $a['start_time']);
+			$a['est_sec'] = round(($a['content_length'] - $a['bytes_processed']) / $a['rate']);
+		}
+		throw new dbdException("APC, uploadprogress, or session.upload_progress not installed or misconfigured! Cannot get upload progress!");
 	}
 	/**#@-*/
 }

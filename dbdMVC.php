@@ -2,7 +2,7 @@
 /**
  * dbdMVC.php :: dbdMVC Include File & Front Controller Class
  *
- * dbdMVC version 2.2.1
+ * dbdMVC version 2.2.2
  * Copyright (c) 2006-2011 by Don't Blink Design
  * http://dbdmvc.com
  *
@@ -26,7 +26,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @package dbdMVC
- * @version 2.2.1
+ * @version 2.2.2
  * @author Don't Blink Design <info@dontblinkdesign.com>
  * @copyright Copyright (c) 2006-2011 by Don't Blink Design
  * @license http://www.gnu.org/copyleft/lesser.html
@@ -159,7 +159,7 @@ class dbdMVC
 	 * Current version number
 	 * <b>Note:</b> May not match file @version number
 	 */
-	const VERSION = "2.2.1";
+	const VERSION = "2.2.2";
 	/**
 	 * #@+
 	 * @access private
