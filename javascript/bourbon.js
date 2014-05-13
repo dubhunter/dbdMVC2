@@ -614,7 +614,7 @@ bView.update = function (name, data, merge) {
 	var view = bView.templateView(name);
 	if (data) {
 		if (merge) {
-			view.data = $.extend({},  view.data, data);
+			view.data = $.extend({}, view.data, data);
 		} else {
 			view.data = data;
 		}
